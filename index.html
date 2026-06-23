@@ -145,12 +145,29 @@ async function verifyCloudStartup(){
 
 <script>
 async function verifyFirebaseConnection(){
+
  try{
-   if(!navigator.onLine) return false;
+
+   // Internet Check
+   if(!navigator.onLine){
+      return false;
+   }
+
+   // Firebase Ready Check
+   if(typeof window.erpCloudLoad !== "function"){
+      console.error("Firebase Load Function Missing");
+      return false;
+   }
+
    return true;
+
  }catch(e){
+
+   console.error("Firebase Verification Error:",e);
+
    return false;
  }
+
 }
 </script>
 
