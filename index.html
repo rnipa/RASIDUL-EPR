@@ -1034,72 +1034,7 @@ syncBox.innerHTML='✅ '+new Date().toLocaleString();
 
 }catch(err){
 
-console.error(err);window.manualCloudRestore = async function(){
-
-try{
-
-if(!confirm('Restore Latest Cloud Backup?')) return;
-
-await erpCloudLoad();
-
-if(typeof renderHistory==="function"){
-   renderHistory();
-}
-
-if(typeof renderLedger==="function"){
-   renderLedger();
-}
-
-if(typeof updateMonthly==="function"){
-   updateMonthly();
-}
-
-if(typeof updateLiveTotals==="function"){
-   updateLiveTotals();
-}
-
-if(typeof updateWorkingCapital==="function"){
-   updateWorkingCapital();
-}
-
-if(typeof updateDueReminders==="function"){
-   updateDueReminders();
-}
-
-if(typeof updateDueDashboard==="function"){
-   updateDueDashboard();
-}
-
-localStorage.setItem(
-   'lastRestoreDate',
-   new Date().toLocaleString()
-);
-
-let rs=document.getElementById('lastRestoreStatus');
-
-if(rs){
-   rs.innerHTML='🔄 '+new Date().toLocaleString();
-}
-
-alert('🔄 Cloud Restore Successful');
-
-}catch(err){
-
 console.error(err);
-
-alert('❌ Cloud Restore Failed');
-
-}
-
-};
-let cs=document.getElementById('cloudStatus');
-if(cs) cs.innerHTML='🔴 Sync Failed';
-
-}
-
-};
-
-
 
 window.manualCloudRestore = async function(){
 
@@ -1166,6 +1101,14 @@ doc(db,"erpData","main")
 if(snap.exists()){
 
 let d=snap.data();
+  let cloudVersion = Number(d.version || 0);
+
+let localVersion = Number(
+   localStorage.getItem('localVersion') || 0
+);
+
+console.log("☁️ Cloud Version:", cloudVersion);
+console.log("💻 Local Version:", localVersion);
 
 window.histories=d.histories||[];
 histories=window.histories;
