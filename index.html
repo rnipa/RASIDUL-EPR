@@ -350,7 +350,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <button onclick="saveFinal()">✅ Final Save</button>
 <button onclick="newDay()">🆕 New Day</button>
 <button onclick="exportData()">📦 Export</button>
-<button onclick="manualCloudSync()">☁️ Cloud Sync</button>
+<button onclick="manualCloudSync()">🔒 Final Cloud Backup</button>
 <button onclick="manualCloudRestore()">🔄 Cloud Restore</button>
 <label class="importLabel">📥 Import<input type="file" id="importFile" hidden></label>
 </div>
@@ -374,16 +374,32 @@ el.addEventListener('input',()=>{window.__ERP_SYNC_PENDING__=true;autoSave();});
 });
 
 function autoSave(){
- let data={};
- document.querySelectorAll('input,textarea,select').forEach(el=>{
-   if(el.type!=='file') data[el.id]=el.value;
- });
- localStorage.setItem('rasidulForm',JSON.stringify(data));
-sessionStorage.setItem('rasidulForm',JSON.stringify(data));
 
-if(window.erpCloudSave){
-erpCloudSave();
-}
+ // 🔒 Pending Sync Status
+ let cs=document.getElementById('cloudStatus');
+ if(cs) cs.innerHTML='🟡 Pending Sync';
+
+ let data={};
+
+ document.querySelectorAll('input,textarea,select').forEach(el=>{
+   if(el.type!=='file'){
+     data[el.id]=el.value;
+   }
+ });
+
+ localStorage.setItem(
+   'rasidulForm',
+   JSON.stringify(data)
+ );
+
+ sessionStorage.setItem(
+   'rasidulForm',
+   JSON.stringify(data)
+ );
+
+ // Cloud Save এখন Manual হবে
+ // 🔒 Final Cloud Backup Button চাপলে Save হবে
+
 }
 
 function restore(){
@@ -955,7 +971,7 @@ cloudData
 console.log("☁️ Cloud Saved");
 window.__ERP_SYNC_PENDING__=false;
 let cs=document.getElementById('cloudStatus');
-if(cs) cs.innerHTML='🟢 Synced';
+if(cs) cs.innerHTML='🟢 Safe To Exit';
 
 let syncBox=document.getElementById('syncStatus');
 
