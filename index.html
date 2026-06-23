@@ -140,36 +140,6 @@ async function verifyCloudStartup(){
   if(lock){ lock.innerHTML='☁️ Cloud যাচাই হচ্ছে...'; }
   return true;
 }
-</script>
-
-
-<script>
-async function verifyFirebaseConnection(){
-
- try{
-
-   // Internet Check
-   if(!navigator.onLine){
-      return false;
-   }
-
-   // Firebase Ready Check
-   if(typeof window.erpCloudLoad !== "function"){
-      console.error("Firebase Load Function Missing");
-      return false;
-   }
-
-   return true;
-
- }catch(e){
-
-   console.error("Firebase Verification Error:",e);
-
-   return false;
- }
-
-}
-</script>
 
 </head>
 <body>
@@ -1064,7 +1034,64 @@ syncBox.innerHTML='✅ '+new Date().toLocaleString();
 
 }catch(err){
 
+console.error(err);window.manualCloudRestore = async function(){
+
+try{
+
+if(!confirm('Restore Latest Cloud Backup?')) return;
+
+await erpCloudLoad();
+
+if(typeof renderHistory==="function"){
+   renderHistory();
+}
+
+if(typeof renderLedger==="function"){
+   renderLedger();
+}
+
+if(typeof updateMonthly==="function"){
+   updateMonthly();
+}
+
+if(typeof updateLiveTotals==="function"){
+   updateLiveTotals();
+}
+
+if(typeof updateWorkingCapital==="function"){
+   updateWorkingCapital();
+}
+
+if(typeof updateDueReminders==="function"){
+   updateDueReminders();
+}
+
+if(typeof updateDueDashboard==="function"){
+   updateDueDashboard();
+}
+
+localStorage.setItem(
+   'lastRestoreDate',
+   new Date().toLocaleString()
+);
+
+let rs=document.getElementById('lastRestoreStatus');
+
+if(rs){
+   rs.innerHTML='🔄 '+new Date().toLocaleString();
+}
+
+alert('🔄 Cloud Restore Successful');
+
+}catch(err){
+
 console.error(err);
+
+alert('❌ Cloud Restore Failed');
+
+}
+
+};
 let cs=document.getElementById('cloudStatus');
 if(cs) cs.innerHTML='🔴 Sync Failed';
 
@@ -1162,12 +1189,22 @@ JSON.stringify(d.form||{})
 
 restore();
 renderHistory();
-renderLedger();
+
+if(typeof renderLedger==="function"){
+   renderLedger();
+}
+
 updateMonthly();
 updateLiveTotals();
 updateWorkingCapital();
-updateDueReminders();
-updateDueDashboard();
+
+if(typeof updateDueReminders==="function"){
+   updateDueReminders();
+}
+
+if(typeof updateDueDashboard==="function"){
+   updateDueDashboard();
+}
 
 console.log("☁️ Cloud Loaded");
 
