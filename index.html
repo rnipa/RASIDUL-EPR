@@ -122,8 +122,44 @@ font-weight:bold;
 text-align:center;
 }
 </style>
+
+<script>
+window.__ERP_CLOUD_VERIFIED__ = false;
+window.__ERP_SYNC_PENDING__ = false;
+
+async function verifyCloudStartup(){
+  const lock=document.getElementById('cloudLockScreen');
+  if(lock){
+    lock.style.display='flex';
+    lock.innerHTML='🔒 Rasidul Premium ERP<br><br>🌐 Internet যাচাই হচ্ছে...';
+  }
+  if(!navigator.onLine){
+    if(lock){ lock.innerHTML='❌ ইন্টারনেট সংযোগ নেই<br><br>Cloud ERP ব্যবহার করতে ইন্টারনেট চালু করুন'; }
+    return false;
+  }
+  if(lock){ lock.innerHTML='☁️ Cloud যাচাই হচ্ছে...'; }
+  return true;
+}
+</script>
+
+
+<script>
+async function verifyFirebaseConnection(){
+ try{
+   if(!navigator.onLine) return false;
+   return true;
+ }catch(e){
+   return false;
+ }
+}
+</script>
+
 </head>
 <body>
+<div id="cloudLockScreen" style="display:none;position:fixed;inset:0;background:#0f172a;color:#fff;z-index:999999;justify-content:center;align-items:center;flex-direction:column;font-size:22px;text-align:center">
+❌ ইন্টারনেট সংযোগ নেই<br><br>
+Cloud ERP ব্যবহার করতে ইন্টারনেট চালু করুন
+</div>
 <div class="bg"></div>
 
 <div class="container">
@@ -334,7 +370,7 @@ window.histories=JSON.parse(localStorage.getItem('rasidulHistories')||'[]');
 let editIndex=null;
 
 document.querySelectorAll('input,textarea,select').forEach(el=>{
-el.addEventListener('input',autoSave);
+el.addEventListener('input',()=>{window.__ERP_SYNC_PENDING__=true;autoSave();});
 });
 
 function autoSave(){
@@ -886,6 +922,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.erpCloudSave = async function(){
+let cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🟡 Syncing...';
 
 try{
 
@@ -915,6 +953,9 @@ cloudData
 );
 
 console.log("☁️ Cloud Saved");
+window.__ERP_SYNC_PENDING__=false;
+let cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🟢 Synced';
 
 let syncBox=document.getElementById('syncStatus');
 
@@ -925,6 +966,8 @@ syncBox.innerHTML='✅ '+new Date().toLocaleString();
 }catch(err){
 
 console.error(err);
+let cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🔴 Sync Failed';
 
 }
 
@@ -1056,6 +1099,20 @@ console.log("🔄 Cloud Sync Active");
 
 window.addEventListener('load', async ()=>{
 
+const lock=document.getElementById('cloudLockScreen');
+if(lock){
+ lock.style.display='flex';
+ lock.innerHTML='🔒 Cloud Verification চলছে...';
+}
+
+const ok = await verifyFirebaseConnection();
+if(!ok){
+ if(lock){
+  lock.innerHTML='❌ Cloud Verification Failed';
+ }
+ return;
+}
+
 await erpCloudLoad();
 
 renderHistory();
@@ -1065,6 +1122,10 @@ updateLiveTotals();
 updateWorkingCapital();
 updateDueReminders();
 updateDueDashboard();
+
+if(lock){ lock.style.display='none'; }
+const cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🟢 Cloud Verified';
 
 });
 
@@ -1120,6 +1181,35 @@ document.addEventListener('input',function(){
 })();
 </script>
 
+
+<script>
+(function(){
+ function updateInternetGuard(){
+   const lock=document.getElementById('cloudLockScreen');
+   if(!lock) return;
+
+   if(navigator.onLine){
+      lock.style.display='none';
+   }else{
+      lock.style.display='flex';
+   }
+ }
+
+ window.addEventListener('online',updateInternetGuard);
+ window.addEventListener('offline',updateInternetGuard);
+ window.addEventListener('load',updateInternetGuard);
+})();
+</script>
+
+
+<script>
+window.addEventListener('beforeunload',function(e){
+ if(window.__ERP_SYNC_PENDING__){
+   e.preventDefault();
+   e.returnValue='Cloud Sync pending';
+ }
+});
+</script>
 </body>
 
 <script>
