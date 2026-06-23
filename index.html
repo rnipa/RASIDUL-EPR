@@ -140,6 +140,19 @@ async function verifyCloudStartup(){
   if(lock){ lock.innerHTML='☁️ Cloud যাচাই হচ্ছে...'; }
   return true;
 }
+</script>
+
+
+<script>
+async function verifyFirebaseConnection(){
+ try{
+   if(!navigator.onLine) return false;
+   return true;
+ }catch(e){
+   return false;
+ }
+}
+</script>
 
 </head>
 <body>
@@ -928,50 +941,6 @@ measurementId: "G-2PZTVGYHTH"
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
-  window.verifyFirebaseConnection = async function(){
-
- try{
-
-   if(!navigator.onLine){
-      return false;
-   }
-
-   const testSnap = await getDoc(
-   doc(db,"erpData","main")
-);
-
-if(!testSnap.exists()){
-
-   console.error("❌ Cloud Document Missing");
-
-   return false;
-
-}
-
-const cloudData = testSnap.data();
-
-if(!cloudData){
-
-   console.error("❌ Cloud Data Empty");
-
-   return false;
-
-}
-
-console.log("✅ Firestore Read OK");
-console.log("✅ Cloud Document Valid");
-
-return true;
-
- }catch(e){
-
-   console.error("❌ Firestore Verification Failed",e);
-
-   return false;
-
- }
-
-};
 
 window.erpCloudSave = async function(){
 let cs=document.getElementById('cloudStatus');
@@ -994,12 +963,8 @@ histories:window.histories||[],
 ledgerPeople:window.ledgerPeople||[],
 form:formData,
 updated:new Date().toLocaleString(),
-version: Date.now()
+version:'v3-enterprise-cloud'
 };
-  localStorage.setItem(
-   'localVersion',
-   cloudData.version
-);
 
 localStorage.setItem('lastCloudSync',new Date().toLocaleString());
 
@@ -1013,19 +978,6 @@ window.__ERP_SYNC_PENDING__=false;
 let cs=document.getElementById('cloudStatus');
 if(cs) cs.innerHTML='🟢 Safe To Exit';
 
-  let syncTime = new Date().toLocaleString();
-
-localStorage.setItem(
-  'lastCloudSync',
-  syncTime
-);
-
-let ls = document.getElementById('lastCloudSync');
-
-if(ls){
-   ls.innerHTML = syncTime;
-}
-
 let syncBox=document.getElementById('syncStatus');
 
 if(syncBox){
@@ -1035,6 +987,14 @@ syncBox.innerHTML='✅ '+new Date().toLocaleString();
 }catch(err){
 
 console.error(err);
+let cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🔴 Sync Failed';
+
+}
+
+};
+
+
 
 window.manualCloudRestore = async function(){
 
@@ -1045,11 +1005,7 @@ if(!confirm('Restore Latest Cloud Backup?')) return;
 await erpCloudLoad();
 
 renderHistory();
-
-if(typeof renderLedger==="function"){
-   renderLedger();
-}
-
+renderLedger();
 updateMonthly();
 updateLiveTotals();
 updateWorkingCapital();
@@ -1101,14 +1057,6 @@ doc(db,"erpData","main")
 if(snap.exists()){
 
 let d=snap.data();
-  let cloudVersion = Number(d.version || 0);
-
-let localVersion = Number(
-   localStorage.getItem('localVersion') || 0
-);
-
-console.log("☁️ Cloud Version:", cloudVersion);
-console.log("💻 Local Version:", localVersion);
 
 window.histories=d.histories||[];
 histories=window.histories;
@@ -1132,22 +1080,12 @@ JSON.stringify(d.form||{})
 
 restore();
 renderHistory();
-
-if(typeof renderLedger==="function"){
-   renderLedger();
-}
-
+renderLedger();
 updateMonthly();
 updateLiveTotals();
 updateWorkingCapital();
-
-if(typeof updateDueReminders==="function"){
-   updateDueReminders();
-}
-
-if(typeof updateDueDashboard==="function"){
-   updateDueDashboard();
-}
+updateDueReminders();
+updateDueDashboard();
 
 console.log("☁️ Cloud Loaded");
 
@@ -1182,42 +1120,33 @@ console.log("🔄 Cloud Sync Active");
 
 window.addEventListener('load', async ()=>{
 
- const lock=document.getElementById('cloudLockScreen');
+const lock=document.getElementById('cloudLockScreen');
+if(lock){
+ lock.style.display='flex';
+ lock.innerHTML='🔒 Cloud Verification চলছে...';
+}
 
- const ok = await window.verifyFirebaseConnection();
-
- if(!ok){
-
-   if(lock){
-      lock.innerHTML='❌ Cloud Verification Failed';
-   }
-
-   return;
- }
-
- await erpCloudLoad();
-
- renderHistory();
-
- if(typeof renderLedger==="function"){
-    renderLedger();
- }
-
- updateMonthly();
- updateLiveTotals();
- updateWorkingCapital();
- updateDueReminders();
- updateDueDashboard();
-
+const ok = await verifyFirebaseConnection();
+if(!ok){
  if(lock){
-    lock.style.display='none';
+  lock.innerHTML='❌ Cloud Verification Failed';
  }
+ return;
+}
 
- const cs=document.getElementById('cloudStatus');
+await erpCloudLoad();
 
- if(cs){
-    cs.innerHTML='🟢 Cloud Verified';
- }
+renderHistory();
+renderLedger();
+updateMonthly();
+updateLiveTotals();
+updateWorkingCapital();
+updateDueReminders();
+updateDueDashboard();
+
+if(lock){ lock.style.display='none'; }
+const cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🟢 Cloud Verified';
 
 });
 
@@ -1755,13 +1684,6 @@ ${balanceText}
 const currentDevice=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?'📱 Mobile':'💻 PC';
 
 window.addEventListener('load',()=>{
-  let lastSync = localStorage.getItem('lastCloudSync');
-
-let ls = document.getElementById('lastCloudSync');
-
-if(ls && lastSync){
-   ls.innerHTML = lastSync;
-}
  try{
    const pd=document.getElementById('previousDeviceBox');
    const cd=document.getElementById('cloudDeviceBox');
