@@ -958,6 +958,50 @@ measurementId: "G-2PZTVGYHTH"
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
+  window.verifyFirebaseConnection = async function(){
+
+ try{
+
+   if(!navigator.onLine){
+      return false;
+   }
+
+   const testSnap = await getDoc(
+   doc(db,"erpData","main")
+);
+
+if(!testSnap.exists()){
+
+   console.error("❌ Cloud Document Missing");
+
+   return false;
+
+}
+
+const cloudData = testSnap.data();
+
+if(!cloudData){
+
+   console.error("❌ Cloud Data Empty");
+
+   return false;
+
+}
+
+console.log("✅ Firestore Read OK");
+console.log("✅ Cloud Document Valid");
+
+return true;
+
+ }catch(e){
+
+   console.error("❌ Firestore Verification Failed",e);
+
+   return false;
+
+ }
+
+};
 
 window.erpCloudSave = async function(){
 let cs=document.getElementById('cloudStatus');
@@ -980,7 +1024,7 @@ histories:window.histories||[],
 ledgerPeople:window.ledgerPeople||[],
 form:formData,
 updated:new Date().toLocaleString(),
-version:'v3-enterprise-cloud'
+version: Date.now()
 };
 
 localStorage.setItem('lastCloudSync',new Date().toLocaleString());
@@ -1035,7 +1079,11 @@ if(!confirm('Restore Latest Cloud Backup?')) return;
 await erpCloudLoad();
 
 renderHistory();
-renderLedger();
+
+if(typeof renderLedger==="function"){
+   renderLedger();
+}
+
 updateMonthly();
 updateLiveTotals();
 updateWorkingCapital();
@@ -1148,22 +1196,32 @@ console.log("🔄 Cloud Sync Active");
 }
 );
 
-window.addEventListener('load', async ()=>{
+window.addEventListener('load', async function verifyFirebaseConnection(){
 
-const lock=document.getElementById('cloudLockScreen');
-if(lock){
- lock.style.display='flex';
- lock.innerHTML='🔒 Cloud Verification চলছে...';
-}
+ try{
 
-const ok = await verifyFirebaseConnection();
-if(!ok){
- if(lock){
-  lock.innerHTML='❌ Cloud Verification Failed';
+   if(!navigator.onLine){
+      return false;
+   }
+
+   // Firestore Read Test
+   const testSnap = await getDoc(
+      doc(db,"erpData","main")
+   );
+
+   console.log("✅ Firestore Read OK");
+
+   return true;
+
+ }catch(e){
+
+   console.error("❌ Firestore Verification Failed",e);
+
+   return false;
+
  }
- return;
-}
 
+}
 await erpCloudLoad();
 
 renderHistory();
