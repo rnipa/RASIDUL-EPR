@@ -787,7 +787,10 @@ restore();
 updateLiveTotals();
 updateWorkingCapital();
 renderHistory();
-renderLedger();
+
+if(typeof renderLedger==="function"){
+   renderLedger();
+}
 
 updateMonthly();
 
@@ -816,7 +819,9 @@ restore();
 updateLiveTotals();
 updateWorkingCapital();
 renderHistory();
-renderLedger();
+if(typeof renderLedger==="function"){
+   renderLedger();
+}
 
 updateMonthly();
 
