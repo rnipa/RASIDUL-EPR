@@ -978,6 +978,19 @@ window.__ERP_SYNC_PENDING__=false;
 let cs=document.getElementById('cloudStatus');
 if(cs) cs.innerHTML='🟢 Safe To Exit';
 
+  let syncTime = new Date().toLocaleString();
+
+localStorage.setItem(
+  'lastCloudSync',
+  syncTime
+);
+
+let ls = document.getElementById('lastCloudSync');
+
+if(ls){
+   ls.innerHTML = syncTime;
+}
+
 let syncBox=document.getElementById('syncStatus');
 
 if(syncBox){
@@ -1684,6 +1697,13 @@ ${balanceText}
 const currentDevice=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?'📱 Mobile':'💻 PC';
 
 window.addEventListener('load',()=>{
+  let lastSync = localStorage.getItem('lastCloudSync');
+
+let ls = document.getElementById('lastCloudSync');
+
+if(ls && lastSync){
+   ls.innerHTML = lastSync;
+}
  try{
    const pd=document.getElementById('previousDeviceBox');
    const cd=document.getElementById('cloudDeviceBox');
