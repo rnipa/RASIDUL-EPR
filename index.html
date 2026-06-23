@@ -1026,6 +1026,10 @@ form:formData,
 updated:new Date().toLocaleString(),
 version: Date.now()
 };
+  localStorage.setItem(
+   'localVersion',
+   cloudData.version
+);
 
 localStorage.setItem('lastCloudSync',new Date().toLocaleString());
 
@@ -1196,45 +1200,44 @@ console.log("🔄 Cloud Sync Active");
 }
 );
 
-window.addEventListener('load', async function verifyFirebaseConnection(){
+window.addEventListener('load', async ()=>{
 
- try{
+ const lock=document.getElementById('cloudLockScreen');
 
-   if(!navigator.onLine){
-      return false;
+ const ok = await window.verifyFirebaseConnection();
+
+ if(!ok){
+
+   if(lock){
+      lock.innerHTML='❌ Cloud Verification Failed';
    }
 
-   // Firestore Read Test
-   const testSnap = await getDoc(
-      doc(db,"erpData","main")
-   );
-
-   console.log("✅ Firestore Read OK");
-
-   return true;
-
- }catch(e){
-
-   console.error("❌ Firestore Verification Failed",e);
-
-   return false;
-
+   return;
  }
 
-}
-await erpCloudLoad();
+ await erpCloudLoad();
 
-renderHistory();
-renderLedger();
-updateMonthly();
-updateLiveTotals();
-updateWorkingCapital();
-updateDueReminders();
-updateDueDashboard();
+ renderHistory();
 
-if(lock){ lock.style.display='none'; }
-const cs=document.getElementById('cloudStatus');
-if(cs) cs.innerHTML='🟢 Cloud Verified';
+ if(typeof renderLedger==="function"){
+    renderLedger();
+ }
+
+ updateMonthly();
+ updateLiveTotals();
+ updateWorkingCapital();
+ updateDueReminders();
+ updateDueDashboard();
+
+ if(lock){
+    lock.style.display='none';
+ }
+
+ const cs=document.getElementById('cloudStatus');
+
+ if(cs){
+    cs.innerHTML='🟢 Cloud Verified';
+ }
 
 });
 
