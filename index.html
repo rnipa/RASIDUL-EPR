@@ -168,7 +168,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <p class="sub">Stable Smart Business Control Center 🚀</p>
 
 <div class="dash">
-  <button onclick="manualCloudSync()">🔒 Final Cloud Backup</button>
+<button onclick="manualCloudSync()">🔒 Final Cloud Backup</button>
 <div class="mini"><h3>🛡️ Cloud Status</h3><p id="cloudStatus">🟢 Connected</p></div>
 <div class="mini"><h3>💸 MFS Profit</h3><h2 id="mfsProfitBox">0 ৳</h2></div><div class="mini"><h3>📱 Recharge Profit</h3><h2 id="rechargeProfitBox">0 ৳</h2></div><div class="mini"><h3>📅 Daily Profit</h3><h2 id="dailyProfit">0 ৳</h2></div>
 <div class="mini"><h3>📈 Monthly Profit</h3><h2 id="monthlyProfit">0 ৳</h2></div>
@@ -188,8 +188,8 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="mini"><h3>📈 Avg Daily Profit</h3><p id="avgProfit">0 ৳</p></div>
 <div class="mini"><h3>💰 Lifetime Profit</h3><p id="lifetimeProfit">0 ৳</p></div>
 <div class="mini"><h3>🎯 Target Progress</h3><p id="targetProgress">0%</p></div>
-<div class="mini"><h3>🔔 Due Reminders</h3><p id="dueReminderBox">No Alerts</p></div>
-<div class="mini"><h3>👥 Total Due Clients</h3><p id="dueClientsCount">0</p></div>
+<div class="mini"><h3>🔔 Due Reminders</h3><p id="ReminderBox">No Alerts</p></div>
+<div class="mini"><h3>👥 Total  Clients</h3><p id="ClientsCount">0</p></div>
 <div class="mini"><h3>💰 Total Receivable</h3><p id="totalReceivable">0 ৳</p></div>
 <div class="mini"><h3>🔴 High Risk Clients</h3><p id="highRiskCount">0</p></div>
 
@@ -1286,11 +1286,11 @@ let alerts=[];
  let d=new Date(last.time);
  let days=Math.floor((Date.now()-d.getTime())/(1000*60*60*24));
 
- if(days>=90){
+ if(days>=10){
    alerts.push('🔴 '+p.name+' ('+days+' days)');
- }else if(days>=60){
+ }else if(days>=7){
    alerts.push('🟠 '+p.name+' ('+days+' days)');
- }else if(days>=30){
+ }else if(days>=3){
    alerts.push('🟡 '+p.name+' ('+days+' days)');
  }
 });
@@ -1318,7 +1318,8 @@ let msg=`🟠 ৳${Math.abs(balance)} টাকা বকেয়া রয়�
 
 🤝 আপনার সহযোগিতার জন্য ধন্যবাদ।
 
-🏪 Rubaiya Pharmacy ERP`;
+🏪 Rubaiya Pharmacy ERP
+Sing:: MD RASIDUL HASAN`;
 
 window.location.href='https://wa.me/'+p.mobile+'?text='+encodeURIComponent(msg);
 }
@@ -1414,9 +1415,9 @@ refundReceived+=Number(h.amount);
 });
 
 let status=balance<0
-? `🟢 He Owes You ${Math.abs(balance)} ৳`
+? `🟢 আমি তার কাছে পাবে ${Math.abs(balance)} ৳`
 : balance>0
-? `🔴 You Owe Him ${balance} ৳`
+? `🔴 সে আমার কাছে পাবে ${balance} ৳`
 : `⚖️ Settled`;
 
 let historyHTML='';
