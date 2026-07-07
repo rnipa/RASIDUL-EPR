@@ -252,12 +252,11 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <option value="Bkash">📱 Bkash</option>
 <option value="Nagad">📱 Nagad</option>
 <option value="Rocket">🚀 Rocket</option>
-<option value="Tally">📒 Tally Khata</option>
 <option value="GP">📶 GP</option>
 <option value="Robi">📶 Robi</option>
 <option value="Airtel">📶 Airtel</option>
 <option value="Banglalink">📶 Banglalink</option>
-
+<option value="Tally">📒 Tally Khata</option>
 </select>
 
 <button style="margin-top:15px" onclick="withdrawCapital()">💸 Withdraw From Capital</button>
@@ -418,11 +417,6 @@ function v(id){
 
 function calculate(){
 
-let openMFS=v('obk')+v('ong')+v('ork')+v('omc')+v('otk');
-let closeMFS=v('cbk')+v('cng')+v('crk')+v('cmc')+v('ctk');
-
-let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('orc');
-let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('crc');
 
 window.mfsProfit=closeMFS-openMFS;
 window.rechargeProfit=closeRecharge-openRecharge;
@@ -589,6 +583,9 @@ v('n100')*100+
 v('n50')*50+
 v('n20')*20+
 v('n10')*10;
+v('n5')*5;
+v('n2')*2;
+v('n1')*1;
 
 cashTotal.innerHTML=t;
 
@@ -711,10 +708,20 @@ otk.value=ctk.value;
 orc.value=crc.value;
 
 mfsCapital.value=
-v('cbk')+v('cng')+v('crk')+v('cmc');
+mfsCapital.value=
+v('cbk')+
+v('cng')+
+v('crk')+
+v('cmc')+
+v('ctk');
 
 rechargeCapital.value=
-v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
+rechargeCapital.value=
+v('cgp')+
+v('crobi')+
+v('cair')+
+v('cbl')+
+v('crc');
 
 autoSave();
 
