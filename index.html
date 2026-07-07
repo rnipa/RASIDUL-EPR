@@ -252,11 +252,12 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <option value="Bkash">📱 Bkash</option>
 <option value="Nagad">📱 Nagad</option>
 <option value="Rocket">🚀 Rocket</option>
+<option value="Tally">📒 Tally Khata</option>
 <option value="GP">📶 GP</option>
 <option value="Robi">📶 Robi</option>
 <option value="Airtel">📶 Airtel</option>
 <option value="Banglalink">📶 Banglalink</option>
-<option value="Tally">📒 Tally Khata</option>
+
 </select>
 
 <button style="margin-top:15px" onclick="withdrawCapital()">💸 Withdraw From Capital</button>
@@ -272,13 +273,13 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div><label>Bkash</label><input id="obk"></div>
 <div><label>Nagad</label><input id="ong"></div>
 <div><label>Rocket</label><input id="ork"></div>
+<div><label>Tally Khata</label><input id="otk"></div>
 <div><label>MFS Cash</label><input id="omc"></div>
 
 <div><label>GP</label><input id="ogp"></div>
 <div><label>Robi</label><input id="orobi"></div>
 <div><label>Airtel</label><input id="oair"></div>
 <div><label>Banglalink</label><input id="obl"></div>
-<div><label>Tally Khata</label><input id="otk"></div>
 <div><label>Recharge Cash</label><input id="orc"></div>
 </div>
 
@@ -295,13 +296,13 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div><label>Bkash</label><input id="cbk"></div>
 <div><label>Nagad</label><input id="cng"></div>
 <div><label>Rocket</label><input id="crk"></div>
+<div><label>Tally Khata</label><input id="ctk"></div>
 <div><label>MFS Cash</label><input id="cmc"></div>
 
 <div><label>GP</label><input id="cgp"></div>
 <div><label>Robi</label><input id="crobi"></div>
 <div><label>Airtel</label><input id="cair"></div>
 <div><label>Banglalink</label><input id="cbl"></div>
-<div><label>Tally Khata</label><input id="ctk"></div>
 <div><label>Recharge Cash</label><input id="crc"></div>
 </div>
 
@@ -417,11 +418,11 @@ function v(id){
 
 function calculate(){
 
-let openMFS=v('obk')+v('ong')+v('ork')+v('omc');
-let closeMFS=v('cbk')+v('cng')+v('crk')+v('cmc');
+let openMFS=v('obk')+v('ong')+v('ork')+v('omc')+v('otk');
+let closeMFS=v('cbk')+v('cng')+v('crk')+v('cmc')+v('ctk');
 
-let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc');
-let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
+let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('orc');
+let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('crc');
 
 window.mfsProfit=closeMFS-openMFS;
 window.rechargeProfit=closeRecharge-openRecharge;
@@ -667,7 +668,7 @@ else if(method==='GP') ogp.value=Math.max(0,v('ogp')-amount);
 else if(method==='Robi') orobi.value=Math.max(0,v('orobi')-amount);
 else if(method==='Airtel') oair.value=Math.max(0,v('oair')-amount);
 else if(method==='Banglalink') obl.value=Math.max(0,v('obl')-amount);
-else if(method==='Tally') otk.value=Math.max(0,v('otk')-amount);
+else if(method==='Tally') omc.value=Math.max(0,v('omc')-amount);
 else{
  if(source==='mfs') omc.value=Math.max(0,v('omc')-amount);
  else orc.value=Math.max(0,v('orc')-amount);
@@ -1598,7 +1599,7 @@ oair.value=(+oair.value||0)+(amount*sign);
 }else if(method==='Banglalink'){
 obl.value=(+obl.value||0)+(amount*sign);
 }else if(method==='Tally'){
-otk.value=(+otk.value||0)+(amount*sign);
+omc.value=(+omc.value||0)+(amount*sign);
 }else if(method==='Cash'){
 if(fundSource==='mfs'){
 omc.value=(+omc.value||0)+(amount*sign);
