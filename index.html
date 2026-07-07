@@ -252,6 +252,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <option value="Bkash">📱 Bkash</option>
 <option value="Nagad">📱 Nagad</option>
 <option value="Rocket">🚀 Rocket</option>
+<option value="Bank">🏦 Bank</option>
 <option value="GP">📶 GP</option>
 <option value="Robi">📶 Robi</option>
 <option value="Airtel">📶 Airtel</option>
@@ -274,6 +275,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div><label>Rocket</label><input id="ork"></div>
 <div><label>Tally Khata</label><input id="otk"></div>
 <div><label>MFS Cash</label><input id="omc"></div>
+<div><label>Bank</label><input id="obank"></div>
 
 <div><label>GP</label><input id="ogp"></div>
 <div><label>Robi</label><input id="orobi"></div>
@@ -296,6 +298,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div><label>Nagad</label><input id="cng"></div>
 <div><label>Rocket</label><input id="crk"></div>
 <div><label>Tally Khata</label><input id="ctk"></div>
+<div><label>Bank</label><input id="cbank"></div>
 <div><label>MFS Cash</label><input id="cmc"></div>
 
 <div><label>GP</label><input id="cgp"></div>
@@ -661,6 +664,8 @@ rechargeCapital.value=Math.max(0,v('rechargeCapital')-amount);
 if(method==='Bkash') obk.value=Math.max(0,v('obk')-amount);
 else if(method==='Nagad') ong.value=Math.max(0,v('ong')-amount);
 else if(method==='Rocket') ork.value=Math.max(0,v('ork')-amount);
+else if(method==='Bank')
+obank.value=Math.max(0,v('obank')-amount);
 else if(method==='GP') ogp.value=Math.max(0,v('ogp')-amount);
 else if(method==='Robi') orobi.value=Math.max(0,v('orobi')-amount);
 else if(method==='Airtel') oair.value=Math.max(0,v('oair')-amount);
@@ -698,6 +703,7 @@ function newDay(){
 obk.value=cbk.value;
 ong.value=cng.value;
 ork.value=crk.value;
+obank.value=cbank.value;
 omc.value=cmc.value;
 
 ogp.value=cgp.value;
@@ -708,14 +714,13 @@ otk.value=ctk.value;
 orc.value=crc.value;
 
 mfsCapital.value=
-mfsCapital.value=
 v('cbk')+
 v('cng')+
 v('crk')+
+v('cbank')+
 v('cmc')+
 v('ctk');
 
-rechargeCapital.value=
 rechargeCapital.value=
 v('cgp')+
 v('crobi')+
@@ -811,10 +816,10 @@ r.readAsText(file);
 
 function updateLiveTotals(){
 
-let openingEmoneyValue=v('obk')+v('ong')+v('ork')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk');
+let openingEmoneyValue=v('obk')+v('ong')+v('ork')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('cbank');
 let openingCashValue=v('omc')+v('orc');
 
-let closingEmoneyValue=v('cbk')+v('cng')+v('crk')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk');
+let closingEmoneyValue=v('cbk')+v('cng')+v('crk')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('cbank');
 let closingCashValue=v('cmc')+v('crc');
 
 openingEmoney.innerHTML=openingEmoneyValue+' ৳';
@@ -897,6 +902,7 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 <option value="Nagad Personal">📱 Nagad Personal</option>
 <option value="Nagad Merchant">🏢 Nagad Merchant</option>
 <option value="Rocket">🚀 Rocket</option>
+<option value="Bank">🏦 Bank</option>
 <option value="GP">📶 GP</option>
 <option value="Robi">📶 Robi</option>
 <option value="Airtel">📶 Airtel</option>
@@ -1597,6 +1603,8 @@ obk.value=(+obk.value||0)+(amount*sign);
 ong.value=(+ong.value||0)+(amount*sign);
 }else if(method.includes('Rocket')){
 ork.value=(+ork.value||0)+(amount*sign);
+}else if(method==='Bank'){
+obank.value=(+obank.value||0)+(amount*sign);
 }else if(method==='GP'){
 ogp.value=(+ogp.value||0)+(amount*sign);
 }else if(method==='Robi'){
