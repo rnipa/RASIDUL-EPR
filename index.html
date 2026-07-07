@@ -270,12 +270,12 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <h2>🌅 Opening Balance</h2>
 
 <div class="grid">
+<div><label>Bank</label><input id="obank"></div>
 <div><label>Bkash</label><input id="obk"></div>
 <div><label>Nagad</label><input id="ong"></div>
 <div><label>Rocket</label><input id="ork"></div>
 <div><label>Tally Khata</label><input id="otk"></div>
 <div><label>MFS Cash</label><input id="omc"></div>
-<div><label>Bank</label><input id="obank"></div>
 
 <div><label>GP</label><input id="ogp"></div>
 <div><label>Robi</label><input id="orobi"></div>
@@ -294,11 +294,11 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="card">
 <h2>🌙 Closing Balance</h2>
 <div class="grid">
+<div><label>Bank</label><input id="cbank"></div>
 <div><label>Bkash</label><input id="cbk"></div>
 <div><label>Nagad</label><input id="cng"></div>
 <div><label>Rocket</label><input id="crk"></div>
 <div><label>Tally Khata</label><input id="ctk"></div>
-<div><label>Bank</label><input id="cbank"></div>
 <div><label>MFS Cash</label><input id="cmc"></div>
 
 <div><label>GP</label><input id="cgp"></div>
@@ -421,8 +421,35 @@ function v(id){
 function calculate(){
 
 
-window.mfsProfit=closeMFS-openMFS;
-window.rechargeProfit=closeRecharge-openRecharge;
+let openMFS =
+v('obk') +
+v('ong') +
+v('ork') +
+v('obank') +
+v('omc') +
+v('otk');
+
+let closeMFS =
+v('cbk') +
+v('cng') +
+v('crk') +
+v('cbank') +
+v('cmc') +
+v('ctk');
+
+let openRecharge =
+v('ogp') +
+v('orobi') +
+v('oair') +
+v('obl') +
+v('orc');
+
+let closeRecharge =
+v('cgp') +
+v('crobi') +
+v('cair') +
+v('cbl') +
+v('crc');
 
 let rawProfit=mfsProfit+rechargeProfit;
 
@@ -816,10 +843,10 @@ r.readAsText(file);
 
 function updateLiveTotals(){
 
-let openingEmoneyValue=v('obk')+v('ong')+v('ork')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('cbank');
+let openingEmoneyValue=v('obk')+v('ong')+v('ork')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')v('cbank');
 let openingCashValue=v('omc')+v('orc');
 
-let closingEmoneyValue=v('cbk')+v('cng')+v('crk')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('cbank');
+let closingEmoneyValue=v('cbk')+v('cng')+v('crk')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')v('cbank');
 let closingCashValue=v('cmc')+v('crc');
 
 openingEmoney.innerHTML=openingEmoneyValue+' ৳';
