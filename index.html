@@ -260,6 +260,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <option value="Tally">📒 Tally Khata</option>
 </select>
 
+
 <button style="margin-top:15px" onclick="withdrawCapital()">💸 Withdraw From Capital</button>
 
 </div>
@@ -308,6 +309,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div><label>Recharge Cash</label><input id="crc"></div>
 </div>
 
+
 <div class="top-grid" style="margin-top:15px">
 <div class="mini"><h3>💰 Closing E-Money</h3><h2 id="closingEmoney">0 ৳</h2></div>
 <div class="mini"><h3>💵 Closing Cash</h3><h2 id="closingCash">0 ৳</h2></div>
@@ -338,6 +340,8 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <input id="n1" placeholder="1">
   
 </div>
+
+
 
 <div class="actions">
 <button onclick="calcCash()">🧮 Calculate</button>
@@ -424,36 +428,14 @@ function v(id){
 
 function calculate(){
 
+let openMFS=v('obk')+v('ong')+v(ork)+v('obank')+v('omc')+v('otk');
+let closeMFS=v('cbk')+v('cng') +v('crk')+v('cbank')+v('cmc')+v('ctk');
 
-let openMFS =
-v('obk') +
-v('ong') +
-v('ork') +
-v('obank') +
-v('omc') +
-v('otk');
+let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('orc');
+let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('crc');
 
-let closeMFS =
-v('cbk') +
-v('cng') +
-v('crk') +
-v('cbank') +
-v('cmc') +
-v('ctk');
-
-let openRecharge =
-v('ogp') +
-v('orobi') +
-v('oair') +
-v('obl') +
-v('orc');
-
-let closeRecharge =
-v('cgp') +
-v('crobi') +
-v('cair') +
-v('cbl') +
-v('crc');
+window.mfsProfit=closeMFS-openMFS;
+window.rechargeProfit=closeRecharge-openRecharge;
 
 let rawProfit=mfsProfit+rechargeProfit;
 
@@ -722,44 +704,6 @@ updateWorkingCapital();
 updateLiveTotals();
 autoSave();
 
-withdrawAmount.value='0';
-withdrawReason.value='';
-
-alert('💸 Withdrawal Saved');
-
-}
-
-function newDay(){
-
-obk.value=cbk.value;
-ong.value=cng.value;
-ork.value=crk.value;
-obank.value=cbank.value;
-omc.value=cmc.value;
-
-ogp.value=cgp.value;
-orobi.value=crobi.value;
-oair.value=cair.value;
-obl.value=cbl.value;
-otk.value=ctk.value;
-orc.value=crc.value;
-
-mfsCapital.value=
-v('cbk')+
-v('cng')+
-v('crk')+
-v('cbank')+
-v('cmc')+
-v('ctk');
-
-rechargeCapital.value=
-v('cgp')+
-v('crobi')+
-v('cair')+
-v('cbl')+
-v('crc');
-
-autoSave();
 
 updateLiveTotals();
 
@@ -847,10 +791,10 @@ r.readAsText(file);
 
 function updateLiveTotals(){
 
-let openingEmoneyValue=v('obk')+v('ong')+v('ork')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('cbank');
+let openingEmoneyValue=v('obk')+v('ong')+v('ork')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk');
 let openingCashValue=v('omc')+v('orc');
 
-let closingEmoneyValue=v('cbk')+v('cng')+v('crk')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('cbank');
+let closingEmoneyValue=v('cbk')+v('cng')+v('crk')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk');
 let closingCashValue=v('cmc')+v('crc');
 
 openingEmoney.innerHTML=openingEmoneyValue+' ৳';
@@ -944,6 +888,7 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 <option value="Other">🔄 Other</option>
 </select>
 </div>
+
 
 <div>
 <label>📂 Fund Source</label>
@@ -1634,8 +1579,6 @@ obk.value=(+obk.value||0)+(amount*sign);
 ong.value=(+ong.value||0)+(amount*sign);
 }else if(method.includes('Rocket')){
 ork.value=(+ork.value||0)+(amount*sign);
-}else if(method==='Bank'){
-obank.value=(+obank.value||0)+(amount*sign);
 }else if(method==='GP'){
 ogp.value=(+ogp.value||0)+(amount*sign);
 }else if(method==='Robi'){
@@ -1645,7 +1588,7 @@ oair.value=(+oair.value||0)+(amount*sign);
 }else if(method==='Banglalink'){
 obl.value=(+obl.value||0)+(amount*sign);
 }else if(method==='Tally'){
-omc.value=(+omc.value||0)+(amount*sign);
+otk.value=(+otk.value||0)+(amount*sign);
 }else if(method==='Cash'){
 if(fundSource==='mfs'){
 omc.value=(+omc.value||0)+(amount*sign);
