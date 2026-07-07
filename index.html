@@ -252,12 +252,14 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <option value="Bkash">📱 Bkash</option>
 <option value="Nagad">📱 Nagad</option>
 <option value="Rocket">🚀 Rocket</option>
+<option value="Bank">🏦 Bank</option>
 <option value="GP">📶 GP</option>
 <option value="Robi">📶 Robi</option>
 <option value="Airtel">📶 Airtel</option>
 <option value="Banglalink">📶 Banglalink</option>
 <option value="Tally">📒 Tally Khata</option>
 </select>
+
 
 <button style="margin-top:15px" onclick="withdrawCapital()">💸 Withdraw From Capital</button>
 
@@ -269,16 +271,17 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <h2>🌅 Opening Balance</h2>
 
 <div class="grid">
+<div><label>Bank</label><input id="obank"></div>
 <div><label>Bkash</label><input id="obk"></div>
 <div><label>Nagad</label><input id="ong"></div>
 <div><label>Rocket</label><input id="ork"></div>
+<div><label>Tally Khata</label><input id="otk"></div>
 <div><label>MFS Cash</label><input id="omc"></div>
 
 <div><label>GP</label><input id="ogp"></div>
 <div><label>Robi</label><input id="orobi"></div>
 <div><label>Airtel</label><input id="oair"></div>
 <div><label>Banglalink</label><input id="obl"></div>
-<div><label>Tally Khata</label><input id="otk"></div>
 <div><label>Recharge Cash</label><input id="orc"></div>
 </div>
 
@@ -292,18 +295,20 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="card">
 <h2>🌙 Closing Balance</h2>
 <div class="grid">
+<div><label>Bank</label><input id="cbank"></div>
 <div><label>Bkash</label><input id="cbk"></div>
 <div><label>Nagad</label><input id="cng"></div>
 <div><label>Rocket</label><input id="crk"></div>
+<div><label>Tally Khata</label><input id="ctk"></div>
 <div><label>MFS Cash</label><input id="cmc"></div>
 
 <div><label>GP</label><input id="cgp"></div>
 <div><label>Robi</label><input id="crobi"></div>
 <div><label>Airtel</label><input id="cair"></div>
 <div><label>Banglalink</label><input id="cbl"></div>
-<div><label>Tally Khata</label><input id="ctk"></div>
 <div><label>Recharge Cash</label><input id="crc"></div>
 </div>
+
 
 <div class="top-grid" style="margin-top:15px">
 <div class="mini"><h3>💰 Closing E-Money</h3><h2 id="closingEmoney">0 ৳</h2></div>
@@ -330,7 +335,13 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <input id="n50" placeholder="50">
 <input id="n20" placeholder="20">
 <input id="n10" placeholder="10">
+<input id="n5" placeholder="5">
+<input id="n2" placeholder="2">
+<input id="n1" placeholder="1">
+  
 </div>
+
+
 
 <div class="actions">
 <button onclick="calcCash()">🧮 Calculate</button>
@@ -417,11 +428,11 @@ function v(id){
 
 function calculate(){
 
-let openMFS=v('obk')+v('ong')+v('ork')+v('omc');
-let closeMFS=v('cbk')+v('cng')+v('crk')+v('cmc');
+let openMFS=v('obk')+v('ong')+v('ork')+v('obank')+v('omc')+v('otk');
+let closeMFS=v('cbk')+v('cng') +v('crk')+v('cbank')+v('cmc')+v('ctk');
 
-let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc');
-let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
+let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('orc');
+let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('crc');
 
 window.mfsProfit=closeMFS-openMFS;
 window.rechargeProfit=closeRecharge-openRecharge;
@@ -587,7 +598,10 @@ v('n200')*200+
 v('n100')*100+
 v('n50')*50+
 v('n20')*20+
-v('n10')*10;
+v('n10')*10+
+v('n5')*5+
+v('n2')*2+
+v('n1')*1;
 
 cashTotal.innerHTML=t;
 
@@ -663,11 +677,13 @@ rechargeCapital.value=Math.max(0,v('rechargeCapital')-amount);
 if(method==='Bkash') obk.value=Math.max(0,v('obk')-amount);
 else if(method==='Nagad') ong.value=Math.max(0,v('ong')-amount);
 else if(method==='Rocket') ork.value=Math.max(0,v('ork')-amount);
+else if(method==='Bank')
+obank.value=Math.max(0,v('obank')-amount);
 else if(method==='GP') ogp.value=Math.max(0,v('ogp')-amount);
 else if(method==='Robi') orobi.value=Math.max(0,v('orobi')-amount);
 else if(method==='Airtel') oair.value=Math.max(0,v('oair')-amount);
 else if(method==='Banglalink') obl.value=Math.max(0,v('obl')-amount);
-else if(method==='Tally') otk.value=Math.max(0,v('otk')-amount);
+else if(method==='Tally') omc.value=Math.max(0,v('omc')-amount);
 else{
  if(source==='mfs') omc.value=Math.max(0,v('omc')-amount);
  else orc.value=Math.max(0,v('orc')-amount);
@@ -688,34 +704,6 @@ updateWorkingCapital();
 updateLiveTotals();
 autoSave();
 
-withdrawAmount.value='0';
-withdrawReason.value='';
-
-alert('💸 Withdrawal Saved');
-
-}
-
-function newDay(){
-
-obk.value=cbk.value;
-ong.value=cng.value;
-ork.value=crk.value;
-omc.value=cmc.value;
-
-ogp.value=cgp.value;
-orobi.value=crobi.value;
-oair.value=cair.value;
-obl.value=cbl.value;
-otk.value=ctk.value;
-orc.value=crc.value;
-
-mfsCapital.value=
-v('cbk')+v('cng')+v('crk')+v('cmc');
-
-rechargeCapital.value=
-v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
-
-autoSave();
 
 updateLiveTotals();
 
@@ -803,10 +791,10 @@ r.readAsText(file);
 
 function updateLiveTotals(){
 
-let openingEmoneyValue=v('obk')+v('ong')+v('ork')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk');
+let openingEmoneyValue=v('obk')+v('ong')+v('ork')+v('obank')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk');
 let openingCashValue=v('omc')+v('orc');
 
-let closingEmoneyValue=v('cbk')+v('cng')+v('crk')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk');
+let closingEmoneyValue=v('cbk')+v('cng')+v('crk')+v('cbank')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk');
 let closingCashValue=v('cmc')+v('crc');
 
 openingEmoney.innerHTML=openingEmoneyValue+' ৳';
@@ -889,6 +877,7 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 <option value="Nagad Personal">📱 Nagad Personal</option>
 <option value="Nagad Merchant">🏢 Nagad Merchant</option>
 <option value="Rocket">🚀 Rocket</option>
+<option value="Bank">🏦 Bank</option>
 <option value="GP">📶 GP</option>
 <option value="Robi">📶 Robi</option>
 <option value="Airtel">📶 Airtel</option>
@@ -899,6 +888,7 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 <option value="Other">🔄 Other</option>
 </select>
 </div>
+
 
 <div>
 <label>📂 Fund Source</label>
@@ -1598,7 +1588,7 @@ oair.value=(+oair.value||0)+(amount*sign);
 }else if(method==='Banglalink'){
 obl.value=(+obl.value||0)+(amount*sign);
 }else if(method==='Tally'){
-otk.value=(+otk.value||0)+(amount*sign);
+omc.value=(+omc.value||0)+(amount*sign);
 }else if(method==='Cash'){
 if(fundSource==='mfs'){
 omc.value=(+omc.value||0)+(amount*sign);
