@@ -301,7 +301,10 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="mini"><h3>👥 External Fund / Client Receivable</h3><h2 id="externalFundBox">0 ৳</h2><p id="externalMovementBox">আমাদের দেনা: 0 ৳ | আজকের Net Movement: 0 ৳</p></div>
 <div class="mini"><h3>🏦 Own Business Fund</h3><h2 id="ownFundBox">0 ৳</h2><p id="retainedProfitBox">Retained Profit: 0 ৳</p></div>
 <div class="mini" id="capitalProtectionCard">
-<h3>🛡️ Protected Capital</h3>
+<h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+<span>🛡️ Protected Capital</span>
+<button type="button" class="protected-edit-btn" onclick="openProtectedCapitalEditor()">🔐 Edit</button>
+</h3>
 <h2 id="protectedCapitalBox">0 ৳</h2>
 <p id="currentOwnCapitalBox">Current Own Capital: 0 ৳</p>
 <p id="capitalDifferenceBox">Difference: 0 ৳</p>
@@ -353,10 +356,15 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 <hr style="margin:15px 0;border-color:rgba(255,255,255,.18)">
 
-<label>🛡️ Protected MFS Capital</label>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+<label style="margin:0">🛡️ Protected MFS Capital</label>
+<button type="button" class="protected-inline-edit" onclick="openProtectedCapitalEditor()">🔐 Edit</button>
+</div>
 <input id="protectedMfsCapital" class="protected-readonly" readonly value="50000">
 
-<label style="margin-top:10px">🛡️ Protected Recharge Capital</label>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px">
+<label style="margin:0">🛡️ Protected Recharge Capital</label>
+</div>
 <input id="protectedRechargeCapital" class="protected-readonly" readonly value="30000">
 
 <div id="baseCapitalWarning" class="capital-alert safe">
@@ -514,6 +522,48 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 </div>
 <div class="card"><h2>📦 Daily History Archive</h2><div id="dailyHistoryArchiveBox"></div></div>
 
+</div>
+
+
+<!-- ===== PROTECTED CAPITAL SECURE EDIT MODAL ===== -->
+<div id="protectedCapitalModal" class="protected-modal-overlay" onclick="closeProtectedCapitalEditor(event)">
+  <div class="protected-modal" onclick="event.stopPropagation()">
+    <h3>🛡️ Protected Capital</h3>
+    <div id="protectedModalSub" class="pm-sub"></div>
+
+    <div class="protected-current">
+      <span>বর্তমান Protected Capital</span><br>
+      <strong id="protectedCurrentTotal">0 ৳</strong>
+    </div>
+
+    <div id="protectedCurrentPasswordWrap">
+      <label>🔑 Current Password</label>
+      <input id="protectedCurrentPassword" type="password" autocomplete="current-password" placeholder="বর্তমান পাসওয়ার্ড লিখুন">
+    </div>
+
+    <label>🛡️ Protected MFS Capital</label>
+    <input id="protectedEditMfs" type="number" min="0" step="0.01" placeholder="MFS Capital">
+
+    <label>📱 Protected Recharge Capital</label>
+    <input id="protectedEditRecharge" type="number" min="0" step="0.01" placeholder="Recharge Capital">
+
+    <div id="protectedNewPasswordWrap">
+      <label>🔐 Set Password</label>
+      <input id="protectedNewPassword" type="password" autocomplete="new-password" placeholder="নতুন পাসওয়ার্ড">
+      <label>🔐 Confirm Password</label>
+      <input id="protectedConfirmPassword" type="password" autocomplete="new-password" placeholder="পাসওয়ার্ড আবার লিখুন">
+    </div>
+
+    <div class="pm-security">
+      🔒 Protected Capital পরিবর্তন করা যাবে না শুধু সাধারণ input দিয়ে।<br>
+      প্রথমবার Password সেট করতে হবে। এরপর প্রতিবার Capital পরিবর্তনের জন্য Password + Confirmation লাগবে।
+    </div>
+
+    <div class="pm-actions">
+      <button type="button" class="pm-cancel" onclick="closeProtectedCapitalEditor()">Cancel</button>
+      <button type="button" class="pm-save" onclick="saveProtectedCapitalSecure()">🔐 Confirm & Save</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -875,39 +925,210 @@ cashTotal.innerHTML='0';
 
 }
 
-function initProtectedCapital(){
-
-let saved=JSON.parse(localStorage.getItem('rasidulProtectedCapital')||'null');
-
-if(saved && typeof saved==='object'){
-document.getElementById('protectedMfsCapital').value=Number(saved.mfs||0);
-document.getElementById('protectedRechargeCapital').value=Number(saved.recharge||0);
-return;
+function getProtectedCapitalData(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('rasidulProtectedCapital')||'null');
+    if(saved && typeof saved==='object'){
+      return {mfs:Number(saved.mfs||0),recharge:Number(saved.recharge||0)};
+    }
+  }catch(e){}
+  return {mfs:0,recharge:0};
 }
 
-/*
-  First run: capture the user's existing Base Capital as the
-  Protected Capital floor. This prevents old data from being lost.
-*/
-let initial={
-mfs:v('mfsCapital'),
-recharge:v('rechargeCapital')
-};
+function initProtectedCapital(){
+  let saved=getProtectedCapitalData();
 
-localStorage.setItem('rasidulProtectedCapital',JSON.stringify(initial));
+  if(localStorage.getItem('rasidulProtectedCapital')===null){
+    /*
+      First run:
+      Use the existing Base Capital as the initial Protected Capital floor.
+      The user can immediately change it through the secure editor and set a password.
+    */
+    saved={
+      mfs:v('mfsCapital'),
+      recharge:v('rechargeCapital')
+    };
+    localStorage.setItem('rasidulProtectedCapital',JSON.stringify(saved));
+  }
 
-document.getElementById('protectedMfsCapital').value=initial.mfs;
-document.getElementById('protectedRechargeCapital').value=initial.recharge;
+  const mfsEl=document.getElementById('protectedMfsCapital');
+  const rechargeEl=document.getElementById('protectedRechargeCapital');
+
+  if(mfsEl) mfsEl.value=Number(saved.mfs||0);
+  if(rechargeEl) rechargeEl.value=Number(saved.recharge||0);
+
+  updateProtectedPasswordUI();
+}
+
+async function hashProtectedPassword(password){
+  const text=String(password||'');
+  if(!text) return '';
+
+  if(window.crypto && crypto.subtle && window.TextEncoder){
+    const data=new TextEncoder().encode(text);
+    const hash=await crypto.subtle.digest('SHA-256',data);
+    return Array.from(new Uint8Array(hash))
+      .map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  /* Fallback for older environments. This is only a compatibility fallback. */
+  let h=2166136261;
+  for(let i=0;i<text.length;i++){
+    h^=text.charCodeAt(i);
+    h=Math.imul(h,16777619);
+  }
+  return 'fallback-'+(h>>>0).toString(16);
+}
+
+function hasProtectedPassword(){
+  return !!localStorage.getItem('rasidulProtectedCapitalPasswordHash');
+}
+
+function updateProtectedPasswordUI(){
+  const currentWrap=document.getElementById('protectedCurrentPasswordWrap');
+  const newWrap=document.getElementById('protectedNewPasswordWrap');
+  const sub=document.getElementById('protectedModalSub');
+
+  if(!currentWrap || !newWrap) return;
+
+  if(hasProtectedPassword()){
+    currentWrap.style.display='block';
+    newWrap.style.display='none';
+    if(sub) sub.innerHTML='আপনার Protected Capital পরিবর্তন করতে বর্তমান Password দিন এবং নতুন Capital নিশ্চিত করুন।';
+  }else{
+    currentWrap.style.display='none';
+    newWrap.style.display='block';
+    if(sub) sub.innerHTML='এটি প্রথমবারের Setup। প্রথমে আপনার Protected Capital ঠিক করুন এবং একটি Password সেট করুন।';
+  }
+}
+
+function openProtectedCapitalEditor(){
+  const modal=document.getElementById('protectedCapitalModal');
+  if(!modal) return;
+
+  const data=getProtectedCapitalData();
+  document.getElementById('protectedEditMfs').value=data.mfs;
+  document.getElementById('protectedEditRecharge').value=data.recharge;
+  document.getElementById('protectedCurrentPassword').value='';
+  document.getElementById('protectedNewPassword').value='';
+  document.getElementById('protectedConfirmPassword').value='';
+
+  const total=data.mfs+data.recharge;
+  document.getElementById('protectedCurrentTotal').innerHTML=total.toLocaleString()+' ৳';
+
+  updateProtectedPasswordUI();
+  modal.style.display='flex';
+
+  setTimeout(()=>{
+    const first=hasProtectedPassword()
+      ? document.getElementById('protectedCurrentPassword')
+      : document.getElementById('protectedEditMfs');
+    first?.focus();
+  },50);
+}
+
+function closeProtectedCapitalEditor(e){
+  if(e && e.target && e.target.id!=='protectedCapitalModal') return;
+  const modal=document.getElementById('protectedCapitalModal');
+  if(modal) modal.style.display='none';
+}
+
+async function saveProtectedCapitalSecure(){
+  const newMfs=Number(document.getElementById('protectedEditMfs').value||0);
+  const newRecharge=Number(document.getElementById('protectedEditRecharge').value||0);
+
+  if(!Number.isFinite(newMfs)||newMfs<0||!Number.isFinite(newRecharge)||newRecharge<0){
+    return alert('❌ Protected Capital-এর সঠিক amount দিন।');
+  }
+
+  const oldData=getProtectedCapitalData();
+  const oldTotal=oldData.mfs+oldData.recharge;
+  const newTotal=newMfs+newRecharge;
+
+  if(newMfs===oldData.mfs && newRecharge===oldData.recharge){
+    return alert('ℹ️ কোনো পরিবর্তন করা হয়নি।');
+  }
+
+  const firstSetup=!hasProtectedPassword();
+
+  if(firstSetup){
+    const password=document.getElementById('protectedNewPassword').value;
+    const confirmPassword=document.getElementById('protectedConfirmPassword').value;
+
+    if(password.length<4){
+      return alert('🔐 Password কমপক্ষে 4 characters হতে হবে।');
+    }
+    if(password!==confirmPassword){
+      return alert('❌ Password এবং Confirm Password মিলছে না।');
+    }
+
+    if(!confirm(
+      '🛡️ Protected Capital প্রথমবার সেট করবেন?\\n\\n'+
+      'MFS: ৳'+newMfs.toLocaleString()+'\\n'+
+      'Recharge: ৳'+newRecharge.toLocaleString()+'\\n'+
+      'Total: ৳'+newTotal.toLocaleString()+'\\n\\n'+
+      'এই Password ভবিষ্যতে Capital পরিবর্তনের সময় প্রয়োজন হবে।\\n\\nContinue?'
+    )) return;
+
+    const hash=await hashProtectedPassword(password);
+    localStorage.setItem('rasidulProtectedCapitalPasswordHash',hash);
+  }else{
+    const currentPassword=document.getElementById('protectedCurrentPassword').value;
+    if(!currentPassword){
+      return alert('🔑 Current Password দিন।');
+    }
+
+    const enteredHash=await hashProtectedPassword(currentPassword);
+    const savedHash=localStorage.getItem('rasidulProtectedCapitalPasswordHash');
+
+    if(enteredHash!==savedHash){
+      return alert('❌ Password সঠিক নয়। Protected Capital পরিবর্তন করা হয়নি।');
+    }
+
+    if(!confirm(
+      '⚠️ Protected Capital পরিবর্তন করতে যাচ্ছেন।\\n\\n'+
+      'বর্তমান Total: ৳'+oldTotal.toLocaleString()+'\\n'+
+      'নতুন Total: ৳'+newTotal.toLocaleString()+'\\n\\n'+
+      'MFS: ৳'+oldData.mfs.toLocaleString()+' → ৳'+newMfs.toLocaleString()+'\\n'+
+      'Recharge: ৳'+oldData.recharge.toLocaleString()+' → ৳'+newRecharge.toLocaleString()+'\\n\\n'+
+      'নিশ্চিতভাবে পরিবর্তন করবেন?'
+    )) return;
+  }
+
+  const data={mfs:newMfs,recharge:newRecharge};
+  localStorage.setItem('rasidulProtectedCapital',JSON.stringify(data));
+
+  const mfsEl=document.getElementById('protectedMfsCapital');
+  const rechargeEl=document.getElementById('protectedRechargeCapital');
+  if(mfsEl) mfsEl.value=newMfs;
+  if(rechargeEl) rechargeEl.value=newRecharge;
+
+  autoSave();
+  updateFinancialPosition();
+  updateCapitalProtection();
+
+  if(window.erpCloudSave){
+    try{ await erpCloudSave(); }catch(e){ console.warn('Cloud Protected Capital save pending',e); }
+  }
+
+  closeProtectedCapitalEditor();
+
+  alert(
+    '✅ Protected Capital '+(firstSetup?'Set':'Updated')+' Successfully\\n\\n'+
+    '🛡️ MFS: ৳'+newMfs.toLocaleString()+'\\n'+
+    '📱 Recharge: ৳'+newRecharge.toLocaleString()+'\\n'+
+    '💰 Total Protected Capital: ৳'+newTotal.toLocaleString()
+  );
 }
 
 function saveProtectedCapital(){
-
-let data={
-mfs:v('protectedMfsCapital'),
-recharge:v('protectedRechargeCapital')
-};
-
-localStorage.setItem('rasidulProtectedCapital',JSON.stringify(data));
+  /* Kept for compatibility with existing reinvestment code.
+     Normal direct editing remains locked behind the secure editor. */
+  const data={
+    mfs:v('protectedMfsCapital'),
+    recharge:v('protectedRechargeCapital')
+  };
+  localStorage.setItem('rasidulProtectedCapital',JSON.stringify(data));
 }
 
 function updateCapitalProtection(){
@@ -1039,6 +1260,14 @@ function applyReinvestment(){
   */
   protectedMfsCapital.value=v('protectedMfsCapital')+mfs;
   protectedRechargeCapital.value=v('protectedRechargeCapital')+recharge;
+
+  if(!confirm(
+    '🛡️ Reinvest Profit-কে Protected Capital হিসেবে Lock করবেন?\\n\\n'+
+    'MFS: +'+mfs.toLocaleString()+' ৳\\n'+
+    'Recharge: +'+recharge.toLocaleString()+' ৳\\n'+
+    'Total: +'+total.toLocaleString()+' ৳\\n\\n'+
+    'এটি Protected Capital floor স্থায়ীভাবে বাড়াবে।'
+  )) return;
 
   saveProtectedCapital();
 
@@ -1464,6 +1693,13 @@ function miniCalcApply(){
 }
 
 document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    const modal=document.getElementById('protectedCapitalModal');
+    if(modal && modal.style.display==='flex') closeProtectedCapitalEditor();
+  }
+});
+
+document.addEventListener('keydown',function(e){
   const overlay=document.getElementById('miniCalcOverlay');
   if(!overlay || overlay.style.display!=='flex') return;
   if(e.key==='Enter') miniCalcEquals();
@@ -1784,6 +2020,101 @@ details[open] summary{
   }
 }
 
+
+/* ===== PROTECTED CAPITAL SECURE EDITOR ===== */
+.protected-edit-btn,
+.protected-inline-edit{
+  width:auto !important;
+  min-height:32px !important;
+  padding:6px 10px !important;
+  margin:0 !important;
+  border-radius:9px !important;
+  font-size:12px !important;
+  background:linear-gradient(135deg,#7c3aed,#2563eb) !important;
+  color:#fff !important;
+  box-shadow:0 4px 12px rgba(37,99,235,.25);
+}
+.protected-edit-btn:hover,
+.protected-inline-edit:hover{
+  transform:translateY(-1px) !important;
+}
+.protected-modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.78);
+  backdrop-filter:blur(8px);
+  z-index:1000002;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+.protected-modal{
+  width:min(430px,100%);
+  background:#111827;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:22px;
+  padding:20px;
+  box-shadow:0 25px 80px rgba(0,0,0,.55);
+  color:#fff;
+}
+.protected-modal h3{
+  margin:0 0 6px;
+  color:#fff;
+}
+.protected-modal .pm-sub{
+  color:#a9b7c9;
+  font-size:13px;
+  line-height:1.55;
+  margin-bottom:15px;
+}
+.protected-modal label{
+  color:#f8fafc;
+  margin-top:10px;
+}
+.protected-modal input{
+  background:#0f172a !important;
+  color:#fff !important;
+  border:1px solid #334155 !important;
+}
+.protected-current{
+  background:#172033 !important;
+  border:1px solid #2b3a50;
+  border-radius:12px;
+  padding:10px 12px;
+  margin-bottom:12px;
+}
+.protected-current span{
+  color:#a9b7c9;
+  font-size:12px;
+}
+.protected-current strong{
+  color:#fff;
+  font-size:18px;
+}
+.pm-actions{
+  display:flex;
+  gap:8px;
+  margin-top:16px;
+}
+.pm-actions button{
+  flex:1;
+}
+.pm-cancel{
+  background:#334155 !important;
+}
+.pm-save{
+  background:linear-gradient(135deg,#22c55e,#15803d) !important;
+}
+.pm-security{
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:#172554;
+  color:#bfdbfe;
+  font-size:12px;
+  line-height:1.5;
+}
 </style>
 </head>
 <body>
