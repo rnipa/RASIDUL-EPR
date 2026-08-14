@@ -252,7 +252,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="mini"><h3>📈 Monthly Profit</h3><h2 id="monthlyProfit">0 ৳</h2></div>
 <div class="mini"><h3>💎 Total Working Capital</h3><h2 id="workingCapitalBox">0 ৳</h2></div>
 <div class="mini"><h3>💰 Actual Total Money</h3><h2 id="actualMoneyBox">0 ৳</h2><p id="moneyPositionBox">Waiting...</p></div>
-<div class="mini"><h3>👥 External Fund</h3><h2 id="externalFundBox">0 ৳</h2><p id="externalMovementBox">Today: 0 ৳</p></div>
+<div class="mini"><h3>👥 External Fund / Client Receivable</h3><h2 id="externalFundBox">0 ৳</h2><p id="externalMovementBox">আমাদের দেনা: 0 ৳ | আজকের Net Movement: 0 ৳</p></div>
 <div class="mini"><h3>🏦 Own Business Fund</h3><h2 id="ownFundBox">0 ৳</h2><p id="retainedProfitBox">Retained Profit: 0 ৳</p></div>
 <div class="mini" id="capitalProtectionCard">
 <h3>🛡️ Protected Capital</h3>
@@ -542,6 +542,34 @@ function getExternalBalanceTotal(){
   return total;
 }
 
+/*
+  External Fund Position
+  ----------------------
+  Positive balance  = we owe the client.
+  Negative balance  = client owes us.
+  Neither one is Profit/Loss.
+*/
+function getExternalPositionSummary(){
+  let receivable=0; // Client owes us
+  let payable=0;   // We owe client
+
+  (window.ledgerPeople||[]).forEach(person=>{
+    const balance=getLedgerBalance(person);
+
+    if(balance<0){
+      receivable += Math.abs(balance);
+    }else if(balance>0){
+      payable += balance;
+    }
+  });
+
+  return {
+    receivable: receivable,
+    payable: payable,
+    net: payable - receivable
+  };
+}
+
 function getExternalMovementToday(){
   const started=Number(localStorage.getItem('rasidulDayStartedAt')||Date.now());
   let net=0;
@@ -597,6 +625,15 @@ function calculate(){
   window.profit=adjustedMovement;
 
   const externalBalance=getExternalBalanceTotal();
+  const externalPosition=getExternalPositionSummary();
+
+  /*
+    Own Fund = Actual Money - Net External Position.
+    If clients owe us, externalBalance is negative, so the receivable
+    is added back to our ownership position.
+    If we owe clients, externalBalance is positive, so it is excluded
+    from our own funds.
+  */
   const ownFund=closing.total-externalBalance;
   const protectedTotal=v('protectedMfsCapital')+v('protectedRechargeCapital');
   const retainedProfit=ownFund-protectedTotal;
@@ -611,7 +648,8 @@ function calculate(){
 
   finalBox.innerHTML=
   '💸 Business Profit: '+profit+' টাকা<br><br>'+
-  '👥 External Fund Movement: '+externalMovement+' টাকা<br><br>'+
+  '📥 Client-এর কাছে আমাদের পাওনা: '+externalPosition.receivable+' টাকা<br><br>'+
+  '📤 Client-এর কাছে আমাদের দেনা: '+externalPosition.payable+' টাকা<br><br>'+
   '💰 Own Business Fund: '+ownFund+' টাকা<br><br>'+
   '📊 Actual Closing Money: '+closing.total+' টাকা';
 
@@ -903,11 +941,21 @@ function updateFinancialPosition(){
   const a=document.getElementById('actualMoneyBox');
   if(a) a.innerHTML=actual.toLocaleString()+' ৳';
 
+  const externalPosition=getExternalPositionSummary();
+
   const e=document.getElementById('externalFundBox');
-  if(e) e.innerHTML=external.toLocaleString()+' ৳';
+  if(e){
+    e.innerHTML=
+      '📥 '+externalPosition.receivable.toLocaleString()+' ৳';
+  }
 
   const em=document.getElementById('externalMovementBox');
-  if(em) em.innerHTML='Today: '+getExternalMovementToday().toLocaleString()+' ৳';
+  if(em){
+    em.innerHTML=
+      'আমাদের দেনা: '+externalPosition.payable.toLocaleString()+
+      ' ৳ | আজকের Net Movement: '+
+      getExternalMovementToday().toLocaleString()+' ৳';
+  }
 
   const o=document.getElementById('ownFundBox');
   if(o) o.innerHTML=own.toLocaleString()+' ৳';
@@ -2379,35 +2427,51 @@ function saveLedgerTransaction(){
   const sign=(type==='gave' || type==='refundReceived') ? 1 : -1;
 
   /*
+    Transaction classification:
+    gave/refundReceived  = external money came into the business
+    took/refundGiven     = business money was temporarily given out
+    Both are balance movements, NEVER Profit/Loss.
+  */
+
+  /*
     IMPORTANT:
     External Fund is real money movement, but NOT profit and NOT own capital.
     Because the transaction happens during today's business,
     it changes CLOSING balance, never OPENING balance.
   */
-  const adjustClosing=(id)=>{
-    const el=document.getElementById(id);
-    if(el) el.value=Math.max(0,(Number(el.value)||0)+(amount*sign));
-  };
+  const accountId = (() => {
+    if(method.includes('Bkash')) return 'cbk';
+    if(method.includes('Nagad')) return 'cng';
+    if(method.includes('Rocket')) return 'crk';
+    if(method==='GP') return 'cgp';
+    if(method==='Robi') return 'crobi';
+    if(method==='Airtel') return 'cair';
+    if(method==='Banglalink') return 'cbl';
+    if(method==='Tally') return 'ctk';
+    if(method==='Cash') return fundSource==='mfs' ? 'cmc' : 'crc';
+    return null;
+  })();
 
-  if(method.includes('Bkash')){
-    adjustClosing('cbk');
-  }else if(method.includes('Nagad')){
-    adjustClosing('cng');
-  }else if(method.includes('Rocket')){
-    adjustClosing('crk');
-  }else if(method==='GP'){
-    adjustClosing('cgp');
-  }else if(method==='Robi'){
-    adjustClosing('crobi');
-  }else if(method==='Airtel'){
-    adjustClosing('cair');
-  }else if(method==='Banglalink'){
-    adjustClosing('cbl');
-  }else if(method==='Tally'){
-    adjustClosing('ctk');
-  }else if(method==='Cash'){
-    if(fundSource==='mfs') adjustClosing('cmc');
-    else adjustClosing('crc');
+  /*
+    A client taking money is a RECEIVABLE, not a loss.
+    We only require enough money in the selected closing account
+    to physically hand over. We never touch opening balance.
+  */
+  if(accountId){
+    const account=document.getElementById(accountId);
+    const current=Number(account?.value||0);
+
+    if(sign<0 && current < amount){
+      ledgerPeople[personIndex].history.pop();
+      return alert(
+        '🚫 External Fund Transaction Blocked\n\n'+
+        'এই Account-এ বর্তমানে '+current.toLocaleString()+' ৳ আছে।\n'+
+        'Client-কে '+amount.toLocaleString()+' ৳ দেওয়া সম্ভব নয়।\n\n'+
+        '⚠️ Opening Balance পরিবর্তন করা হয়নি।'
+      );
+    }
+
+    account.value=current+(amount*sign);
   }else{
     /*
       Bank/Card/Other have no balance field in the current UI,
