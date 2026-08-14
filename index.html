@@ -121,6 +121,84 @@ font-size:22px;
 font-weight:bold;
 text-align:center;
 }
+
+/* ===== COMPACT BALANCE CALCULATOR + 58MM ARCHIVE PRINT ===== */
+.balance-item{position:relative}
+.balance-item label{padding-right:36px}
+.balance-calc-btn{
+  position:absolute;
+  top:0;
+  right:0;
+  width:28px !important;
+  height:28px;
+  min-width:28px;
+  padding:0 !important;
+  margin:0 !important;
+  border-radius:8px;
+  font-size:13px !important;
+  line-height:28px;
+  text-align:center;
+  background:rgba(255,255,255,.14);
+  color:#fff;
+  box-shadow:none;
+  transform:none !important;
+  z-index:2;
+}
+.balance-calc-btn:hover{background:#2563eb;transform:scale(1.05) !important}
+.mini-calc-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.58);
+  backdrop-filter:blur(4px);z-index:1000000;
+  display:none;align-items:center;justify-content:center;padding:15px;
+}
+.mini-calc{
+  width:min(360px,100%);background:#111827;
+  border:1px solid rgba(255,255,255,.18);border-radius:20px;
+  padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+.mini-calc h3{margin:0 0 12px}
+.mini-calc-display{
+  width:100%;background:#020617;color:#fff;text-align:right;
+  font-size:25px;font-weight:bold;margin-bottom:10px;
+}
+.mini-calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.mini-calc-grid button{
+  padding:11px 5px !important;margin:0 !important;
+  border-radius:10px;font-size:16px;
+}
+.mini-calc-actions{display:flex;gap:8px;margin-top:10px}
+.mini-calc-actions button{padding:9px !important;margin:0 !important}
+.archive-print-btn{
+  width:auto !important;padding:7px 11px !important;
+  margin-top:10px !important;font-size:12px !important;
+  border-radius:9px !important;
+}
+@media print{
+  body *{visibility:hidden !important}
+  #archivePrintArea,#archivePrintArea *{visibility:visible !important}
+  #archivePrintArea{
+    position:absolute;left:0;top:0;width:58mm;
+    background:#fff !important;color:#000 !important;
+    padding:2mm;margin:0;font-family:Arial,sans-serif;
+  }
+  #archivePrintArea h2,#archivePrintArea h3,#archivePrintArea p{color:#000 !important}
+  .no-print{display:none !important}
+}
+
+
+/* ===== CAPITAL PROTECTION SYSTEM ===== */
+.capital-safe{border:1px solid rgba(34,197,94,.55)!important}
+.capital-warning{border:1px solid rgba(245,158,11,.75)!important}
+.capital-danger{border:2px solid rgba(239,68,68,.85)!important;animation:capitalPulse 1.8s ease-in-out infinite}
+@keyframes capitalPulse{0%,100%{box-shadow:0 8px 25px rgba(0,0,0,.2)}50%{box-shadow:0 8px 30px rgba(239,68,68,.35)}}
+.capital-alert{
+  margin-top:12px;padding:14px;border-radius:14px;
+  font-weight:bold;line-height:1.6;
+}
+.capital-alert.safe{background:rgba(34,197,94,.15);color:#bbf7d0}
+.capital-alert.warning{background:rgba(245,158,11,.16);color:#fef3c7}
+.capital-alert.danger{background:rgba(239,68,68,.18);color:#fecaca}
+.protected-readonly{opacity:.85;background:rgba(0,0,0,.12)!important}
+
 </style>
 
 <script>
@@ -173,6 +251,20 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="mini"><h3>💸 MFS Profit</h3><h2 id="mfsProfitBox">0 ৳</h2></div><div class="mini"><h3>📱 Recharge Profit</h3><h2 id="rechargeProfitBox">0 ৳</h2></div><div class="mini"><h3>📅 Daily Profit</h3><h2 id="dailyProfit">0 ৳</h2></div>
 <div class="mini"><h3>📈 Monthly Profit</h3><h2 id="monthlyProfit">0 ৳</h2></div>
 <div class="mini"><h3>💎 Total Working Capital</h3><h2 id="workingCapitalBox">0 ৳</h2></div>
+<div class="mini"><h3>💰 Actual Total Money</h3><h2 id="actualMoneyBox">0 ৳</h2><p id="moneyPositionBox">Waiting...</p></div>
+<div class="mini"><h3>👥 External Fund</h3><h2 id="externalFundBox">0 ৳</h2><p id="externalMovementBox">Today: 0 ৳</p></div>
+<div class="mini"><h3>🏦 Own Business Fund</h3><h2 id="ownFundBox">0 ৳</h2><p id="retainedProfitBox">Retained Profit: 0 ৳</p></div>
+<div class="mini" id="capitalProtectionCard">
+<h3>🛡️ Protected Capital</h3>
+<h2 id="protectedCapitalBox">0 ৳</h2>
+<p id="currentOwnCapitalBox">Current Own Capital: 0 ৳</p>
+<p id="capitalDifferenceBox">Difference: 0 ৳</p>
+<div id="capitalAlert" class="capital-alert safe">🟢 Capital Safe</div>
+</div>
+<div class="mini">
+<h3>🧮 Day-End Capital Check</h3>
+<p id="capitalCheckBox">Waiting for Closing Balance...</p>
+</div>
 <div class="mini"><h3>🎯 Daily Target</h3><input id="target"></div>
 <div class="mini"><h3>🧠 Smart Insight</h3><p id="insight">Waiting...</p></div>
 <div class="mini"><h3>🏆 Achievement</h3><p id="achieve">Locked 😄</p></div>
@@ -212,6 +304,18 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 <label style="margin-top:10px">📱 Recharge Base Capital</label>
 <input id="rechargeCapital" value="30000">
+
+<hr style="margin:15px 0;border-color:rgba(255,255,255,.18)">
+
+<label>🛡️ Protected MFS Capital</label>
+<input id="protectedMfsCapital" class="protected-readonly" readonly value="50000">
+
+<label style="margin-top:10px">🛡️ Protected Recharge Capital</label>
+<input id="protectedRechargeCapital" class="protected-readonly" readonly value="30000">
+
+<div id="baseCapitalWarning" class="capital-alert safe">
+🟢 আপনার Protected Capital নিরাপদ আছে।
+</div>
 </div>
 
 <div class="card">
@@ -269,20 +373,18 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <h2>🌅 Opening Balance</h2>
 
 <div class="grid">
-<div><label>Bkash</label><input id="obk"></div>
-<div><label>Nagad</label><input id="ong"></div>
-<div><label>Rocket</label><input id="ork"></div>
-<div><label>MFS Cash</label><input id="omc"></div>
+<div class="balance-item"><label>Bkash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'obk\')">🧮</button><input id="obk"></div>
+<div class="balance-item"><label>Nagad</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ong\')">🧮</button><input id="ong"></div>
+<div class="balance-item"><label>Rocket</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ork\')">🧮</button><input id="ork"></div>
+<div class="balance-item"><label>MFS Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'omc\')">🧮</button><input id="omc"></div>
 
-<div><label>GP</label><input id="ogp"></div>
-<div><label>Robi</label><input id="orobi"></div>
-<div><label>Airtel</label><input id="oair"></div>
-<div><label>Banglalink</label><input id="obl"></div>
-<div><label>Tally Khata</label><input id="otk"></div>
-<div><label>Recharge Cash</label><input id="orc"></div>
-<div class="actions">
-<button onclick="clearCalc()">🧹 Clear</button>
-</div>
+<div class="balance-item"><label>GP</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ogp\')">🧮</button><input id="ogp"></div>
+<div class="balance-item"><label>Robi</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'orobi\')">🧮</button><input id="orobi"></div>
+<div class="balance-item"><label>Airtel</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'oair\')">🧮</button><input id="oair"></div>
+<div class="balance-item"><label>Banglalink</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'obl\')">🧮</button><input id="obl"></div>
+<div class="balance-item"><label>Tally Khata</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'otk\')">🧮</button><input id="otk"></div>
+<div class="balance-item"><label>Recharge Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'orc\')">🧮</button><input id="orc"></div>
+
 
 <div class="top-grid" style="margin-top:15px">
 <div class="mini"><h3>💰 Opening E-Money</h3><h2 id="openingEmoney">0 ৳</h2></div>
@@ -294,20 +396,18 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="card">
 <h2>🌙 Closing Balance</h2>
 <div class="grid">
-<div><label>Bkash</label><input id="cbk"></div>
-<div><label>Nagad</label><input id="cng"></div>
-<div><label>Rocket</label><input id="crk"></div>
-<div><label>MFS Cash</label><input id="cmc"></div>
+<div class="balance-item"><label>Bkash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cbk\')">🧮</button><input id="cbk"></div>
+<div class="balance-item"><label>Nagad</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cng\')">🧮</button><input id="cng"></div>
+<div class="balance-item"><label>Rocket</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'crk\')">🧮</button><input id="crk"></div>
+<div class="balance-item"><label>MFS Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cmc\')">🧮</button><input id="cmc"></div>
 
-<div><label>GP</label><input id="cgp"></div>
-<div><label>Robi</label><input id="crobi"></div>
-<div><label>Airtel</label><input id="cair"></div>
-<div><label>Banglalink</label><input id="cbl"></div>
-<div><label>Tally Khata</label><input id="ctk"></div>
-<div><label>Recharge Cash</label><input id="crc"></div>
-<div class="actions">
-<button onclick="clearCalc()">🧹 Clear</button>
-</div>
+<div class="balance-item"><label>GP</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cgp\')">🧮</button><input id="cgp"></div>
+<div class="balance-item"><label>Robi</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'crobi\')">🧮</button><input id="crobi"></div>
+<div class="balance-item"><label>Airtel</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cair\')">🧮</button><input id="cair"></div>
+<div class="balance-item"><label>Banglalink</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cbl\')">🧮</button><input id="cbl"></div>
+<div class="balance-item"><label>Tally Khata</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ctk\')">🧮</button><input id="ctk"></div>
+<div class="balance-item"><label>Recharge Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'crc\')">🧮</button><input id="crc"></div>
+
 
 <div class="top-grid" style="margin-top:15px">
 <div class="mini"><h3>💰 Closing E-Money</h3><h2 id="closingEmoney">0 ৳</h2></div>
@@ -375,7 +475,7 @@ window.histories=JSON.parse(localStorage.getItem('rasidulHistories')||'[]');
 let editIndex=null;
 
 document.querySelectorAll('input,textarea,select').forEach(el=>{
-el.addEventListener('input',()=>{window.__ERP_SYNC_PENDING__=true;autoSave();});
+el.addEventListener('input',()=>{window.__ERP_SYNC_PENDING__=true;updateCapitalProtection();autoSave();});
 });
 
 function autoSave(){
@@ -419,37 +519,111 @@ function v(id){
  return +document.getElementById(id).value||0;
 }
 
-function calculate(){
-
-let openMFS=v('obk')+v('ong')+v('ork')+v('omc');
-let closeMFS=v('cbk')+v('cng')+v('crk')+v('cmc');
-
-let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc');
-let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
-
-window.mfsProfit=closeMFS-openMFS;
-window.rechargeProfit=closeRecharge-openRecharge;
-
-let rawProfit=mfsProfit+rechargeProfit;
-
-window.profit=rawProfit;
-
-mfsProfitBox.innerHTML=mfsProfit+' ৳';
-rechargeProfitBox.innerHTML=rechargeProfit+' ৳';
-
-dailyProfit.innerHTML=profit+' ৳';
-
-finalBox.innerHTML=
-'💸 MFS Profit: '+mfsProfit+' টাকা<br><br>'+
-'📱 Recharge Profit: '+rechargeProfit+' টাকা<br><br>'+
- '💰 Total Profit: '+profit+' টাকা';
-
-insight.innerHTML=profit>=0?'📈 Profit চলছে':'🔴 Loss চলছে';
-
-achieve.innerHTML=profit>=3000?'🚀 Business Booster':'🏅 Daily Achievement';
-
-return profit;
+function getAccountTotals(prefix){
+  if(prefix==='opening'){
+    return {
+      mfs:v('obk')+v('ong')+v('ork')+v('omc'),
+      recharge:v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc'),
+      total:v('obk')+v('ong')+v('ork')+v('omc')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc')
+    };
+  }
+  return {
+    mfs:v('cbk')+v('cng')+v('crk')+v('cmc'),
+    recharge:v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc'),
+    total:v('cbk')+v('cng')+v('crk')+v('cmc')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc')
+  };
 }
+
+function getExternalBalanceTotal(){
+  let total=0;
+  (window.ledgerPeople||[]).forEach(p=>{
+    total+=getLedgerBalance(p);
+  });
+  return total;
+}
+
+function getExternalMovementToday(){
+  const started=Number(localStorage.getItem('rasidulDayStartedAt')||Date.now());
+  let net=0;
+
+  (window.ledgerPeople||[]).forEach(p=>{
+    (p.history||[]).forEach(h=>{
+      let ts=Number(h.timestamp||0);
+      if(!ts && h.time){
+        const parsed=new Date(h.time).getTime();
+        if(Number.isFinite(parsed)) ts=parsed;
+      }
+      if(ts>=started){
+        if(h.type==='gave' || h.type==='refundReceived') net+=Number(h.amount||0);
+        if(h.type==='took' || h.type==='refundGiven') net-=Number(h.amount||0);
+      }
+    });
+  });
+
+  return net;
+}
+
+function getOwnerWithdrawToday(){
+  return Number(localStorage.getItem('rasidulOwnerWithdrawToday')||0);
+}
+
+function getCapitalInjectionToday(){
+  return Number(localStorage.getItem('rasidulCapitalInjectionToday')||0);
+}
+
+function calculate(){
+  const opening=getAccountTotals('opening');
+  const closing=getAccountTotals('closing');
+
+  const externalMovement=getExternalMovementToday();
+  const ownerWithdrawal=getOwnerWithdrawToday();
+  const capitalInjection=getCapitalInjectionToday();
+
+  /*
+    IMPORTANT ACCOUNTING RULE:
+    Closing - Opening is only a MONEY MOVEMENT.
+    External funds, owner withdrawals and capital injections are not profit.
+  */
+  const adjustedMovement =
+    closing.total -
+    opening.total -
+    externalMovement +
+    ownerWithdrawal -
+    capitalInjection;
+
+  window.totalBusinessMovement=adjustedMovement;
+  window.mfsProfit=adjustedMovement<0 ? adjustedMovement : Math.max(0, adjustedMovement);
+  window.rechargeProfit=0;
+  window.profit=adjustedMovement;
+
+  const externalBalance=getExternalBalanceTotal();
+  const ownFund=closing.total-externalBalance;
+  const protectedTotal=v('protectedMfsCapital')+v('protectedRechargeCapital');
+  const retainedProfit=ownFund-protectedTotal;
+
+  window.currentOwnFund=ownFund;
+  window.externalFund=externalBalance;
+  window.retainedProfit=retainedProfit;
+
+  mfsProfitBox.innerHTML=mfsProfit+' ৳';
+  rechargeProfitBox.innerHTML=rechargeProfit+' ৳';
+  dailyProfit.innerHTML=profit+' ৳';
+
+  finalBox.innerHTML=
+  '💸 Business Profit: '+profit+' টাকা<br><br>'+
+  '👥 External Fund Movement: '+externalMovement+' টাকা<br><br>'+
+  '💰 Own Business Fund: '+ownFund+' টাকা<br><br>'+
+  '📊 Actual Closing Money: '+closing.total+' টাকা';
+
+  insight.innerHTML=profit>=0?'📈 Profit চলছে':'🔴 Loss চলছে';
+  achieve.innerHTML=profit>=3000?'🚀 Business Booster':'🏅 Daily Achievement';
+
+  updateFinancialPosition();
+  updateCapitalProtection();
+
+  return profit;
+}
+
 
 function saveFinal(){
 
@@ -616,115 +790,282 @@ cashTotal.innerHTML='0';
 
 }
 
+function initProtectedCapital(){
+
+let saved=JSON.parse(localStorage.getItem('rasidulProtectedCapital')||'null');
+
+if(saved && typeof saved==='object'){
+document.getElementById('protectedMfsCapital').value=Number(saved.mfs||0);
+document.getElementById('protectedRechargeCapital').value=Number(saved.recharge||0);
+return;
+}
+
+/*
+  First run: capture the user's existing Base Capital as the
+  Protected Capital floor. This prevents old data from being lost.
+*/
+let initial={
+mfs:v('mfsCapital'),
+recharge:v('rechargeCapital')
+};
+
+localStorage.setItem('rasidulProtectedCapital',JSON.stringify(initial));
+
+document.getElementById('protectedMfsCapital').value=initial.mfs;
+document.getElementById('protectedRechargeCapital').value=initial.recharge;
+}
+
+function saveProtectedCapital(){
+
+let data={
+mfs:v('protectedMfsCapital'),
+recharge:v('protectedRechargeCapital')
+};
+
+localStorage.setItem('rasidulProtectedCapital',JSON.stringify(data));
+}
+
+function updateCapitalProtection(){
+  const protectedTotal=v('protectedMfsCapital')+v('protectedRechargeCapital');
+  const opening=getAccountTotals('opening');
+  const closing=getAccountTotals('closing');
+  const actual=closing.total>0 ? closing.total : opening.total;
+  const external=getExternalBalanceTotal();
+  const currentOwn=actual-external;
+  const difference=currentOwn-protectedTotal;
+
+  const pBox=document.getElementById('protectedCapitalBox');
+  const cBox=document.getElementById('currentOwnCapitalBox');
+  const dBox=document.getElementById('capitalDifferenceBox');
+  const alertBox=document.getElementById('capitalAlert');
+  const card=document.getElementById('capitalProtectionCard');
+  const baseAlert=document.getElementById('baseCapitalWarning');
+
+  if(pBox) pBox.innerHTML=protectedTotal.toLocaleString()+' ৳';
+  if(cBox) cBox.innerHTML='Current Own Capital: '+currentOwn.toLocaleString()+' ৳';
+  if(dBox) dBox.innerHTML=(difference>=0?'Available Above Floor: ':'Capital Shortage: ')+Math.abs(difference).toLocaleString()+' ৳';
+
+  let cls='safe';
+  let message='🟢 Capital Safe';
+
+  if(difference<0){
+    cls='danger';
+    message='🔴 নিজের মূলধন Protected Floor-এর নিচে। ঘাটতি '+Math.abs(difference).toLocaleString()+' ৳';
+  }else if(difference===0){
+    cls='warning';
+    message='🟡 Capital Boundary: Protected Capital-এর ঠিক সীমায় আছেন।';
+  }
+
+  if(alertBox){
+    alertBox.className='capital-alert '+cls;
+    alertBox.innerHTML=message;
+  }
+  if(baseAlert){
+    baseAlert.className='capital-alert '+cls;
+    baseAlert.innerHTML=message;
+  }
+  if(card){
+    card.classList.remove('capital-safe','capital-warning','capital-danger');
+    card.classList.add('capital-'+cls);
+  }
+
+  const check=document.getElementById('capitalCheckBox');
+  if(check){
+    if(actual<=0){
+      check.innerHTML='⏳ Closing Balance দিন।';
+    }else if(difference<0){
+      check.innerHTML='🔴 Actual Money: '+actual.toLocaleString()+' ৳ | External: '+external.toLocaleString()+' ৳ | Own Fund: '+currentOwn.toLocaleString()+' ৳ | Protected Floor: '+protectedTotal.toLocaleString()+' ৳';
+    }else{
+      check.innerHTML='🟢 Passed — Own Fund '+currentOwn.toLocaleString()+' ৳ | Protected '+protectedTotal.toLocaleString()+' ৳';
+    }
+  }
+
+  updateFinancialPosition();
+}
+
+
 function updateWorkingCapital(){
-
-let total=
-v('mfsCapital')+
-v('rechargeCapital');
-
-let box=document.getElementById('workingCapitalBox');
-
-if(box){
-box.innerHTML=total+' ৳';
+  updateFinancialPosition();
 }
 
+function updateFinancialPosition(){
+  const opening=getAccountTotals('opening');
+  const closing=getAccountTotals('closing');
+  const actual=closing.total>0 ? closing.total : opening.total;
+  const external=getExternalBalanceTotal();
+  const own=actual-external;
+  const protectedTotal=v('protectedMfsCapital')+v('protectedRechargeCapital');
+  const retained=own-protectedTotal;
+
+  const w=document.getElementById('workingCapitalBox');
+  if(w) w.innerHTML=own.toLocaleString()+' ৳';
+
+  const a=document.getElementById('actualMoneyBox');
+  if(a) a.innerHTML=actual.toLocaleString()+' ৳';
+
+  const e=document.getElementById('externalFundBox');
+  if(e) e.innerHTML=external.toLocaleString()+' ৳';
+
+  const em=document.getElementById('externalMovementBox');
+  if(em) em.innerHTML='Today: '+getExternalMovementToday().toLocaleString()+' ৳';
+
+  const o=document.getElementById('ownFundBox');
+  if(o) o.innerHTML=own.toLocaleString()+' ৳';
+
+  const r=document.getElementById('retainedProfitBox');
+  if(r) r.innerHTML='Above Protected Floor: '+retained.toLocaleString()+' ৳';
+
+  const pos=document.getElementById('moneyPositionBox');
+  if(pos){
+    pos.innerHTML='Own: '+own.toLocaleString()+' ৳ | External: '+external.toLocaleString()+' ৳';
+  }
 }
+
 
 function applyReinvestment(){
+  const mfs=v('mfsReinvest');
+  const recharge=v('rechargeReinvest');
 
-let mfs=v('mfsReinvest');
-let recharge=v('rechargeReinvest');
+  if(mfs<0 || recharge<0){
+    return alert('❌ Reinvest amount negative হতে পারবে না');
+  }
 
-mfsCapital.value=v('mfsCapital')+mfs;
-rechargeCapital.value=v('rechargeCapital')+recharge;
+  const total=mfs+recharge;
+  if(total<=0){
+    return alert('❌ Reinvest amount দিন');
+  }
 
-mfsReinvest.value='0';
-rechargeReinvest.value='0';
+  /*
+    Reinvestment is a CLASSIFICATION decision:
+    Profit already exists inside the business money.
+    Therefore we do NOT add money to Bkash/Cash again.
+    We only raise the Protected Capital floor by the amount
+    the owner explicitly chooses to lock as capital.
+  */
+  protectedMfsCapital.value=v('protectedMfsCapital')+mfs;
+  protectedRechargeCapital.value=v('protectedRechargeCapital')+recharge;
 
-updateWorkingCapital();
+  saveProtectedCapital();
 
-autoSave();
+  mfsReinvest.value='0';
+  rechargeReinvest.value='0';
 
-alert('🚀 Main Capital Updated');
+  autoSave();
+  updateFinancialPosition();
+  updateCapitalProtection();
 
+  alert('🛡️ Protected Capital +'+total.toLocaleString()+' ৳ করা হয়েছে। Actual Balance পরিবর্তন করা হয়নি।');
 }
 
 function withdrawCapital(){
+  const amount=v('withdrawAmount');
+  if(amount<=0) return alert('Enter Valid Amount');
 
-let amount=v('withdrawAmount');
-if(amount<=0) return alert('Enter Valid Amount');
+  const reason=document.getElementById('withdrawReason').value||'No Reason';
+  const source=document.getElementById('withdrawSource').value;
+  const method=document.getElementById('withdrawMethod').value;
 
-let reason=document.getElementById('withdrawReason').value||'No Reason';
-let source=document.getElementById('withdrawSource').value;
-let method=document.getElementById('withdrawMethod').value;
+  const opening=getAccountTotals('opening');
+  const closing=getAccountTotals('closing');
+  const actual=(closing.total>0 ? closing.total : opening.total);
+  const external=getExternalBalanceTotal();
+  const ownFund=actual-external;
+  const protectedTotal=v('protectedMfsCapital')+v('protectedRechargeCapital');
+  const availableAboveFloor=ownFund-protectedTotal;
 
-if(source==='mfs'){
-mfsCapital.value=Math.max(0,v('mfsCapital')-amount);
-}else{
-rechargeCapital.value=Math.max(0,v('rechargeCapital')-amount);
-}
+  if(amount>availableAboveFloor){
+    const shortage=amount-availableAboveFloor;
+    return alert(
+      '🚫 Capital Withdrawal Blocked\\n\\n'+
+      '🛡️ Protected Capital: '+protectedTotal.toLocaleString()+' ৳\\n'+
+      '💰 Current Own Fund: '+ownFund.toLocaleString()+' ৳\\n'+
+      '💸 Withdrawal: '+amount.toLocaleString()+' ৳\\n'+
+      '🔴 Protected Floor-এর নিচে যাওয়ার ঝুঁকি: '+shortage.toLocaleString()+' ৳\\n\\n'+
+      '⚠️ আগে হিসাব সমন্বয় করুন।'
+    );
+  }
 
-if(method==='Bkash') obk.value=Math.max(0,v('obk')-amount);
-else if(method==='Nagad') ong.value=Math.max(0,v('ong')-amount);
-else if(method==='Rocket') ork.value=Math.max(0,v('ork')-amount);
-else if(method==='GP') ogp.value=Math.max(0,v('ogp')-amount);
-else if(method==='Robi') orobi.value=Math.max(0,v('orobi')-amount);
-else if(method==='Airtel') oair.value=Math.max(0,v('oair')-amount);
-else if(method==='Banglalink') obl.value=Math.max(0,v('obl')-amount);
-else if(method==='Tally') otk.value=Math.max(0,v('otk')-amount);
-else{
- if(source==='mfs') omc.value=Math.max(0,v('omc')-amount);
- else orc.value=Math.max(0,v('orc')-amount);
-}
+  /*
+    Owner withdrawal is a real money movement.
+    It belongs in CLOSING balance, not OPENING balance.
+  */
+  const adjustClosing=(id)=>{
+    const el=document.getElementById(id);
+    if(el) el.value=Math.max(0,(Number(el.value)||0)-amount);
+  };
 
-histories.unshift({
-date:new Date().toLocaleString(),
-mfs:0,
-recharge:0,
-profit:0,
-note:'💸 Owner Withdrawal: '+amount+' ৳ | 💳 '+method+' | 📝 '+reason
-});
+  if(method==='Bkash') adjustClosing('cbk');
+  else if(method==='Nagad') adjustClosing('cng');
+  else if(method==='Rocket') adjustClosing('crk');
+  else if(method==='GP') adjustClosing('cgp');
+  else if(method==='Robi') adjustClosing('crobi');
+  else if(method==='Airtel') adjustClosing('cair');
+  else if(method==='Banglalink') adjustClosing('cbl');
+  else if(method==='Tally') adjustClosing('ctk');
+  else if(source==='mfs') adjustClosing('cmc');
+  else adjustClosing('crc');
 
-localStorage.setItem('rasidulHistories',JSON.stringify(histories));
-renderHistory();
-updateMonthly();
-updateWorkingCapital();
-updateLiveTotals();
-autoSave();
+  const currentWithdraw=Number(localStorage.getItem('rasidulOwnerWithdrawToday')||0);
+  localStorage.setItem('rasidulOwnerWithdrawToday',String(currentWithdraw+amount));
 
-withdrawAmount.value='0';
-withdrawReason.value='';
+  histories.unshift({
+    date:new Date().toLocaleString(),
+    mfs:0,
+    recharge:0,
+    profit:0,
+    note:'💸 Owner Withdrawal: '+amount+' ৳ | 💳 '+method+' | 📝 '+reason
+  });
 
-alert('💸 Withdrawal Saved');
+  localStorage.setItem('rasidulHistories',JSON.stringify(histories));
 
+  renderHistory();
+  updateMonthly();
+  updateFinancialPosition();
+  updateLiveTotals();
+  updateCapitalProtection();
+  autoSave();
+
+  withdrawAmount.value='0';
+  withdrawReason.value='';
+
+  alert('💸 Withdrawal Saved. Closing Balance থেকে '+amount.toLocaleString()+' ৳ কমানো হয়েছে।');
 }
 
 function newDay(){
+  if(!confirm(
+    '🆕 New Day শুরু করবেন?\\n\\n'+
+    'আজকের Closing Balance আগামী দিনের Opening Balance হবে।\\n'+
+    'Protected Capital পরিবর্তন হবে না।\\n'+
+    'আজকের Profit আবার আগামীকাল Profit হিসেবে গণনা হবে না।'
+  )) return;
 
-obk.value=cbk.value;
-ong.value=cng.value;
-ork.value=crk.value;
-omc.value=cmc.value;
+  obk.value=cbk.value;
+  ong.value=cng.value;
+  ork.value=crk.value;
+  omc.value=cmc.value;
 
-ogp.value=cgp.value;
-orobi.value=crobi.value;
-oair.value=cair.value;
-obl.value=cbl.value;
-otk.value=ctk.value;
-orc.value=crc.value;
+  ogp.value=cgp.value;
+  orobi.value=crobi.value;
+  oair.value=cair.value;
+  obl.value=cbl.value;
+  otk.value=ctk.value;
+  orc.value=crc.value;
 
-mfsCapital.value=
-v('cbk')+v('cng')+v('crk')+v('cmc');
+  /*
+    Day rollover only:
+    Closing -> Next Opening.
+    Capital, Profit and External Fund identities remain separate.
+  */
+  localStorage.setItem('rasidulDayStartedAt',String(Date.now()));
+  localStorage.setItem('rasidulOwnerWithdrawToday','0');
+  localStorage.setItem('rasidulCapitalInjectionToday','0');
 
-rechargeCapital.value=
-v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
+  autoSave();
+  updateLiveTotals();
+  updateFinancialPosition();
+  updateCapitalProtection();
 
-autoSave();
-
-updateLiveTotals();
-
-alert('🆕 New Day Started + Capital Updated');
-
+  alert('🆕 New Day Started\\n\\nClosing → Opening সফল হয়েছে।\\n🛡️ Protected Capital অপরিবর্তিত।');
 }
 
 function exportData(){
@@ -734,7 +1075,8 @@ histories,
 ledgerPeople,
 ledgerArchives:window.ledgerArchives||[],
 form:JSON.parse(localStorage.getItem('rasidulForm')||'{}'),
-backupDate:new Date().toLocaleString()
+backupDate:new Date().toLocaleString(),
+protectedCapital:JSON.parse(localStorage.getItem('rasidulProtectedCapital')||'null')
 };
 
 let blob=new Blob([JSON.stringify(data)],{type:'application/json'});
@@ -776,6 +1118,7 @@ localStorage.setItem('rasidulHistories',JSON.stringify(histories));
 localStorage.setItem('ledgerPeople',JSON.stringify(ledgerPeople));
 
 localStorage.setItem('rasidulForm',JSON.stringify(d.form||{}));
+if(d.protectedCapital){localStorage.setItem('rasidulProtectedCapital',JSON.stringify(d.protectedCapital));}
 
 // ===== STABLE LIVE SYSTEM =====
 
@@ -793,8 +1136,10 @@ updateWorkingCapital();
 // ===== END STABLE LIVE SYSTEM =====
 
 restore();
+initProtectedCapital();
 updateLiveTotals();
 updateWorkingCapital();
+updateCapitalProtection();
 renderHistory();
 renderLedgerArchives();
 
@@ -825,7 +1170,9 @@ closingCash.innerHTML=closingCashValue+' ৳';
 
 }
 
+if(!localStorage.getItem('rasidulDayStartedAt')) localStorage.setItem('rasidulDayStartedAt',String(Date.now()));
 restore();
+initProtectedCapital();
 updateLiveTotals();
 updateWorkingCapital();
 renderHistory();
@@ -933,6 +1280,178 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 <div id="ledgerArchiveBox"></div>
 </div>
 
+
+<!-- ===== Hidden Calculator For Opening/Closing Balance ===== -->
+<div id="miniCalcOverlay" class="mini-calc-overlay" onclick="closeBalanceCalculator(event)">
+  <div class="mini-calc" onclick="event.stopPropagation()">
+    <h3 id="miniCalcTitle">🧮 Calculator</h3>
+    <input id="miniCalcDisplay" class="mini-calc-display" type="text" readonly value="0">
+    <div class="mini-calc-grid">
+      <button type="button" onclick="miniCalcPress('7')">7</button>
+      <button type="button" onclick="miniCalcPress('8')">8</button>
+      <button type="button" onclick="miniCalcPress('9')">9</button>
+      <button type="button" onclick="miniCalcPress('/')">÷</button>
+      <button type="button" onclick="miniCalcPress('4')">4</button>
+      <button type="button" onclick="miniCalcPress('5')">5</button>
+      <button type="button" onclick="miniCalcPress('6')">6</button>
+      <button type="button" onclick="miniCalcPress('*')">×</button>
+      <button type="button" onclick="miniCalcPress('1')">1</button>
+      <button type="button" onclick="miniCalcPress('2')">2</button>
+      <button type="button" onclick="miniCalcPress('3')">3</button>
+      <button type="button" onclick="miniCalcPress('-')">−</button>
+      <button type="button" onclick="miniCalcPress('0')">0</button>
+      <button type="button" onclick="miniCalcPress('.')">.</button>
+      <button type="button" onclick="miniCalcEquals()">=</button>
+      <button type="button" onclick="miniCalcPress('+')">+</button>
+    </div>
+    <div class="mini-calc-actions">
+      <button type="button" onclick="miniCalcClear()">🧹 Clear</button>
+      <button type="button" onclick="miniCalcApply()">✅ Apply</button>
+      <button type="button" onclick="closeBalanceCalculator()">✕ Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let miniCalcTargetId=null;
+let miniCalcExpression='';
+
+function openBalanceCalculator(id){
+  miniCalcTargetId=id;
+  const target=document.getElementById(id);
+  miniCalcExpression=target ? (target.value||'') : '';
+  document.getElementById('miniCalcDisplay').value=miniCalcExpression||'0';
+  const label=target?.previousElementSibling?.textContent||'Balance';
+  document.getElementById('miniCalcTitle').innerHTML='🧮 '+label+' হিসাব';
+  document.getElementById('miniCalcOverlay').style.display='flex';
+}
+
+function closeBalanceCalculator(e){
+  if(e && e.target && e.target.id!=='miniCalcOverlay') return;
+  document.getElementById('miniCalcOverlay').style.display='none';
+  miniCalcTargetId=null;
+  miniCalcExpression='';
+}
+
+function miniCalcPress(value){
+  miniCalcExpression+=value;
+  document.getElementById('miniCalcDisplay').value=miniCalcExpression;
+}
+
+function miniCalcClear(){
+  miniCalcExpression='';
+  document.getElementById('miniCalcDisplay').value='0';
+}
+
+function miniCalcEquals(){
+  try{
+    if(!/^[0-9+\-*/().\s]+$/.test(miniCalcExpression)) throw new Error();
+    const result=Function('"use strict";return ('+miniCalcExpression+')')();
+    if(!Number.isFinite(result)) throw new Error();
+    miniCalcExpression=String(Math.round(result*100)/100);
+    document.getElementById('miniCalcDisplay').value=miniCalcExpression;
+  }catch(e){
+    document.getElementById('miniCalcDisplay').value='Error';
+  }
+}
+
+function miniCalcApply(){
+  miniCalcEquals();
+  const value=document.getElementById('miniCalcDisplay').value;
+  if(value!=='Error' && miniCalcTargetId){
+    document.getElementById(miniCalcTargetId).value=value;
+    document.getElementById(miniCalcTargetId).dispatchEvent(new Event('input',{bubbles:true}));
+    if(typeof updateLiveTotals==='function') updateLiveTotals();
+  }
+  document.getElementById('miniCalcOverlay').style.display='none';
+  miniCalcTargetId=null;
+  miniCalcExpression='';
+}
+
+document.addEventListener('keydown',function(e){
+  const overlay=document.getElementById('miniCalcOverlay');
+  if(!overlay || overlay.style.display!=='flex') return;
+  if(e.key==='Enter') miniCalcEquals();
+  if(e.key==='Escape') closeBalanceCalculator();
+});
+</script>
+
+<script>
+function printLedgerArchive(index){
+  const a=(window.ledgerArchives||[])[index];
+  if(!a) return;
+
+  const typeText={
+    gave:'সে আমাকে টাকা দিল',
+    took:'সে আমার থেকে টাকা নিল',
+    refundGiven:'আমি তাকে ফেরত দিলাম',
+    refundReceived:'সে আমাকে ফেরত দিল'
+  };
+
+  const tx=(a.transactions||[]).slice().reverse().map((h,n)=>`
+    <div class="tx">
+      <b>লেনদেন ${n+1}</b><br>
+      তারিখ: ${h.time||''}<br>
+      পরিমাণ: ${Number(h.amount||0).toLocaleString('en-US')} ৳<br>
+      ধরন: ${typeText[h.type]||h.type||''}<br>
+      মাধ্যম: ${h.method||'Not Set'}
+    </div>
+  `).join('');
+
+  const safeName=String(a.personName||'Client').replace(/[<>"']/g,'');
+  const win=window.open('','_blank','width=420,height=700');
+
+  if(!win){
+    alert('Print window blocked. Browser-এর Pop-up Allow করুন।');
+    return;
+  }
+
+  win.document.write(`<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Ledger Archive - ${safeName}</title>
+<style>
+@page{size:58mm auto;margin:0}
+*{box-sizing:border-box}
+html,body{width:58mm;margin:0;padding:0;background:#fff;color:#000}
+body{font-family:Arial,sans-serif;font-size:11px;line-height:1.45;padding:3mm}
+h2{text-align:center;font-size:15px;margin:0 0 2mm}
+h3{font-size:13px;margin:2mm 0}
+.center{text-align:center}
+.line{border-top:1px dashed #000;margin:2mm 0}
+.row{display:flex;justify-content:space-between;gap:4px}
+.tx{border-bottom:1px dashed #000;padding:2mm 0}
+.total{font-weight:bold;font-size:12px}
+</style>
+</head>
+<body>
+<h2>Rubaiya Pharmacy</h2>
+<div class="center">External Fund Ledger</div>
+<div class="line"></div>
+<b>Client:</b> ${safeName}<br>
+<b>Mobile:</b> ${String(a.personMobile||'').replace(/[<>"']/g,'')}<br>
+<b>Settlement:</b> ${String(a.settledAt||'').replace(/[<>"']/g,'')}
+<div class="line"></div>
+<div class="row"><span>Given</span><b>${Number(a.totalGiven||0).toLocaleString('en-US')} ৳</b></div>
+<div class="row"><span>Taken</span><b>${Number(a.totalTaken||0).toLocaleString('en-US')} ৳</b></div>
+<div class="row"><span>Refund Given</span><b>${Number(a.refundGiven||0).toLocaleString('en-US')} ৳</b></div>
+<div class="row"><span>Refund Received</span><b>${Number(a.refundReceived||0).toLocaleString('en-US')} ৳</b></div>
+<div class="line"></div>
+<div class="total">Final Balance: 0 ৳</div>
+<div class="line"></div>
+<h3>Transaction Details</h3>
+${tx}
+<div class="line"></div>
+<div class="center">সকল হিসাব সমন্বয় হয়েছে</div>
+<div class="center">Thank you</div>
+<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script>
+</body>
+</html>`);
+  win.document.close();
+}
+</script>
+
 <!-- Firebase Cloud ERP -->
 <script type="module">
 
@@ -985,7 +1504,8 @@ ledgerPeople:window.ledgerPeople||[],
 ledgerArchives:window.ledgerArchives||[],
 form:formData,
 updated:new Date().toLocaleString(),
-version:'v3-enterprise-cloud-archive'
+version:'v3-enterprise-cloud-archive-capital-protection',
+protectedCapital:JSON.parse(localStorage.getItem('rasidulProtectedCapital')||'null')
 };
 
 localStorage.setItem('lastCloudSync',new Date().toLocaleString());
@@ -1086,6 +1606,8 @@ await window.loadLedgerArchivesFromCloud();
 updateMonthly();
 updateLiveTotals();
 updateWorkingCapital();
+initProtectedCapital();
+updateCapitalProtection();
 updateDueReminders();
 updateDueDashboard();
 
@@ -1157,11 +1679,14 @@ localStorage.setItem(
 'rasidulForm',
 JSON.stringify(d.form||{})
 );
+if(d.protectedCapital){localStorage.setItem('rasidulProtectedCapital',JSON.stringify(d.protectedCapital));}
 
 restore();
+initProtectedCapital();
 renderHistory();
 renderLedger();
 updateMonthly();
+updateCapitalProtection();
 updateLiveTotals();
 updateWorkingCapital();
 updateDueReminders();
@@ -1226,6 +1751,7 @@ renderLedgerArchives();
 updateMonthly();
 updateLiveTotals();
 updateWorkingCapital();
+updateFinancialPosition();
 updateDueReminders();
 updateDueDashboard();
 
@@ -1402,7 +1928,7 @@ let alerts=[];
  }
 });
 
-let box=document.getElementById('dueReminderBox');
+let box=document.getElementById('ReminderBox');
 if(box){
  box.innerHTML=alerts.length?alerts.slice(0,3).join('<br>'):'✅ No Due Alerts';
 }
@@ -1461,7 +1987,7 @@ let clients=0,total=0,high=0,payable=0;
  }
 });
 
-let el=document.getElementById('dueClientsCount');
+let el=document.getElementById('ClientsCount');
 if(el) el.innerHTML=clients;
 
 el=document.getElementById('totalReceivable');
@@ -1812,6 +2338,8 @@ box.innerHTML+=`
 
 <h4 style="margin-bottom:5px">⚖️ Final Balance: 0 ৳</h4>
 
+<button type="button" class="archive-print-btn no-print" onclick="printLedgerArchive(${i})">🖨️ 58mm Print</button>
+
 <details>
 <summary>📜 View Archived Transactions (${(a.transactions||[]).length})</summary>
 ${txHTML}
@@ -1825,100 +2353,101 @@ ${txHTML}
 }
 
 function saveLedgerTransaction(){
+  if(ledgerPeople.length===0){
+    return alert('আগে Person Add করুন');
+  }
 
-if(ledgerPeople.length===0){
-return alert('আগে Person Add করুন');
-}
+  const personIndex=Number(document.getElementById('ledgerPerson').value);
+  const amount=Number(document.getElementById('ledgerAmount').value||0);
+  const type=document.getElementById('ledgerType').value;
+  const method=document.getElementById('ledgerMethod').value;
+  const fundSource=document.getElementById('ledgerFundSource').value;
 
-let personIndex=Number(document.getElementById('ledgerPerson').value);
-let amount=Number(document.getElementById('ledgerAmount').value||0);
-let type=document.getElementById('ledgerType').value;
-let method=document.getElementById('ledgerMethod').value;
-let fundSource=document.getElementById('ledgerFundSource').value;
+  if(amount<=0) return alert('সঠিক Amount দিন');
 
-if(amount<=0){
-return alert('সঠিক Amount দিন');
-}
+  const timestamp=Date.now();
 
-ledgerPeople[personIndex].history.push({
-amount:amount,
-type:type,
-method:method,
-fundSource:fundSource,
-time:new Date().toLocaleString()
-});
+  ledgerPeople[personIndex].history.push({
+    amount:amount,
+    type:type,
+    method:method,
+    fundSource:fundSource,
+    time:new Date(timestamp).toLocaleString(),
+    timestamp:timestamp
+  });
 
-let sign=(type==='gave' || type==='refundReceived') ? 1 : -1;
+  const sign=(type==='gave' || type==='refundReceived') ? 1 : -1;
 
-if(fundSource==='mfs'){
-mfsCapital.value=(+mfsCapital.value||0)+(amount*sign);
-}else{
-rechargeCapital.value=(+rechargeCapital.value||0)+(amount*sign);
-}
+  /*
+    IMPORTANT:
+    External Fund is real money movement, but NOT profit and NOT own capital.
+    Because the transaction happens during today's business,
+    it changes CLOSING balance, never OPENING balance.
+  */
+  const adjustClosing=(id)=>{
+    const el=document.getElementById(id);
+    if(el) el.value=Math.max(0,(Number(el.value)||0)+(amount*sign));
+  };
 
-if(method.includes('Bkash')){
-obk.value=(+obk.value||0)+(amount*sign);
-}else if(method.includes('Nagad')){
-ong.value=(+ong.value||0)+(amount*sign);
-}else if(method.includes('Rocket')){
-ork.value=(+ork.value||0)+(amount*sign);
-}else if(method==='GP'){
-ogp.value=(+ogp.value||0)+(amount*sign);
-}else if(method==='Robi'){
-orobi.value=(+orobi.value||0)+(amount*sign);
-}else if(method==='Airtel'){
-oair.value=(+oair.value||0)+(amount*sign);
-}else if(method==='Banglalink'){
-obl.value=(+obl.value||0)+(amount*sign);
-}else if(method==='Tally'){
-otk.value=(+otk.value||0)+(amount*sign);
-}else if(method==='Cash'){
-if(fundSource==='mfs'){
-omc.value=(+omc.value||0)+(amount*sign);
-}else{
-orc.value=(+orc.value||0)+(amount*sign);
-}
-}
+  if(method.includes('Bkash')){
+    adjustClosing('cbk');
+  }else if(method.includes('Nagad')){
+    adjustClosing('cng');
+  }else if(method.includes('Rocket')){
+    adjustClosing('crk');
+  }else if(method==='GP'){
+    adjustClosing('cgp');
+  }else if(method==='Robi'){
+    adjustClosing('crobi');
+  }else if(method==='Airtel'){
+    adjustClosing('cair');
+  }else if(method==='Banglalink'){
+    adjustClosing('cbl');
+  }else if(method==='Tally'){
+    adjustClosing('ctk');
+  }else if(method==='Cash'){
+    if(fundSource==='mfs') adjustClosing('cmc');
+    else adjustClosing('crc');
+  }else{
+    /*
+      Bank/Card/Other have no balance field in the current UI,
+      so we keep the ledger entry without corrupting another account.
+    */
+  }
 
-// If this transaction makes the client's balance exactly zero,
-// archive the complete settlement cycle before starting a new cycle.
-let settledNow = archiveSettledLedger(personIndex);
+  const settledNow=archiveSettledLedger(personIndex);
 
-if(settledNow){
-updateWorkingCapital();
-updateLiveTotals();
-autoSave();
-return;
-}
+  updateFinancialPosition();
+  updateLiveTotals();
+  autoSave();
 
-updateWorkingCapital();
-updateLiveTotals();
-autoSave();
+  saveLedgerData();
+  renderLedger();
+  renderLedgerArchives();
+  updateDueReminders();
+  updateDueDashboard();
 
-saveLedgerData();
-renderLedger();
-updateDueReminders();
-updateDueDashboard();
+  if(window.erpCloudSave) erpCloudSave();
 
-if(window.erpCloudSave){
-erpCloudSave();
-}
+  if(settledNow){
+    document.getElementById('ledgerAmount').value='';
+    return;
+  }
 
-let person=ledgerPeople[personIndex];
+  const person=ledgerPeople[personIndex];
 
-if(person.mobile && person.mobile.trim()!==''){
-const message=buildWhatsAppMessage(person,amount,type,method);
-const waUrl='https://wa.me/'+person.mobile+'?text='+encodeURIComponent(message);
+  if(person.mobile && person.mobile.trim()!==''){
+    const message=buildWhatsAppMessage(person,amount,type,method);
+    const waUrl='https://wa.me/'+person.mobile+'?text='+encodeURIComponent(message);
 
-if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
-    window.location.href = waUrl;
-}else{
-    window.open(waUrl,'_blank');
-}
-}
+    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+      window.location.href=waUrl;
+    }else{
+      window.open(waUrl,'_blank');
+    }
+  }
 
-document.getElementById('ledgerAmount').value='';
-
+  document.getElementById('ledgerAmount').value='';
 }
 
 renderLedger();
