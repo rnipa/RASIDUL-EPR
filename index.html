@@ -280,6 +280,8 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div><label>Banglalink</label><input id="obl"></div>
 <div><label>Tally Khata</label><input id="otk"></div>
 <div><label>Recharge Cash</label><input id="orc"></div>
+<div class="actions">
+<button onclick="clearCalc()">🧹 Clear</button>
 </div>
 
 <div class="top-grid" style="margin-top:15px">
@@ -303,6 +305,8 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div><label>Banglalink</label><input id="cbl"></div>
 <div><label>Tally Khata</label><input id="ctk"></div>
 <div><label>Recharge Cash</label><input id="crc"></div>
+<div class="actions">
+<button onclick="clearCalc()">🧹 Clear</button>
 </div>
 
 <div class="top-grid" style="margin-top:15px">
@@ -728,6 +732,7 @@ function exportData(){
 let data={
 histories,
 ledgerPeople,
+ledgerArchives:window.ledgerArchives||[],
 form:JSON.parse(localStorage.getItem('rasidulForm')||'{}'),
 backupDate:new Date().toLocaleString()
 };
@@ -763,6 +768,9 @@ histories=d.histories||[];
 
 ledgerPeople=d.ledgerPeople||[];
 
+window.ledgerArchives=d.ledgerArchives||[];
+saveLedgerArchives();
+
 localStorage.setItem('rasidulHistories',JSON.stringify(histories));
 
 localStorage.setItem('ledgerPeople',JSON.stringify(ledgerPeople));
@@ -788,6 +796,7 @@ restore();
 updateLiveTotals();
 updateWorkingCapital();
 renderHistory();
+renderLedgerArchives();
 
 if(typeof renderLedger==="function"){
    renderLedger();
@@ -916,6 +925,14 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 
 </div>
 
+<div class="card">
+<h2>📦 Settled Ledger Archive</h2>
+<p style="opacity:.8">
+যে Client-এর সকল হিসাব 0 ৳-তে সমন্বয় হবে, তার সম্পূর্ণ লেনদেন এখানে স্থায়ীভাবে Archive হবে।
+</p>
+<div id="ledgerArchiveBox"></div>
+</div>
+
 <!-- Firebase Cloud ERP -->
 <script type="module">
 
@@ -926,7 +943,10 @@ getFirestore,
 doc,
 setDoc,
 getDoc,
-onSnapshot
+onSnapshot,
+collection,
+addDoc,
+getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -962,9 +982,10 @@ formData[el.id]=el.value;
 let cloudData={
 histories:window.histories||[],
 ledgerPeople:window.ledgerPeople||[],
+ledgerArchives:window.ledgerArchives||[],
 form:formData,
 updated:new Date().toLocaleString(),
-version:'v3-enterprise-cloud'
+version:'v3-enterprise-cloud-archive'
 };
 
 localStorage.setItem('lastCloudSync',new Date().toLocaleString());
@@ -997,6 +1018,57 @@ if(cs) cs.innerHTML='🔴 Sync Failed';
 
 
 
+window.saveLedgerArchiveToCloud = async function(archiveItem){
+
+try{
+
+await setDoc(
+doc(db,"ledgerArchives",archiveItem.archiveId),
+archiveItem
+);
+
+console.log("📦 Settled Ledger Archive Saved To Cloud");
+
+}catch(err){
+
+console.error("Ledger Archive Cloud Save Failed:",err);
+
+}
+
+};
+
+window.loadLedgerArchivesFromCloud = async function(){
+
+try{
+
+const snap=await getDocs(collection(db,"ledgerArchives"));
+
+let cloudArchives=[];
+
+snap.forEach(docSnap=>{
+cloudArchives.push(docSnap.data());
+});
+
+if(cloudArchives.length>0){
+
+window.ledgerArchives=cloudArchives.sort((a,b)=>{
+return new Date(b.settledAt).getTime()-new Date(a.settledAt).getTime();
+});
+
+saveLedgerArchives();
+
+renderLedgerArchives();
+
+}
+
+}catch(err){
+
+console.error("Ledger Archive Cloud Load Failed:",err);
+
+}
+
+};
+
 window.manualCloudRestore = async function(){
 
 try{
@@ -1007,6 +1079,10 @@ await erpCloudLoad();
 
 renderHistory();
 renderLedger();
+renderLedgerArchives();
+if(window.loadLedgerArchivesFromCloud){
+await window.loadLedgerArchivesFromCloud();
+}
 updateMonthly();
 updateLiveTotals();
 updateWorkingCapital();
@@ -1063,6 +1139,9 @@ window.histories=d.histories||[];
 histories=window.histories;
 window.ledgerPeople=d.ledgerPeople||[];
 ledgerPeople=window.ledgerPeople;
+
+window.ledgerArchives=d.ledgerArchives||window.ledgerArchives||[];
+saveLedgerArchives();
 
 localStorage.setItem(
 'rasidulHistories',
@@ -1137,8 +1216,13 @@ if(!ok){
 
 await erpCloudLoad();
 
+if(window.loadLedgerArchivesFromCloud){
+  await window.loadLedgerArchivesFromCloud();
+}
+
 renderHistory();
 renderLedger();
+renderLedgerArchives();
 updateMonthly();
 updateLiveTotals();
 updateWorkingCapital();
@@ -1173,6 +1257,7 @@ function createEmergencyBackup(){
    form:JSON.parse(localStorage.getItem('rasidulForm')||'{}'),
    histories:JSON.parse(localStorage.getItem('rasidulHistories')||'[]'),
    ledgerPeople:JSON.parse(localStorage.getItem('ledgerPeople')||'[]'),
+   ledgerArchives:JSON.parse(localStorage.getItem('rasidulLedgerArchives')||'[]'),
    time:new Date().toLocaleString()
   };
   let backups=JSON.parse(localStorage.getItem('erpEmergencyBackups')||'[]');
@@ -1238,6 +1323,28 @@ localStorage.getItem('ledgerPeople')||
 sessionStorage.getItem('ledgerPeople')||
 '[]'
 );
+
+// ===== SETTLED LEDGER ARCHIVE =====
+window.ledgerArchives=JSON.parse(
+localStorage.getItem('rasidulLedgerArchives')||
+sessionStorage.getItem('rasidulLedgerArchives')||
+'[]'
+);
+
+function saveLedgerArchives(){
+
+localStorage.setItem(
+'rasidulLedgerArchives',
+JSON.stringify(window.ledgerArchives)
+);
+
+sessionStorage.setItem(
+'rasidulLedgerArchives',
+JSON.stringify(window.ledgerArchives)
+);
+
+}
+// ===== END SETTLED LEDGER ARCHIVE =====
 
 function saveLedgerData(){
 
@@ -1318,8 +1425,16 @@ let msg=`🟠 ৳${Math.abs(balance)} টাকা বকেয়া রয়�
 
 🤝 আপনার সহযোগিতার জন্য ধন্যবাদ।
 
-🏪 Rubaiya Pharmacy ERP
-Sing:: MD RASIDUL HASAN`;
+🏪 **Rubaiya Pharmacy**
+📩 *Sent by Rasidul*
+
+Please review your statement carefully. If you find any **mistake, unknown transaction, or unexpected entry**, kindly inform us immediately.
+
+🤖 *This is a computer-generated message.*
+
+Thank you for your cooperation. 💙
+**Rubaiya Pharmacy**
+`;
 
 window.location.href='https://wa.me/'+p.mobile+'?text='+encodeURIComponent(msg);
 }
@@ -1555,6 +1670,160 @@ updateDueDashboard();
 
 }
 
+function archiveSettledLedger(personIndex){
+
+let person=ledgerPeople[personIndex];
+
+if(!person || !person.history || person.history.length===0){
+return false;
+}
+
+let finalBalance=getLedgerBalance(person);
+
+if(Math.abs(finalBalance)>0.001){
+return false;
+}
+
+let totalGiven=0;
+let totalTaken=0;
+let refundGiven=0;
+let refundReceived=0;
+
+person.history.forEach(h=>{
+
+let amount=Number(h.amount||0);
+
+if(h.type==='gave') totalGiven+=amount;
+if(h.type==='took') totalTaken+=amount;
+if(h.type==='refundGiven') refundGiven+=amount;
+if(h.type==='refundReceived') refundReceived+=amount;
+
+});
+
+let archiveItem={
+
+archiveId:'ARC-'+Date.now()+'-'+personIndex,
+
+personId:person.id||null,
+
+personName:person.name,
+
+personMobile:person.mobile||'',
+
+settledAt:new Date().toLocaleString(),
+
+businessDate:new Date().toISOString().slice(0,10),
+
+finalBalance:0,
+
+totalGiven:totalGiven,
+
+totalTaken:totalTaken,
+
+refundGiven:refundGiven,
+
+refundReceived:refundReceived,
+
+transactions:JSON.parse(JSON.stringify(person.history))
+
+};
+
+window.ledgerArchives.unshift(archiveItem);
+
+saveLedgerArchives();
+
+// Current ledger starts a fresh cycle.
+// The archived copy remains safely stored separately.
+person.history=[];
+
+saveLedgerData();
+
+renderLedger();
+renderLedgerArchives();
+updateDueReminders();
+updateDueDashboard();
+
+if(window.saveLedgerArchiveToCloud){
+window.saveLedgerArchiveToCloud(archiveItem);
+}
+
+alert(
+'✅ সকল হিসাব সমন্বয় হয়েছে!\\n\\n'+
+'👤 '+person.name+'\\n'+
+'📦 এই হিসাব Archive-এ সংরক্ষিত হয়েছে।\\n'+
+'🆕 Client-এর নতুন হিসাব এখন থেকে আলাদাভাবে শুরু হবে।'
+);
+
+return true;
+
+}
+
+function renderLedgerArchives(){
+
+let box=document.getElementById('ledgerArchiveBox');
+
+if(!box) return;
+
+box.innerHTML='';
+
+if(!window.ledgerArchives || window.ledgerArchives.length===0){
+
+box.innerHTML='<div class="history">📦 এখনো কোনো Settled Ledger Archive নেই।</div>';
+
+return;
+
+}
+
+window.ledgerArchives.forEach((a,i)=>{
+
+let txHTML=(a.transactions||[]).slice().reverse().map(h=>{
+
+let typeText='';
+
+if(h.type==='gave') typeText='সে আমাকে টাকা দিল';
+if(h.type==='took') typeText='সে আমার থেকে টাকা নিল';
+if(h.type==='refundGiven') typeText='আমি তাকে ফেরত দিলাম';
+if(h.type==='refundReceived') typeText='সে আমাকে ফেরত দিল';
+
+return `
+<div style="margin-top:8px;padding:8px;border-top:1px solid rgba(255,255,255,.15)">
+📅 ${h.time||''}<br>
+💰 ${Number(h.amount||0)} ৳<br>
+📌 ${typeText}<br>
+💳 ${h.method||'Not Set'}
+</div>
+`;
+
+}).join('');
+
+box.innerHTML+=`
+
+<div class="partner">
+
+<h3 style="margin-top:0">📦 ${a.personName}</h3>
+
+📱 ${a.personMobile||'No Mobile'}<br>
+🗓️ Settlement Date: ${a.settledAt}<br><br>
+
+💸 Given: ${a.totalGiven||0} ৳<br>
+💵 Taken: ${a.totalTaken||0} ৳<br>
+🔄 Refund Given: ${a.refundGiven||0} ৳<br>
+🔁 Refund Received: ${a.refundReceived||0} ৳<br>
+
+<h4 style="margin-bottom:5px">⚖️ Final Balance: 0 ৳</h4>
+
+<details>
+<summary>📜 View Archived Transactions (${(a.transactions||[]).length})</summary>
+${txHTML}
+</details>
+
+</div>
+`;
+
+});
+
+}
+
 function saveLedgerTransaction(){
 
 if(ledgerPeople.length===0){
@@ -1566,6 +1835,10 @@ let amount=Number(document.getElementById('ledgerAmount').value||0);
 let type=document.getElementById('ledgerType').value;
 let method=document.getElementById('ledgerMethod').value;
 let fundSource=document.getElementById('ledgerFundSource').value;
+
+if(amount<=0){
+return alert('সঠিক Amount দিন');
+}
 
 ledgerPeople[personIndex].history.push({
 amount:amount,
@@ -1607,6 +1880,17 @@ orc.value=(+orc.value||0)+(amount*sign);
 }
 }
 
+// If this transaction makes the client's balance exactly zero,
+// archive the complete settlement cycle before starting a new cycle.
+let settledNow = archiveSettledLedger(personIndex);
+
+if(settledNow){
+updateWorkingCapital();
+updateLiveTotals();
+autoSave();
+return;
+}
+
 updateWorkingCapital();
 updateLiveTotals();
 autoSave();
@@ -1638,6 +1922,7 @@ document.getElementById('ledgerAmount').value='';
 }
 
 renderLedger();
+renderLedgerArchives();
 updateDueReminders();
 updateDueDashboard();
 
@@ -1667,14 +1952,23 @@ else balanceText='🤝 সকল হিসাব সমন্বয় হয়
 
 return `${title}
 
-👤 ${person.name}
+👤 NAME: ${person.name}
 💳 মাধ্যম: ${method}
 
 ${balanceText}
 
 ✨ লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে।
 
-🏪 Rubaiya Pharmacy ERP`;
+🏪 **Rubaiya Pharmacy**
+📩 *Sent by Rasidul*
+
+Please review your statement carefully. If you find any **mistake, unknown transaction, or unexpected entry**, kindly inform us immediately.
+
+🤖 *This is a computer-generated message.*
+
+Thank you for your cooperation. 💙
+**Rubaiya Pharmacy**
+`;
 }
 
 
