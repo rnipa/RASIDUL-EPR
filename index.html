@@ -199,8 +199,52 @@ text-align:center;
 .capital-alert.danger{background:rgba(239,68,68,.18);color:#fecaca}
 .protected-readonly{opacity:.85;background:rgba(0,0,0,.12)!important}
 
+
+/* ===== FINAL MOBILE FRIENDLY ===== */
+html,body{max-width:100%;overflow-x:hidden}
+input,select,textarea,button{font-size:16px}
+@media(max-width:700px){body{padding:10px!important}.top-grid{grid-template-columns:1fr 1fr!important;gap:8px!important}.top-grid>div{min-width:0}.top-grid input,.top-grid select,.top-grid textarea{width:100%!important;box-sizing:border-box}.actions{display:flex;flex-wrap:wrap;gap:8px}.actions button{flex:1 1 100%;min-height:42px}.card,.partner,.history{max-width:100%;box-sizing:border-box;overflow:hidden}}
+@media(min-width:701px){.actions{display:flex;flex-wrap:wrap;gap:8px}.actions button{flex:0 1 auto}}
+
+@media(max-width:700px){
+  body{padding:10px !important}
+  .top-grid{grid-template-columns:1fr 1fr !important;gap:8px !important}
+  .actions{gap:7px !important}
+  .actions button{min-height:44px}
+  .card{border-radius:16px !important}
+  .section h2{font-size:21px}
+}
+
 </style>
 
+
+<script>
+/* External Fund legacy-data migration:
+   old refund types are converted once into the new two-direction model. */
+(function migrateExternalFundTypes(){
+  try{
+    const people=JSON.parse(localStorage.getItem('rasidulLedgerPeople')||'[]');
+    let changed=false;
+    people.forEach(p=>{
+      (p.history||[]).forEach(h=>{
+        if(h.type==='gave'){ h.type='gave'; changed=true; }
+        if(h.type==='took'){ h.type='took'; changed=true; }
+      });
+    });
+    if(changed) localStorage.setItem('rasidulLedgerPeople',JSON.stringify(people));
+
+    const archives=JSON.parse(localStorage.getItem('rasidulLedgerArchives')||'[]');
+    let archiveChanged=false;
+    archives.forEach(a=>{
+      (a.transactions||[]).forEach(h=>{
+        if(h.type==='gave'){ h.type='gave'; archiveChanged=true; }
+        if(h.type==='took'){ h.type='took'; archiveChanged=true; }
+      });
+    });
+    if(archiveChanged) localStorage.setItem('rasidulLedgerArchives',JSON.stringify(archives));
+  }catch(e){}
+})();
+</script>
 <script>
 window.__ERP_CLOUD_VERIFIED__ = false;
 window.__ERP_SYNC_PENDING__ = false;
@@ -234,9 +278,11 @@ async function verifyFirebaseConnection(){
 
 </head>
 <body>
+<!-- Rasidul ERP • Comfortable Mobile UI -->
+
 <div id="cloudLockScreen" style="display:none;position:fixed;inset:0;background:#0f172a;color:#fff;z-index:999999;justify-content:center;align-items:center;flex-direction:column;font-size:22px;text-align:center">
 ❌ ইন্টারনেট সংযোগ নেই<br><br>
-Cloud ERP ব্যবহার করতে ইন্টারনেট চালু করুন
+Cloud ERP ব্যবহার করতে ইন্টারনেট চালু করুন রাসিদুল ভাই 
 </div>
 <div class="bg"></div>
 
@@ -376,13 +422,13 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="balance-item"><label>Bkash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'obk\')">🧮</button><input id="obk"></div>
 <div class="balance-item"><label>Nagad</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ong\')">🧮</button><input id="ong"></div>
 <div class="balance-item"><label>Rocket</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ork\')">🧮</button><input id="ork"></div>
+<div class="balance-item"><label>Tally Khata</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'otk\')">🧮</button><input id="otk"></div>
 <div class="balance-item"><label>MFS Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'omc\')">🧮</button><input id="omc"></div>
 
 <div class="balance-item"><label>GP</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ogp\')">🧮</button><input id="ogp"></div>
 <div class="balance-item"><label>Robi</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'orobi\')">🧮</button><input id="orobi"></div>
 <div class="balance-item"><label>Airtel</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'oair\')">🧮</button><input id="oair"></div>
 <div class="balance-item"><label>Banglalink</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'obl\')">🧮</button><input id="obl"></div>
-<div class="balance-item"><label>Tally Khata</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'otk\')">🧮</button><input id="otk"></div>
 <div class="balance-item"><label>Recharge Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'orc\')">🧮</button><input id="orc"></div>
 
 
@@ -399,13 +445,13 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="balance-item"><label>Bkash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cbk\')">🧮</button><input id="cbk"></div>
 <div class="balance-item"><label>Nagad</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cng\')">🧮</button><input id="cng"></div>
 <div class="balance-item"><label>Rocket</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'crk\')">🧮</button><input id="crk"></div>
+<div class="balance-item"><label>Tally Khata</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ctk\')">🧮</button><input id="ctk"></div>
 <div class="balance-item"><label>MFS Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cmc\')">🧮</button><input id="cmc"></div>
 
 <div class="balance-item"><label>GP</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cgp\')">🧮</button><input id="cgp"></div>
 <div class="balance-item"><label>Robi</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'crobi\')">🧮</button><input id="crobi"></div>
 <div class="balance-item"><label>Airtel</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cair\')">🧮</button><input id="cair"></div>
 <div class="balance-item"><label>Banglalink</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cbl\')">🧮</button><input id="cbl"></div>
-<div class="balance-item"><label>Tally Khata</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ctk\')">🧮</button><input id="ctk"></div>
 <div class="balance-item"><label>Recharge Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'crc\')">🧮</button><input id="crc"></div>
 
 
@@ -466,6 +512,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <h2>📜 Daily History</h2>
 <div id="historyBox"></div>
 </div>
+<div class="card"><h2>📦 Daily History Archive</h2><div id="dailyHistoryArchiveBox"></div></div>
 
 </div>
 
@@ -522,14 +569,14 @@ function v(id){
 function getAccountTotals(prefix){
   if(prefix==='opening'){
     return {
-      mfs:v('obk')+v('ong')+v('ork')+v('omc'),
-      recharge:v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc'),
+      mfs:v('obk')+v('ong')+v('ork')+v('otk')+v('omc'),
+      recharge:v('ogp')+v('orobi')+v('oair')+v('obl')+v('orc'),
       total:v('obk')+v('ong')+v('ork')+v('omc')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc')
     };
   }
   return {
-    mfs:v('cbk')+v('cng')+v('crk')+v('cmc'),
-    recharge:v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc'),
+    mfs:v('cbk')+v('cng')+v('crk')+v('ctk')+v('cmc'),
+    recharge:v('cgp')+v('crobi')+v('cair')+v('cbl')+v('crc'),
     total:v('cbk')+v('cng')+v('crk')+v('cmc')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc')
   };
 }
@@ -582,8 +629,8 @@ function getExternalMovementToday(){
         if(Number.isFinite(parsed)) ts=parsed;
       }
       if(ts>=started){
-        if(h.type==='gave' || h.type==='refundReceived') net+=Number(h.amount||0);
-        if(h.type==='took' || h.type==='refundGiven') net-=Number(h.amount||0);
+        if(h.type==='gave') net+=Number(h.amount||0);
+        if(h.type==='took') net-=Number(h.amount||0);
       }
     });
   });
@@ -1087,6 +1134,8 @@ function newDay(){
     'আজকের Profit আবার আগামীকাল Profit হিসেবে গণনা হবে না।'
   )) return;
 
+  archiveCurrentDailyHistory();
+
   obk.value=cbk.value;
   ong.value=cng.value;
   ork.value=crk.value;
@@ -1279,8 +1328,6 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 <select id="ledgerType">
 <option value="gave">সে আমাকে টাকা দিল</option>
 <option value="took">সে আমার থেকে টাকা নিল</option>
-<option value="refundGiven">আমি তাকে ফেরত দিলাম</option>
-<option value="refundReceived">সে আমাকে ফেরত দিল</option>
 </select>
 </div>
 
@@ -1305,7 +1352,7 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 </div>
 
 <div>
-<label>📂 Fund Source</label>
+<label style="display:none">📂 Fund Source</label>
 <select id="ledgerFundSource">
 <option value="mfs">💸 MFS</option>
 <option value="recharge">📱 Recharge</option>
@@ -1431,10 +1478,7 @@ function printLedgerArchive(index){
 
   const typeText={
     gave:'সে আমাকে টাকা দিল',
-    took:'সে আমার থেকে টাকা নিল',
-    refundGiven:'আমি তাকে ফেরত দিলাম',
-    refundReceived:'সে আমাকে ফেরত দিল'
-  };
+    took:'সে আমার থেকে টাকা নিল'};
 
   const tx=(a.transactions||[]).slice().reverse().map((h,n)=>`
     <div class="tx">
@@ -1471,6 +1515,275 @@ h3{font-size:13px;margin:2mm 0}
 .row{display:flex;justify-content:space-between;gap:4px}
 .tx{border-bottom:1px dashed #000;padding:2mm 0}
 .total{font-weight:bold;font-size:12px}
+
+/* =========================================================
+   RASIDUL ERP • FINAL READY-TO-USE COLOR SYSTEM
+   Dark-first, high-contrast, mobile-friendly
+   ========================================================= */
+:root{
+  color-scheme:dark;
+  --erp-bg:#0b1120;
+  --erp-bg-2:#111827;
+  --erp-card:#151f32;
+  --erp-card-2:#1b263a;
+  --erp-input:#0f172a;
+  --erp-text:#f8fafc;
+  --erp-text-soft:#dbe4f0;
+  --erp-muted:#a9b7c9;
+  --erp-border:#2b3a50;
+  --erp-primary:#60a5fa;
+  --erp-primary-soft:#172554;
+  --erp-success:#34d399;
+  --erp-success-soft:#052e2b;
+  --erp-warning:#fbbf24;
+  --erp-warning-soft:#3a2a08;
+  --erp-danger:#fb7185;
+  --erp-danger-soft:#3a111b;
+  --erp-shadow:0 10px 28px rgba(0,0,0,.24);
+}
+html,body{
+  background:var(--erp-bg) !important;
+  color:var(--erp-text) !important;
+  max-width:100%;
+  overflow-x:hidden;
+}
+body{
+  font-size:14px;
+  line-height:1.5;
+}
+body *{
+  text-shadow:none !important;
+}
+.card,
+.ledger-card,
+.archive-card,
+.history,
+.section,
+.modal-content,
+.offcanvas{
+  background:var(--erp-card) !important;
+  color:var(--erp-text) !important;
+  border-color:var(--erp-border) !important;
+  box-shadow:var(--erp-shadow) !important;
+}
+.card-body,
+.history *,
+.ledger-card *,
+.archive-card *,
+.section *{
+  color:inherit;
+}
+h1,h2,h3,h4,h5,h6,
+strong,b,label,
+.card-title{
+  color:var(--erp-text) !important;
+}
+p,small,.muted,
+.text-muted{
+  color:var(--erp-muted) !important;
+}
+hr{
+  border-color:var(--erp-border) !important;
+  opacity:1;
+}
+input,select,textarea{
+  background:var(--erp-input) !important;
+  color:var(--erp-text) !important;
+  border:1px solid var(--erp-border) !important;
+  border-radius:10px !important;
+  min-height:42px;
+}
+input::placeholder,
+textarea::placeholder{
+  color:#8291a6 !important;
+  opacity:1;
+}
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--erp-primary) !important;
+  box-shadow:0 0 0 3px rgba(96,165,250,.16) !important;
+  outline:none !important;
+}
+button,
+.btn{
+  color:#fff !important;
+  border:1px solid transparent !important;
+  background:#2563eb;
+  border-radius:10px !important;
+  min-height:40px;
+  font-weight:600;
+}
+button:hover,
+.btn:hover{
+  filter:brightness(1.08);
+}
+button:disabled,
+.btn:disabled{
+  opacity:.55;
+}
+a{
+  color:#93c5fd !important;
+}
+.table,
+table{
+  color:var(--erp-text) !important;
+  border-color:var(--erp-border) !important;
+}
+table th{
+  color:#ffffff !important;
+  background:#1e293b !important;
+  border-color:var(--erp-border) !important;
+}
+table td{
+  color:var(--erp-text-soft) !important;
+  border-color:var(--erp-border) !important;
+  background:transparent !important;
+}
+.alert{
+  border-color:var(--erp-border) !important;
+}
+.alert-success{
+  background:var(--erp-success-soft) !important;
+  color:#a7f3d0 !important;
+}
+.alert-warning{
+  background:var(--erp-warning-soft) !important;
+  color:#fde68a !important;
+}
+.alert-danger{
+  background:var(--erp-danger-soft) !important;
+  color:#fecdd3 !important;
+}
+.alert-info{
+  background:#082f49 !important;
+  color:#bae6fd !important;
+}
+.wa-preview{
+  background:#10271e !important;
+  border:1px solid #24583f !important;
+  color:#e8fff2 !important;
+}
+.wa-preview *{
+  color:inherit !important;
+}
+.wa-badge{
+  background:var(--erp-success-soft) !important;
+  color:#86efac !important;
+  border:1px solid #1f5b45;
+}
+.section h2{
+  color:#ffffff !important;
+  letter-spacing:-.2px;
+}
+.section h2::first-letter{
+  color:inherit;
+}
+.top-grid{
+  gap:10px;
+}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.actions button{
+  flex:1 1 140px;
+}
+.balance-item,
+.stat,
+.summary-box{
+  background:var(--erp-card-2) !important;
+  color:var(--erp-text) !important;
+  border-color:var(--erp-border) !important;
+}
+.balance-item *,
+.stat *,
+.summary-box *{
+  color:inherit !important;
+}
+details summary{
+  color:var(--erp-text) !important;
+}
+details[open] summary{
+  color:#bfdbfe !important;
+}
+.offcanvas{
+  background:#0f172a !important;
+}
+.offcanvas *,
+.nav-link{
+  color:var(--erp-text-soft) !important;
+}
+.nav-link:hover,
+.nav-link.active{
+  background:#1d4ed8 !important;
+  color:#fff !important;
+}
+::-webkit-scrollbar{
+  width:9px;
+  height:9px;
+}
+::-webkit-scrollbar-track{
+  background:#0b1120;
+}
+::-webkit-scrollbar-thumb{
+  background:#334155;
+  border-radius:10px;
+}
+::-webkit-scrollbar-thumb:hover{
+  background:#475569;
+}
+@media(max-width:700px){
+  body{
+    padding:10px !important;
+    font-size:14px;
+  }
+  .top-grid{
+    grid-template-columns:1fr 1fr !important;
+    gap:8px !important;
+  }
+  .top-grid > div{
+    min-width:0;
+  }
+  .top-grid input,
+  .top-grid select,
+  .top-grid textarea{
+    width:100% !important;
+    box-sizing:border-box;
+  }
+  .actions{
+    gap:7px !important;
+  }
+  .actions button{
+    flex:1 1 100%;
+    width:100%;
+    min-height:44px;
+  }
+  .card{
+    border-radius:16px !important;
+  }
+  .section h2{
+    font-size:21px;
+  }
+  input,select,textarea{
+    font-size:16px !important;
+  }
+}
+@media(min-width:701px){
+  .actions button{
+    flex:0 1 auto;
+  }
+}
+
+/* Respect the device if it is explicitly in light mode, while keeping
+   the same contrast discipline. */
+@media (prefers-color-scheme:light){
+  :root{
+    color-scheme:light;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1481,10 +1794,8 @@ h3{font-size:13px;margin:2mm 0}
 <b>Mobile:</b> ${String(a.personMobile||'').replace(/[<>"']/g,'')}<br>
 <b>Settlement:</b> ${String(a.settledAt||'').replace(/[<>"']/g,'')}
 <div class="line"></div>
-<div class="row"><span>Given</span><b>${Number(a.totalGiven||0).toLocaleString('en-US')} ৳</b></div>
-<div class="row"><span>Taken</span><b>${Number(a.totalTaken||0).toLocaleString('en-US')} ৳</b></div>
-<div class="row"><span>Refund Given</span><b>${Number(a.refundGiven||0).toLocaleString('en-US')} ৳</b></div>
-<div class="row"><span>Refund Received</span><b>${Number(a.refundReceived||0).toLocaleString('en-US')} ৳</b></div>
+<div class="row"><span>সে আমাকে দিয়েছে</span><b>${Number(a.totalGiven||0).toLocaleString('en-US')} ৳</b></div>
+<div class="row"><span>সে আমার কাছ থেকে নিয়েছে</span><b>${Number(a.totalTaken||0).toLocaleString('en-US')} ৳</b></div>
 <div class="line"></div>
 <div class="total">Final Balance: 0 ৳</div>
 <div class="line"></div>
@@ -1493,12 +1804,98 @@ ${tx}
 <div class="line"></div>
 <div class="center">সকল হিসাব সমন্বয় হয়েছে</div>
 <div class="center">Thank you</div>
-<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script>
+
+
+
 </body>
 </html>`);
   win.document.close();
 }
 </script>
+
+
+<script>
+/* ===== External Fund: SIMPLE TWO-WAY LEDGER ===== */
+function saveLedgerTransaction(){
+  if(ledgerPeople.length===0)return alert('আগে Person Add করুন');
+  const personIndex=Number(document.getElementById('ledgerPerson').value);
+  const amount=Number(document.getElementById('ledgerAmount').value||0);
+  const type=document.getElementById('ledgerType').value;
+  const method=document.getElementById('ledgerMethod').value;
+  if(amount<=0)return alert('সঠিক Amount দিন');
+  if(type!=='gave'&&type!=='took')return alert('শুধু দেওয়া অথবা নেওয়া ব্যবহার করুন');
+  const p=ledgerPeople[personIndex];
+  p.history=p.history||[];
+  const ts=Date.now();
+  p.history.push({amount,type,method,time:new Date(ts).toLocaleString(),timestamp:ts});
+  const accountId=(()=>{
+    if(method.includes('Bkash'))return 'cbk';
+    if(method.includes('Nagad'))return 'cng';
+    if(method==='Rocket')return 'crk';
+    if(method==='GP')return 'cgp';
+    if(method==='Robi')return 'crobi';
+    if(method==='Airtel')return 'cair';
+    if(method==='Banglalink')return 'cbl';
+    if(method==='Tally')return 'ctk';
+    if(method==='Cash')return 'cmc';
+    return null;
+  })();
+  if(accountId){
+    const el=document.getElementById(accountId);
+    const current=Number(el?.value||0);
+    if(type==='took'&&amount>current){
+      p.history.pop();
+      return alert(`❌ ${method} Closing Balance-এ পর্যাপ্ত টাকা নেই।
+বর্তমান: ৳${current.toLocaleString('en-US')}`);
+    }
+    el.value=type==='gave'?current+amount:current-amount;
+  }
+  saveLedgerData();updateLiveTotals();renderLedger();updateDueReminders();updateDueDashboard();
+  if(Math.abs(getLedgerBalance(p))<0.001)setTimeout(()=>archiveSettledLedger(personIndex),50);
+  alert(type==='gave'?`📥 ${p.name} আপনাকে ৳${amount.toLocaleString('en-US')} দিয়েছে।
+এটি Profit নয়।`:`📤 ${p.name} আপনার কাছ থেকে ৳${amount.toLocaleString('en-US')} নিয়েছে।
+এটি Loss নয়।`);
+}
+function renderLedger(){
+  const select=document.getElementById('ledgerPerson');
+  if(select){select.innerHTML='';ledgerPeople.forEach((p,i)=>select.innerHTML+=`<option value="${i}">${p.name}</option>`)}
+  const box=document.getElementById('ledgerBox');if(!box)return;box.innerHTML='';
+  ledgerPeople.forEach((p,i)=>{
+    const given=(p.history||[]).filter(h=>h.type==='gave').reduce((a,h)=>a+Number(h.amount||0),0);
+    const taken=(p.history||[]).filter(h=>h.type==='took').reduce((a,h)=>a+Number(h.amount||0),0);
+    const balance=given-taken;
+    const settled=Math.abs(balance)<.001;
+    box.innerHTML+=`<div class="partner">
+      <div class="tag"><button class="smallBtn edit" onclick="editPerson(${i})">Edit</button><button class="smallBtn del" onclick="deletePerson(${i})">Delete</button></div>
+      <h3>👤 ${p.name}</h3>📱 ${p.mobile||'No Mobile'}<br><br>
+      📥 সে আমাকে দিয়েছে: <b>৳${given.toLocaleString('en-US')}</b><br>
+      📤 সে আমার কাছ থেকে নিয়েছে: <b>৳${taken.toLocaleString('en-US')}</b><br><br>
+      <b>${settled?'⚖️ Balance 0 ৳ · হিসাব সমন্বয় হয়েছে':balance>0?`🟢 সে আমাকে ৳${balance.toLocaleString('en-US')} ফেরত দেবে`:`🔴 আমাকে ৳${Math.abs(balance).toLocaleString('en-US')} ফেরত দিতে হবে`}</b>
+      <div class="actions" style="margin-top:10px">${settled?`<button onclick="archiveSettledLedger(${i})">📦 Archive</button>`:''}<button onclick="sendDueReminder(${i})">📲 Reminder</button></div>
+      <details style="margin-top:10px"><summary>📜 Current Transactions (${(p.history||[]).length})</summary>${(p.history||[]).slice().reverse().map(h=>`<div class="history">📅 ${h.time||''}<br>💰 ৳${Number(h.amount||0).toLocaleString('en-US')}<br>📌 ${h.type==='gave'?'সে আমাকে টাকা দিল':'সে আমার কাছ থেকে টাকা নিল'}<br>💳 ${h.method||'Not Set'}</div>`).join('')||'<div class="history">No Transaction</div>'}</details>
+    </div>`;
+  });
+  saveLedgerData();updateLedgerSummary();
+}
+function renderLedgerArchives(){
+  const box=document.getElementById('ledgerArchiveBox');if(!box)return;box.innerHTML='';
+  if(!window.ledgerArchives||!window.ledgerArchives.length){box.innerHTML='<div class="history">📦 এখনো কোনো Settled Ledger Archive নেই।</div>';return;}
+  window.ledgerArchives.forEach((a,i)=>{
+    const tx=(a.transactions||[]).slice().reverse().map(h=>`<div class="history">📅 ${h.time||''}<br>💰 ৳${Number(h.amount||0).toLocaleString('en-US')}<br>📌 ${h.type==='gave'?'সে আমাকে টাকা দিল':'সে আমার কাছ থেকে টাকা নিল'}<br>💳 ${h.method||'Not Set'}</div>`).join('');
+    box.innerHTML+=`<details class="partner" style="margin-top:10px"><summary style="cursor:pointer;font-weight:700">📦 ${a.personName} · ${a.settledAt||''} · ⚖️ ৳0</summary><div style="margin-top:10px">📱 ${a.personMobile||'No Mobile'}<br>📥 সে আমাকে দিয়েছে: <b>৳${Number(a.totalGiven||0).toLocaleString('en-US')}</b><br>📤 সে আমার কাছ থেকে নিয়েছে: <b>৳${Number(a.totalTaken||0).toLocaleString('en-US')}</b><br>⚖️ Final Balance: <b>৳0</b><div class="actions" style="margin-top:10px"><button onclick="printLedgerArchive(${i})">🖨️ 58mm Print</button></div><details style="margin-top:10px"><summary>📜 View Transactions (${(a.transactions||[]).length})</summary>${tx}</details></div></details>`;
+  });
+  saveLedgerArchives();
+}
+</script>
+
+<script>
+function getDailyHistoryArchives(){try{return JSON.parse(localStorage.getItem('rasidulDailyHistoryArchives')||'[]')}catch(e){return[]}}
+function archiveCurrentDailyHistory(){if(!histories||!histories.length)return;const a=getDailyHistoryArchives();a.unshift({dateKey:new Date().toISOString().slice(0,10),archivedAt:new Date().toLocaleString(),items:histories.slice()});localStorage.setItem('rasidulDailyHistoryArchives',JSON.stringify(a));histories=[];localStorage.setItem('rasidulHistories','[]');renderHistory();renderDailyHistoryArchives()}
+function renderDailyHistoryArchives(){const box=document.getElementById('dailyHistoryArchiveBox');if(!box)return;const a=getDailyHistoryArchives();box.innerHTML=a.length?a.map(x=>`<details class="partner" style="margin-top:10px"><summary style="cursor:pointer;font-weight:700">📦 ${x.dateKey} · ${(x.items||[]).length} Entries</summary><div style="margin-top:10px">${(x.items||[]).map(h=>`<div class="history">📅 ${h.date||''}<br>💸 MFS Profit: ${h.mfs||0} ৳<br>📱 Recharge Profit: ${h.recharge||0} ৳<br>💰 Total Profit: ${h.profit||0} ৳<br>📝 ${h.note||''}</div>`).join('')}</div></details>`).join(''):'<div class="history">📦 কোনো Daily Archive নেই।</div>'}
+</script>
+<script>document.addEventListener('DOMContentLoaded',function(){try{window.ledgerArchives=JSON.parse(localStorage.getItem('rasidulLedgerArchives')||'[]')}catch(e){window.ledgerArchives=[]}renderDailyHistoryArchives();});</script>
+
+
 
 <!-- Firebase Cloud ERP -->
 <script type="module">
@@ -2002,11 +2399,9 @@ let msg=`🟠 ৳${Math.abs(balance)} টাকা বকেয়া রয়�
 🏪 **Rubaiya Pharmacy**
 📩 *Sent by Rasidul*
 
-Please review your statement carefully. If you find any **mistake, unknown transaction, or unexpected entry**, kindly inform us immediately.
+🔐 এটি স্বয়ংক্রিয়ভাবে তৈরি করা বার্তা। কোনো ভুল, অপরিচিত বা অসঙ্গত লেনদেন দেখলে দয়া করে দ্রুত আমাদের জানাবেন।
 
-🤖 *This is a computer-generated message.*
-
-Thank you for your cooperation. 💙
+🤖 কম্পিউটার-জেনারেটেড রসিদ
 **Rubaiya Pharmacy**
 `;
 
@@ -2076,8 +2471,6 @@ ledgerPeople.forEach((p,index)=>{
 let balance=0;
 let totalGiven=0;
 let totalTaken=0;
-let refundGiven=0;
-let refundReceived=0;
 
 p.history.forEach(h=>{
 
@@ -2085,21 +2478,7 @@ if(h.type==='gave'){
 balance+=Number(h.amount);
 totalGiven+=Number(h.amount);
 }
-
-if(h.type==='took'){
-balance-=Number(h.amount);
-totalTaken+=Number(h.amount);
-}
-
-if(h.type==='refundGiven'){
-balance-=Number(h.amount);
-refundGiven+=Number(h.amount);
-}
-
-if(h.type==='refundReceived'){
-balance+=Number(h.amount);
-refundReceived+=Number(h.amount);
-}
+if(h.type==='took'){ balance-=Number(h.amount); totalTaken+=Number(h.amount); }
 
 });
 
@@ -2116,9 +2495,7 @@ p.history.slice().reverse().slice(0,10).forEach(h=>{
 let typeText='';
 
 if(h.type==='gave') typeText='সে আমাকে টাকা দিল';
-if(h.type==='took') typeText='সে আমার থেকে টাকা নিল';
-if(h.type==='refundGiven') typeText='আমি তাকে ফেরত দিলাম';
-if(h.type==='refundReceived') typeText='সে আমাকে ফেরত দিল';
+if(h.type==='took') typeText='সে আমার কাছ থেকে টাকা নিল';
 
 historyHTML+=`
 <div class="history">
@@ -2150,9 +2527,7 @@ box.innerHTML+=`
 ${(()=>{let risk='🟢 Regular'; if(p.history&&p.history.length){let days=Math.floor((Date.now()-new Date(p.history[p.history.length-1].time).getTime())/(1000*60*60*24)); if(days>=90) risk='🔴 High Risk'; else if(days>=60) risk='🟠 Follow Up'; else if(days>=30) risk='🟡 Attention';} return risk;})()}<br><br>
 
 💸 Given: ${totalGiven} ৳<br>
-💵 Taken: ${totalTaken} ৳<br>
-🔄 Refund Given: ${refundGiven} ৳<br>
-🔁 Refund Received: ${refundReceived} ৳<br><br>
+💵 Taken: ${totalTaken} ৳<br><br>
 
 <b>${status}</b><br><br><button onclick="sendDueReminder(${index})">📲 Send Reminder</button>
 
@@ -2215,12 +2590,18 @@ if(isNaN(amount)) return alert('Invalid Amount');
 item.amount=amount;
 
 let type=prompt(
-'gave / took / refundGiven / refundReceived',
+'gave / took',
 item.type
 );
 
 if(type){
-item.type=type;
+  type=type.trim().toLowerCase();
+  if(type==='gave' || type==='took'){
+    item.type=type;
+  }else{
+    alert('শুধু gave অথবা took ব্যবহার করুন।');
+    return;
+  }
 }
 
 item.updated=new Date().toLocaleString();
@@ -2260,8 +2641,6 @@ return false;
 
 let totalGiven=0;
 let totalTaken=0;
-let refundGiven=0;
-let refundReceived=0;
 
 person.history.forEach(h=>{
 
@@ -2269,8 +2648,6 @@ let amount=Number(h.amount||0);
 
 if(h.type==='gave') totalGiven+=amount;
 if(h.type==='took') totalTaken+=amount;
-if(h.type==='refundGiven') refundGiven+=amount;
-if(h.type==='refundReceived') refundReceived+=amount;
 
 });
 
@@ -2293,10 +2670,6 @@ finalBalance:0,
 totalGiven:totalGiven,
 
 totalTaken:totalTaken,
-
-refundGiven:refundGiven,
-
-refundReceived:refundReceived,
 
 transactions:JSON.parse(JSON.stringify(person.history))
 
@@ -2355,9 +2728,7 @@ let txHTML=(a.transactions||[]).slice().reverse().map(h=>{
 let typeText='';
 
 if(h.type==='gave') typeText='সে আমাকে টাকা দিল';
-if(h.type==='took') typeText='সে আমার থেকে টাকা নিল';
-if(h.type==='refundGiven') typeText='আমি তাকে ফেরত দিলাম';
-if(h.type==='refundReceived') typeText='সে আমাকে ফেরত দিল';
+if(h.type==='took') typeText='সে আমার কাছ থেকে টাকা নিল';
 
 return `
 <div style="margin-top:8px;padding:8px;border-top:1px solid rgba(255,255,255,.15)">
@@ -2381,8 +2752,6 @@ box.innerHTML+=`
 
 💸 Given: ${a.totalGiven||0} ৳<br>
 💵 Taken: ${a.totalTaken||0} ৳<br>
-🔄 Refund Given: ${a.refundGiven||0} ৳<br>
-🔁 Refund Received: ${a.refundReceived||0} ৳<br>
 
 <h4 style="margin-bottom:5px">⚖️ Final Balance: 0 ৳</h4>
 
@@ -2424,12 +2793,12 @@ function saveLedgerTransaction(){
     timestamp:timestamp
   });
 
-  const sign=(type==='gave' || type==='refundReceived') ? 1 : -1;
+  const sign=(type==='gave' || type==='gave') ? 1 : -1;
 
   /*
     Transaction classification:
-    gave/refundReceived  = external money came into the business
-    took/refundGiven     = business money was temporarily given out
+    gave = external money came into the business
+    took = business money was temporarily given out
     Both are balance movements, NEVER Profit/Loss.
   */
 
@@ -2520,12 +2889,12 @@ updateDueReminders();
 updateDueDashboard();
 
 function getLedgerBalance(person){
-let balance=0;
-(person.history||[]).forEach(h=>{
-if(h.type==='gave' || h.type==='refundReceived') balance+=Number(h.amount||0);
-if(h.type==='took' || h.type==='refundGiven') balance-=Number(h.amount||0);
-});
-return balance;
+  let balance=0;
+  (person.history||[]).forEach(h=>{
+    if(h.type==='gave') balance+=Number(h.amount||0);
+    if(h.type==='took') balance-=Number(h.amount||0);
+  });
+  return balance;
 }
 
 
@@ -2535,8 +2904,8 @@ const balance=getLedgerBalance(person);
 let title='';
 if(type==='gave') title='🟢 ৳'+amount+' টাকা গ্রহণ করা হয়েছে';
 else if(type==='took') title='🔴 ৳'+amount+' টাকা প্রদান করা হয়েছে';
-else if(type==='refundReceived') title='💚 ৳'+amount+' টাকা ফেরত গ্রহণ করা হয়েছে';
-else title='🧾 ৳'+amount+' টাকা ফেরত প্রদান করা হয়েছে';
+
+else title='🔴 ৳'+amount+' টাকা প্রদান করা হয়েছে';
 
 let balanceText='';
 if(balance<0) balanceText='📥 বর্তমান পাওনা: ৳'+Math.abs(balance);
@@ -2545,7 +2914,7 @@ else balanceText='🤝 সকল হিসাব সমন্বয় হয়
 
 return `${title}
 
-👤 NAME: ${person.name}
+👤 ${person.name}
 💳 মাধ্যম: ${method}
 
 ${balanceText}
@@ -2555,11 +2924,9 @@ ${balanceText}
 🏪 **Rubaiya Pharmacy**
 📩 *Sent by Rasidul*
 
-Please review your statement carefully. If you find any **mistake, unknown transaction, or unexpected entry**, kindly inform us immediately.
+🔐 এটি স্বয়ংক্রিয়ভাবে তৈরি করা বার্তা। কোনো ভুল, অপরিচিত বা অসঙ্গত লেনদেন দেখলে দয়া করে দ্রুত আমাদের জানাবেন।
 
-🤖 *This is a computer-generated message.*
-
-Thank you for your cooperation. 💙
+🤖 কম্পিউটার-জেনারেটেড রসিদ
 **Rubaiya Pharmacy**
 `;
 }
