@@ -130,7 +130,7 @@ body.cloud-locked .bg{filter:blur(4px)}
 <div class="top-grid"><div class="card"><h3>💎 Base Capital</h3><label>💰 MFS Base Capital</label><input id="mfsCapital" value="50000"><label>📱 Recharge Base Capital</label><input id="rechargeCapital" value="30000"><hr><div class="sectionTitle"><label>🛡️ Protected MFS Capital</label><button class="protected-inline-edit" onclick="openProtectedCapitalEditor()">🔐 Edit</button></div><input id="protectedMfsCapital" class="protected-readonly" readonly value="50000"><label>🛡️ Protected Recharge Capital</label><input id="protectedRechargeCapital" class="protected-readonly" readonly value="30000"><div id="baseCapitalWarning" class="capital-alert safe">🟢 আপনার Protected Capital নিরাপদ আছে।</div></div>
 <div class="card"><h3>📈 Reinvest Profit</h3><label>💰 MFS Reinvest</label><input id="mfsReinvest" value="0"><label>📱 Recharge Reinvest</label><input id="rechargeReinvest" value="0"><button style="margin-top:12px" onclick="applyReinvestment()">🚀 Add To Protected Capital</button></div></div>
 <div class="card"><h3>💸 Owner Withdrawal</h3><label>💰 Withdraw Amount</label><input id="withdrawAmount" value="0"><label>📝 Withdraw Reason</label><textarea id="withdrawReason"></textarea><label>🏦 Withdraw From</label><select id="withdrawSource"><option value="mfs">MFS Capital</option><option value="recharge">Recharge Capital</option></select><label>💳 Withdrawal Method</label><select id="withdrawMethod"><option>Cash</option><option>Bkash</option><option>Nagad</option><option>Rocket</option><option>GP</option><option>Robi</option><option>Airtel</option><option>Banglalink</option><option>Tally</option></select><button style="margin-top:12px" onclick="withdrawCapital()">💸 Withdraw From Capital</button></div>
-<div class="card"><h2>🌅 Opening Balance</h2><div class="grid" id="openingGrid"></div><div class="top-grid"><div class="mini"><h3>💰 Opening E-Money</h3><h2 id="openingEmoney">0 ৳</h2></div><div class="mini"><h3>💵 Opening Cash</h3><h2 id="openingCash">0 ৳</h2></div></div></div>
+<div class="card"><h2>🌅 Opening Balance</h2><p style="margin:0 0 10px;color:#cbd5e1;font-size:13px">💡 Client থেকে টাকা এলে Opening + Closing উভয় ব্যালেন্সে যোগ হবে, টাকা দিলে উভয় ব্যালেন্স থেকে বিয়োগ হবে। ফলে হিসাব Refresh/Cloud Restore-এর পরেও একই থাকবে।</p><div class="grid" id="openingGrid"></div><div class="top-grid"><div class="mini"><h3>💰 Opening E-Money</h3><h2 id="openingEmoney">0 ৳</h2></div><div class="mini"><h3>💵 Opening Cash</h3><h2 id="openingCash">0 ৳</h2></div></div></div>
 <div class="card"><h2>🌙 Closing Balance</h2><div class="grid" id="closingGrid"></div><div class="top-grid"><div class="mini"><h3>💰 Closing E-Money</h3><h2 id="closingEmoney">0 ৳</h2></div><div class="mini"><h3>💵 Closing Cash</h3><h2 id="closingCash">0 ৳</h2></div></div></div>
 <div class="card"><h2>🧮 Smart Cash Calculator</h2><select id="cashTarget"><option value="omc">Opening MFS Cash</option><option value="orc">Opening Recharge Cash</option><option value="cmc">Closing MFS Cash</option><option value="crc">Closing Recharge Cash</option></select><div class="cash-grid"><input id="n1000" placeholder="1000"><input id="n500" placeholder="500"><input id="n200" placeholder="200"><input id="n100" placeholder="100"><input id="n50" placeholder="50"><input id="n20" placeholder="20"><input id="n10" placeholder="10"></div><div class="actions"><button onclick="calcCash()">🧮 Calculate</button><button onclick="applyCash()">✅ Apply</button><button onclick="clearCalc()">🧹 Clear</button></div><h3>💰 Total Cash: <span id="cashTotal">0</span> ৳</h3></div>
 <div class="card"><h2>📝 Special Note</h2><textarea id="note"></textarea></div>
@@ -148,7 +148,7 @@ body.cloud-locked .bg{filter:blur(4px)}
       <button class="smallBtn" onclick="closeCloudBackupManager()">✕</button>
     </div>
     <div class="pm-security">
-      ☁️ ERP প্রতি ৩০ মিনিটে একটি আলাদা Cloud Recovery Point তৈরি করবে।
+      ☁️ ERP প্রতি ৩০ মিনিটে একটি আলাদা Cloud Recovery Point তৈরি করবে। সাধারণ Auto-Sync প্রতিটি পরিবর্তনে শুধু Main Cloud data আপডেট করবে, Backup Point নয়।
       এখান থেকে ৩০ মিনিট, ১ ঘণ্টা বা আরও আগের verified backup নির্বাচন করে Restore করা যাবে।
       বর্তমান হিসাব overwrite করার আগে confirmation চাওয়া হবে।
     </div>
@@ -167,6 +167,7 @@ body.cloud-locked .bg{filter:blur(4px)}
 
 <script>
 const FORM_KEY='rasidulForm', HIST_KEY='rasidulHistories', PEOPLE_KEY='ledgerPeople', ARCHIVE_KEY='rasidulLedgerArchives';
+const CLOUD_HASH_KEY='rasidulLastCloudPayloadHash', CLOUD_PENDING_KEY='rasidulCloudSyncPending', CLOUD_REV_KEY='rasidulLocalRevision';
 const PC_KEY='rasidulProtectedCapital', PC_HASH='rasidulProtectedCapitalPasswordHash', PC_CONFIG='rasidulProtectedCapitalConfigured';
 let histories=JSON.parse(localStorage.getItem(HIST_KEY)||'[]');
 let ledgerPeople=JSON.parse(localStorage.getItem(PEOPLE_KEY)||'[]');
@@ -178,7 +179,25 @@ const openingIds=[['Bkash','obk'],['Nagad','ong'],['Rocket','ork'],['Tally Khata
 const closingIds=[['Bkash','cbk'],['Nagad','cng'],['Rocket','crk'],['Tally Khata','ctk'],['MFS Cash','cmc'],['GP','cgp'],['Robi','crobi'],['Airtel','cair'],['Banglalink','cbl'],['Recharge Cash','crc']];
 function buildBalanceGrid(){[['openingGrid',openingIds],['closingGrid',closingIds]].forEach(([gid,list])=>{$(gid).innerHTML=list.map(([label,id])=>`<div class="balance-item"><label>${label}</label><button class="balance-calc-btn" onclick="openBalanceCalculator('${id}')">🧮</button><input id="${id}"></div>`).join('')})}
 function formData(){const d={};document.querySelectorAll('input,textarea,select').forEach(e=>{if(e.type!=='file')d[e.id]=e.value});return d}
-function autoSave(){localStorage.setItem(FORM_KEY,JSON.stringify(formData()));localStorage.setItem('lastUpdateTime',new Date().toLocaleString());window.__ERP_SYNC_PENDING__=true;scheduleCloudSync()}
+function markLocalDirty(){
+  const rev=Number(localStorage.getItem(CLOUD_REV_KEY)||0)+1;
+  localStorage.setItem(CLOUD_REV_KEY,String(rev));
+  localStorage.setItem(CLOUD_PENDING_KEY,'1');
+  window.__ERP_SYNC_PENDING__=true;
+}
+function autoSave(){
+  localStorage.setItem(FORM_KEY,JSON.stringify(formData()));
+  localStorage.setItem('lastUpdateTime',new Date().toLocaleString());
+  markLocalDirty();
+  scheduleCloudSync();
+}
+function clearLocalDirty(){
+  localStorage.setItem(CLOUD_PENDING_KEY,'0');
+  window.__ERP_SYNC_PENDING__=false;
+}
+function localStateIsDirty(){
+  return localStorage.getItem(CLOUD_PENDING_KEY)==='1' || window.__ERP_SYNC_PENDING__===true;
+}
 function restore(){try{const d=JSON.parse(localStorage.getItem(FORM_KEY)||'{}');Object.keys(d).forEach(k=>{if($(k))$(k).value=d[k]})}catch(e){}}
 function saveLedgerData(){localStorage.setItem(PEOPLE_KEY,JSON.stringify(ledgerPeople));sessionStorage.setItem(PEOPLE_KEY,JSON.stringify(ledgerPeople));window.ledgerPeople=ledgerPeople}
 function saveLedgerArchives(){localStorage.setItem(ARCHIVE_KEY,JSON.stringify(ledgerArchives));sessionStorage.setItem(ARCHIVE_KEY,JSON.stringify(ledgerArchives));window.ledgerArchives=ledgerArchives}
@@ -204,7 +223,7 @@ function getLedgerBalance(p){
 function getExternalBalanceTotal(){return ledgerPeople.reduce((s,p)=>s+getLedgerBalance(p),0)}
 function getExternalPositionSummary(){let receivable=0,payable=0;ledgerPeople.forEach(p=>{const b=getLedgerBalance(p);if(b<0)receivable+=Math.abs(b);else payable+=b});return{receivable,payable,net:payable-receivable}}
 function getExternalMovementToday(){const started=Number(localStorage.getItem('rasidulDayStartedAt')||Date.now());let n=0;ledgerPeople.forEach(p=>(p.history||[]).forEach(h=>{const ts=Number(h.timestamp||new Date(h.time).getTime()||0);if(ts>=started)n+=h.type==='gave'?Number(h.amount||0):-Number(h.amount||0)}));return n}
-function calculate(){const o=getAccountTotals('opening'),c=getAccountTotals('closing'),ext=getExternalMovementToday(),wd=Number(localStorage.getItem('rasidulOwnerWithdrawToday')||0),ci=Number(localStorage.getItem('rasidulCapitalInjectionToday')||0);const profit=c.total-o.total-ext+wd-ci;window.profit=profit;window.mfsProfit=profit;window.rechargeProfit=0;const external=getExternalBalanceTotal(),pos=getExternalPositionSummary(),own=c.total-external,prot=num('protectedMfsCapital')+num('protectedRechargeCapital');window.currentOwnFund=own;window.externalFund=external;window.retainedProfit=own-prot;$('mfsProfitBox').innerHTML=money(profit)+' ৳';$('rechargeProfitBox').innerHTML='0 ৳';$('dailyProfit').innerHTML=money(profit)+' ৳';$('finalBox').innerHTML='💸 Business Profit: '+money(profit)+' টাকা<br><br>📥 Client-এর কাছে আমাদের পাওনা: '+money(pos.receivable)+' টাকা<br><br>📤 Client-এর কাছে আমাদের দেনা: '+money(pos.payable)+' টাকা<br><br>💰 Own Business Fund: '+money(own)+' টাকা<br><br>📊 Actual Closing Money: '+money(c.total)+' টাকা';$('insight').innerHTML=profit>=0?'📈 Profit চলছে':'🔴 Loss চলছে';$('achieve').innerHTML=profit>=3000?'🚀 Business Booster':'🏅 Daily Achievement';updateLiveTotals();updateFinancialPosition();updateCapitalProtection();return profit}
+function calculate(){const o=getAccountTotals('opening'),c=getAccountTotals('closing'),wd=Number(localStorage.getItem('rasidulOwnerWithdrawToday')||0),ci=Number(localStorage.getItem('rasidulCapitalInjectionToday')||0);const profit=c.total-o.total+wd-ci;window.profit=profit;window.mfsProfit=profit;window.rechargeProfit=0;const external=getExternalBalanceTotal(),pos=getExternalPositionSummary(),own=c.total-external,prot=num('protectedMfsCapital')+num('protectedRechargeCapital');window.currentOwnFund=own;window.externalFund=external;window.retainedProfit=own-prot;$('mfsProfitBox').innerHTML=money(profit)+' ৳';$('rechargeProfitBox').innerHTML='0 ৳';$('dailyProfit').innerHTML=money(profit)+' ৳';$('finalBox').innerHTML='💸 Business Profit: '+money(profit)+' টাকা<br><br>📥 Client-এর কাছে আমাদের পাওনা: '+money(pos.receivable)+' টাকা<br><br>📤 Client-এর কাছে আমাদের দেনা: '+money(pos.payable)+' টাকা<br><br>💰 Own Business Fund: '+money(own)+' টাকা<br><br>📊 Actual Closing Money: '+money(c.total)+' টাকা';$('insight').innerHTML=profit>=0?'📈 Profit চলছে':'🔴 Loss চলছে';$('achieve').innerHTML=profit>=3000?'🚀 Business Booster':'🏅 Daily Achievement';updateLiveTotals();updateFinancialPosition();updateCapitalProtection();return profit}
 function saveFinal(){const p=calculate(),item={date:new Date().toLocaleString(),mfs:window.mfsProfit||0,recharge:0,profit:p,note:$('note').value};if(editIndex!==null){histories[editIndex]=item;editIndex=null}else histories.unshift(item);localStorage.setItem(HIST_KEY,JSON.stringify(histories));renderHistory();updateMonthly();cloudSave()}
 function renderHistory(){$('historyBox').innerHTML=histories.map((h,i)=>`<div class="history"><div class="tag"><button class="smallBtn edit" onclick="editHistory(${i})">Edit</button><button class="smallBtn del" onclick="deleteHistory(${i})">Delete</button></div>📅 ${h.date}<br>💸 MFS Profit: ${h.mfs||0} ৳<br>📱 Recharge Profit: ${h.recharge||0} ৳<br>💰 Total Profit: ${h.profit||0} ৳<br>📝 ${h.note||''}</div>`).join('')||'<div class="history">No History</div>'}
 function editHistory(i){$('note').value=histories[i].note||'';editIndex=i;window.scrollTo({top:0,behavior:'smooth'})}function deleteHistory(i){if(confirm('Delete this history?')){histories.splice(i,1);localStorage.setItem(HIST_KEY,JSON.stringify(histories));renderHistory();updateMonthly();cloudSave()}}
@@ -251,7 +270,27 @@ function saveLedgerTransaction(){
   if(map&&sign<0&&num(map)<amount)
     return alert('🚫 নির্বাচিত Account-এ পর্যাপ্ত টাকা নেই।');
 
-  if(map)$(map).value=num(map)+sign*amount;
+  /*
+   * Ledger balance rule:
+   *   gave = money came IN  -> add to BOTH opening-adjusted base and closing
+   *   took = money went OUT -> subtract from BOTH
+   *
+   * This makes an external fund transaction part of the account balance
+   * itself, instead of creating a separate hidden adjustment that can vanish
+   * after refresh/cloud restore.
+   */
+  if(map){
+    $(map).value=num(map)+sign*amount;
+
+    const openingMap={
+      cbk:'obk', cng:'ong', crk:'ork', cgp:'ogp', crobi:'orobi',
+      cair:'oair', cbl:'obl', ctk:'otk', cmc:'omc', crc:'orc'
+    }[map];
+
+    if(openingMap){
+      $(openingMap).value=num(openingMap)+sign*amount;
+    }
+  }
 
   p.history=p.history||[];
   p.history.push({
@@ -567,7 +606,7 @@ let cloudSyncTimer=null;
 let cloudBusy=false;
 let suppressAutoSync=false;
 let firebaseInitializing=null;
-const ERP_VERSION='v6-cloud-integrity-repair';
+const ERP_VERSION='v6.1-cloud-integrity-fixed';
 const ERP_MAIN_PATH=['erpData','main'];
 
 async function sha256Text(text){
@@ -714,33 +753,51 @@ async function writeCloudSnapshot(d,createBackup=true){
   return base;
 }
 
-async function cloudSave(){
-  if(!firebaseReady||!db||!navigator.onLine||!appVerified||cloudBusy)return false;
+async function cloudSave(createRecoveryPoint=false){
+  if(!firebaseReady||!db||!navigator.onLine||!appVerified)return false;
+  if(cloudBusy)return false;
+
   cloudBusy=true;
   try{
     $('cloudStatus').innerHTML='🟡 Syncing Secure Cloud...';
-    const saved=await writeCloudSnapshot(localPayload(),true);
-    window.__ERP_SYNC_PENDING__=false;
-    localStorage.setItem('lastCloudSync',new Date().toLocaleString());
+
+    // ALWAYS upload the current verified local state. Never replace it with
+    // an older Cloud copy during a normal sync.
+    const payload=localPayload();
+    const saved=await writeCloudSnapshot(payload,false);
+
+    const syncedHash=await sha256Text(stableIntegrityString(saved));
+    localStorage.setItem(CLOUD_HASH_KEY,syncedHash);
+    clearLocalDirty();
+
     $('cloudStatus').innerHTML='🟢 Cloud Verified • Safe To Use';
     $('syncStatus').innerHTML='✅ '+new Date().toLocaleString();
+
+    // Recovery points are intentionally separate from ordinary auto-sync.
+    // This prevents every keystroke/transaction from creating a "backup".
+    if(createRecoveryPoint) await createCloudBackup(true,true);
+
     return !!saved;
   }catch(e){
-    console.error(e);
+    console.error('Cloud sync failed, local state preserved:',e);
+    // IMPORTANT: A temporary Cloud failure must NOT restore/overwrite local
+    // data and must NOT lock the ERP. The current data remains safely local
+    // and will be retried automatically when Cloud is available again.
+    localStorage.setItem(CLOUD_PENDING_KEY,'1');
     window.__ERP_SYNC_PENDING__=true;
-    $('cloudStatus').innerHTML='🔴 Cloud Sync Failed';
-    setCloudLock(true,'🔴 Cloud Sync failed। নিরাপত্তার জন্য ERP locked আছে। Internet/Cloud ঠিক করে আবার Verify করুন।');
+    $('cloudStatus').innerHTML='🟠 Cloud Sync Pending • Local data preserved';
+    $('syncStatus').innerHTML='⚠️ Sync pending: '+new Date().toLocaleString();
     return false;
-  }finally{cloudBusy=false}
+  }finally{
+    cloudBusy=false;
+  }
 }
-
 function scheduleCloudSync(){
   if(suppressAutoSync||!appVerified||!navigator.onLine)return;
-  window.__ERP_SYNC_PENDING__=true;
+  markLocalDirty();
   clearTimeout(cloudSyncTimer);
-  cloudSyncTimer=setTimeout(()=>cloudSave(),900);
+  cloudSyncTimer=setTimeout(()=>cloudSave(false),900);
 }
-
 async function applyCloudData(d){
   suppressAutoSync=true;
   histories=Array.isArray(d.histories)?d.histories:[];
@@ -765,6 +822,13 @@ async function applyCloudData(d){
   restore();
   initProtectedCapital();
   renderAll();
+
+  // Data explicitly accepted from Cloud becomes the new synchronized baseline.
+  try{
+    const cloudHash=await sha256Text(stableIntegrityString(d));
+    localStorage.setItem(CLOUD_HASH_KEY,cloudHash);
+  }catch(e){}
+  clearLocalDirty();
   suppressAutoSync=false;
 }
 
@@ -873,59 +937,51 @@ async function cloudVerifyAndLoad(){
       const d=snap.data()||{};
       setCloudLockMessage('🔐 Cloud data পাওয়া গেছে। Integrity যাচাই করা হচ্ছে...');
 
-      let integrity=await verifyCloudIntegrity(d);
-
+      const integrity=await verifyCloudIntegrity(d);
       if(!integrity.valid){
-        // First choice: restore from a cryptographically verified recovery point.
+        // Never use local data to repair a Cloud integrity failure.
         const verifiedBackups=await listVerifiedCloudBackups();
-
         if(verifiedBackups.length){
           const latest=verifiedBackups[0];
           const age=backupAgeLabel(latest.data.createdAt||latest.data.backupCreatedAt);
           setCloudLockMessage('♻️ Main Cloud record mismatch। Verified Recovery Point পাওয়া গেছে: '+age);
 
-          // Do not silently restore. Ask once so an accidental old restore
-          // can never happen without the owner seeing it.
           const useBackup=confirm(
-            '🚨 Cloud Integrity Mismatch পাওয়া গেছে।\\n\\n'+
+            '🚨 Cloud Integrity Mismatch পাওয়া গেছে.\\n\\n'+
             'একটি Verified Recovery Point পাওয়া গেছে:\\n'+
             '🕒 '+new Date(latest.data.createdAt||latest.data.backupCreatedAt).toLocaleString()+
             '\\n⏱️ '+age+
             '\\n\\nএই verified backup দিয়ে Main Cloud record repair করবেন?\\n\\n'+
             '⚠️ বর্তমান Main Cloud data overwrite হবে।'
           );
-
           if(!useBackup){
             setCloudLock(true,'🔴 Integrity mismatch। নিরাপত্তার জন্য ERP locked রাখা হয়েছে।');
             $('cloudStatus').innerHTML='🔴 Integrity Failed • Action Required';
             return false;
           }
 
-          const backup=latest.data;
-          await applyCloudData(backup);
-          const repaired=await writeCloudSnapshot(localPayload(),true);
+          await applyCloudData(latest.data);
+          const repaired=await writeCloudSnapshot(localPayload(),false);
           await applyCloudData(repaired);
-          appVerified=true;
+          await createCloudBackup(true,true);
           setCloudLock(false);
           $('cloudStatus').innerHTML='🟢 Cloud Verified • Recovery Repaired';
-          $('syncStatus').innerHTML='♻️ Restored: '+new Date(backup.createdAt||backup.backupCreatedAt).toLocaleString();
+          $('syncStatus').innerHTML='♻️ Restored: '+new Date(latest.data.createdAt||latest.data.backupCreatedAt).toLocaleString();
           localStorage.setItem('lastRestoreDate',new Date().toLocaleString());
           $('lastRestoreStatus').innerHTML='🔄 '+localStorage.getItem('lastRestoreDate');
           return true;
         }
 
-        // No trusted backup exists. We can still repair an old/legacy hash
-        // ONLY from the current Firebase document after explicit confirmation.
+        // Existing Cloud data is structurally valid but has an old/legacy
+        // hash. Explicitly re-sign CURRENT CLOUD DATA only.
         if(isValidERPCloudStructure(d)){
-          setCloudLockMessage('🛠️ Cloud data structure valid। পুরোনো/ভুল hash format repair করা যেতে পারে...');
+          setCloudLockMessage('🛠️ Cloud data structure valid। Integrity format repair করা যেতে পারে...');
           const repair=confirm(
-            '🔐 Cloud Integrity Hash mismatch হয়েছে।\\n\\n'+
-            'Firebase-এর বর্তমান Cloud data structure ঠিক আছে।\\n\\n'+
-            'আমি কি এই CURRENT CLOUD DATA-কে নতুন secure Integrity Hash দিয়ে re-sign করব?\\n\\n'+
-            '✅ Local/offline data ব্যবহার করা হবে না।\\n'+
-            '✅ বর্তমান Cloud data-ই থাকবে।'
+            '🔐 Cloud Integrity Hash mismatch হয়েছে.\\n\\n'+
+            'Firebase-এর CURRENT Cloud data structure ঠিক আছে.\\n\\n'+
+            'এই CURRENT CLOUD DATA-কে নতুন secure Integrity Hash দিয়ে re-sign করবেন?\\n\\n'+
+            '✅ Local/offline data ব্যবহার করা হবে না।'
           );
-
           if(repair){
             const done=await repairCurrentCloudRecord(d);
             if(done){
@@ -934,7 +990,6 @@ async function cloudVerifyAndLoad(){
               const fixedIntegrity=await verifyCloudIntegrity(fixed);
               if(fixed&&fixedIntegrity.valid){
                 await applyCloudData(fixed);
-                appVerified=true;
                 setCloudLock(false);
                 $('cloudStatus').innerHTML='🟢 Cloud Verified • Integrity Repaired';
                 $('syncStatus').innerHTML='🔐 Current Cloud data re-signed: '+new Date().toLocaleString();
@@ -949,8 +1004,37 @@ async function cloudVerifyAndLoad(){
         return false;
       }
 
+      // CRITICAL FIX:
+      // If local changes were made after the last successful Cloud sync,
+      // NEVER overwrite them with the older Cloud snapshot.
+      const localNow=localPayload();
+      const localHash=await sha256Text(stableIntegrityString(localNow));
+      const cloudHash=String(d.integrityHash||'');
+      const dirty=localStateIsDirty() || (cloudHash && localHash!==cloudHash);
+
+      if(dirty){
+        setCloudLockMessage('🔄 Local হিসাবের নতুন পরিবর্তন পাওয়া গেছে। Cloud পুরনো হলে local data preserve করে sync করা হবে...');
+        const localStructure=isValidERPCloudStructure(localNow);
+        if(!localStructure){
+          setCloudLock(true,'🚨 Local data structure invalid। নিরাপত্তার জন্য ERP locked আছে।');
+          return false;
+        }
+
+        // Local is the latest user-edited state. Keep it untouched while
+        // uploading it. If the upload fails, the local state remains dirty.
+        markLocalDirty();
+        const saved=await writeCloudSnapshot(localNow,false);
+        await applyCloudData(saved);
+        await createCloudBackup(false,true);
+
+        setCloudLock(false);
+        $('cloudStatus').innerHTML='🟢 Cloud Verified • Local Changes Preserved';
+        $('syncStatus').innerHTML='☁️ Local changes synced: '+new Date().toLocaleString();
+        return true;
+      }
+
+      // No local pending changes: Cloud is the source of truth.
       await applyCloudData(d);
-      appVerified=true;
       setCloudLock(false);
       $('cloudStatus').innerHTML='🟢 Cloud Verified • Safe To Use';
       $('syncStatus').innerHTML='☁️ '+new Date(d.updated||Date.now()).toLocaleString();
@@ -960,11 +1044,9 @@ async function cloudVerifyAndLoad(){
         try{
           const migrated={...d};
           delete migrated.integrityHash;
-          await writeCloudSnapshot(migrated,true);
+          await writeCloudSnapshot(migrated,false);
           const verifySnap=await window._fb.getDoc(window._fb.doc(db,'erpData','main'));
-          if(verifySnap.exists()){
-            await applyCloudData(verifySnap.data());
-          }
+          if(verifySnap.exists()) await applyCloudData(verifySnap.data());
         }catch(e){console.warn('Integrity migration skipped',e)}
       }
       return true;
@@ -973,9 +1055,9 @@ async function cloudVerifyAndLoad(){
     // First cloud initialization only.
     setCloudLockMessage('☁️ Cloud-এ প্রথম secure snapshot তৈরি করা হচ্ছে...');
     const initial=localPayload();
-    const saved=await writeCloudSnapshot(initial,true);
+    const saved=await writeCloudSnapshot(initial,false);
     await applyCloudData(saved);
-    appVerified=true;
+    await createCloudBackup(true,true);
     setCloudLock(false);
     $('cloudStatus').innerHTML='🟢 Cloud Verified • Initial Backup Created';
     $('syncStatus').innerHTML='✅ Initial Cloud Backup: '+new Date().toLocaleString();
@@ -988,7 +1070,6 @@ async function cloudVerifyAndLoad(){
     return false;
   }
 }
-
 async function retryCloudVerification(){
   const ok=await cloudVerifyAndLoad();
   if(ok)startCloudBackupScheduler();
@@ -1021,7 +1102,7 @@ function buildCloudBackupPayload(){
 }
 
 async function createCloudBackup(force=false, silent=false){
-  if(!firebaseReady || !db) return false;
+  if(!firebaseReady || !db || !appVerified || !navigator.onLine) return false;
   const now = Date.now();
   if(!force && lastCloudBackupAt && (now-lastCloudBackupAt) < CLOUD_BACKUP_INTERVAL) return false;
 
@@ -1156,9 +1237,10 @@ async function restoreCloudBackup(id){
     localStorage.setItem('lastRestoreDate',new Date().toLocaleString());
     $('lastRestoreStatus').innerHTML='🔄 '+localStorage.getItem('lastRestoreDate');
 
-    // After restoring an old point, immediately create a new safety point containing the restored state.
-    await cloudSave();
-    await createCloudBackup(true,true);
+    // After restoring an old point, immediately make the restored state the
+    // Main Cloud source of truth, then create one fresh recovery point.
+    markLocalDirty();
+    await cloudSave(true);
 
     closeCloudBackupManager();
     alert('✅ Cloud Recovery Point Restore Complete\\n\\n🕒 Backup time: '+new Date(d.createdAt).toLocaleString());
@@ -1189,7 +1271,8 @@ function startCloudBackupScheduler(){
   if(backupTimer) clearInterval(backupTimer);
   backupTimer=setInterval(async()=>{
     if(document.visibilityState==='hidden') return;
-    if(navigator.onLine && firebaseReady){
+    if(navigator.onLine && firebaseReady && appVerified){
+      if(localStateIsDirty()) await cloudSave(false);
       await createCloudBackup(false,true);
     }
   }, 60*1000);
@@ -1198,8 +1281,8 @@ function startCloudBackupScheduler(){
 async function manualCloudSync(){
   if(!appVerified)return alert('🔐 আগে Cloud Verification সম্পন্ন করুন।');
   if(!navigator.onLine)return alert('🔴 Internet নেই। Cloud Backup করা যাবে না।');
-  const ok=await cloudSave();
-  alert(ok?'☁️ Secure Cloud Backup Successful\n\n✅ Main data updated\n✅ Integrity hash saved\n✅ Backup snapshot created':'❌ Cloud Backup Failed');
+  const ok=await cloudSave(true);
+  alert(ok?'☁️ Secure Cloud Backup Successful\n\n✅ Main data updated\n✅ Integrity hash saved\n🕒 Recovery point created':'❌ Cloud Backup Failed');
 }
 async function manualCloudRestore(){
   if(!appVerified)return alert('🔐 আগে Cloud Verification সম্পন্ন করুন।');
@@ -1246,6 +1329,16 @@ window.addEventListener('offline',()=>{
   setCloudLock(true,'🔴 Internet connection lost. ERP নিরাপত্তার জন্য সঙ্গে সঙ্গে locked হয়েছে।');
   $('cloudStatus').innerHTML='🔴 Offline • Access Locked';
 });
+document.addEventListener('visibilitychange',async()=>{
+  if(document.visibilityState==='visible' && navigator.onLine && appVerified && localStateIsDirty()){
+    await cloudSave(false);
+  }
+});
+setInterval(async()=>{
+  if(document.visibilityState==='visible' && navigator.onLine && appVerified && localStateIsDirty() && !cloudBusy){
+    await cloudSave(false);
+  }
+},15000);
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=8').catch(console.warn));
 </script>
 </body></html>
