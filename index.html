@@ -139,7 +139,21 @@ $('importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)re
 function addPerson(){const name=$('personName').value.trim();if(!name)return alert('নাম লিখুন');ledgerPeople.push({id:'P-'+Date.now(),name,mobile:$('personMobile').value.trim(),history:[]});saveLedgerData();$('personName').value='';$('personMobile').value='';renderAll();cloudSave()}
 function editPerson(i){const p=ledgerPeople[i],n=prompt('Edit Name',p.name);if(n===null)return;const m=prompt('Edit Mobile',p.mobile||'');p.name=n;p.mobile=m===null?p.mobile:m;saveLedgerData();renderAll();cloudSave()}
 function deletePerson(i){if(confirm('Delete Client: '+ledgerPeople[i].name+' ?')){ledgerPeople.splice(i,1);saveLedgerData();renderAll();cloudSave()}}
-function saveLedgerTransaction(){if(!ledgerPeople.length)return alert('আগে Person Add করুন');const i=Number($('ledgerPerson').value),amount=Number($('ledgerAmount').value||0),type=$('ledgerType').value,method=$('ledgerMethod').value,source=$('ledgerFundSource').value,note=($('ledgerNote')?.value||'').trim();if(amount<=0)return alert('সঠিক Amount দিন');const p=ledgerPeople[i];const sign=type==='gave'?1:-1;const map=method.includes('Bkash')?'cbk':method.includes('Nagad')?'cng':method==='Rocket'?'crk':method==='GP'?'cgp':method==='Robi'?'crobi':method==='Airtel'?'cair':method==='Banglalink'?'cbl':method==='Tally'?'ctk':method==='Cash'?(source==='mfs'?'cmc':'crc'):null;if(map&&sign<0&&num(map)<amount)return alert('🚫 নির্বাচিত Account-এ পর্যাপ্ত টাকা নেই।');if(map)$(map).value=num(map)+sign*amount;p.history=p.history||[];p.history.push({amount,type,method,fundSource:source,note,time:new Date().toLocaleString(),timestamp:Date.now()});saveLedgerData();$('ledgerAmount').value='';if($('ledgerNote'))$('ledgerNote').value='';autoSave();updateLiveTotals();updateCapitalProtection();renderAll();cloudSave();if(Math.abs(getLedgerBalance(p))<.001)archiveSettledLedger(i);else if(p.mobile)window.open('https://wa.me/'+p.mobile+'?text='+encodeURIComponent(buildWhatsAppMessage(p,amount,type,method,note)),'_blank')}
+function saveLedgerTransaction(){if(!ledgerPeople.length)return alert('আগে Person Add করুন');const i=Number($('ledgerPerson').value),amount=Number($('ledgerAmount').value||0),type=$('ledgerType').value,method=$('ledgerMethod').value,source=$('ledgerFundSource').value,note=($('ledgerNote')?.value||'').trim();if(amount<=0)return alert('সঠিক Amount দিন');const p=ledgerPeople[i];const sign=type==='gave'?1:-1;const map=method.includes('Bkash')?'cbk':method.includes('Nagad')?'cng':method==='Rocket'?'crk':method==='GP'?'cgp':method==='Robi'?'crobi':method==='Airtel'?'cair':method==='Banglalink'?'cbl':method==='Tally'?'ctk':method==='Cash'?(source==='mfs'?'cmc':'crc'):null;if(map&&sign<0&&num(map)<amount)return alert('🚫 নির্বাচিত Account-এ পর্যাপ্ত টাকা নেই।');if(map)$(map).value=num(map)+sign*amount;p.history=p.history||[];p.history.push({amount,type,method,fundSource:source,note,time:new Date().toLocaleString(),timestamp:Date.now()});saveLedgerData();$('ledgerAmount').value='';if($('ledgerNote'))$('ledgerNote').value='';autoSave();updateLiveTotals();updateCapitalProtection();renderAll();cloudSave();if(Math.abs(getLedgerBalance(p)) < .001){
+  archiveSettledLedger(i);
+}else if(p.mobile){
+  const waNumber = normalizeWhatsAppNumber(p.mobile);
+
+  if(waNumber){
+    window.open(
+      'https://wa.me/' + waNumber +
+      '?text=' + encodeURIComponent(
+        buildWhatsAppMessage(p, amount, type, method, note)
+      ),
+      '_blank'
+    );
+  }
+}
 function editTransaction(pi,hi){const h=ledgerPeople[pi].history[hi],a=prompt('Edit Amount',h.amount);if(a===null)return;const n=Number(a);if(!Number.isFinite(n)||n<=0)return alert('Invalid Amount');h.amount=n;saveLedgerData();renderAll();cloudSave()}
 function deleteTransaction(pi,hi){if(confirm('Delete Transaction?')){ledgerPeople[pi].history.splice(hi,1);saveLedgerData();renderAll();cloudSave()}}
 function archiveSettledLedger(i){const p=ledgerPeople[i];if(!p||!p.history?.length||Math.abs(getLedgerBalance(p))>.001)return false;const given=p.history.filter(h=>h.type==='gave').reduce((s,h)=>s+Number(h.amount||0),0),taken=p.history.filter(h=>h.type==='took').reduce((s,h)=>s+Number(h.amount||0),0);ledgerArchives.unshift({archiveId:'ARC-'+Date.now()+'-'+i,personId:p.id,personName:p.name,personMobile:p.mobile||'',settledAt:new Date().toLocaleString(),businessDate:new Date().toISOString().slice(0,10),finalBalance:0,totalGiven:given,totalTaken:taken,transactions:JSON.parse(JSON.stringify(p.history))});p.history=[];saveLedgerArchives();saveLedgerData();renderAll();cloudSave();return true}
@@ -163,7 +177,7 @@ function buildDueReminderMessage(p){
   const last=getLastClientTransaction(p);
   const lastNote=last?.note ? `\n📝 শেষ নোট: ${last.note}` : '';
   const lastDate=last?.time ? `\n📅 শেষ লেনদেন: ${last.time}` : '';
-  return `🔔৳${money(due)} *বকেয়া হিসাবের স্মরণবার্তা*
+  return `🔔 *বকেয়া হিসাবের স্মরণবার্তা*
 
 আসসালামু আলাইকুম ${p.name},
 
@@ -203,7 +217,68 @@ function sendAllDueReminders(){
 }
 
 function updateDueDashboard(){let total=0,pay=0,high=0,count=0;ledgerPeople.forEach(p=>{const b=getLedgerBalance(p);if(b<0){count++;total+=Math.abs(b)}if(b>0)pay+=b;if(p.history?.length){const days=Math.floor((Date.now()-Number(p.history[p.history.length-1].timestamp||Date.now()))/86400000);if(days>=10)high++}});$('ClientsCount').innerHTML=count;$('totalReceivable').innerHTML=money(total)+' ৳';$('totalPayable').innerHTML=money(pay)+' ৳';$('netPosition').innerHTML=money(total-pay)+' ৳';$('highRiskCount').innerHTML=high;$('ReminderBox').innerHTML=count?(high?'🔴 '+count+' Due Client | '+high+' Follow-up Needed':'🟠 '+count+' Due Client'):'✅ No Due Alerts'}
-function buildWhatsAppMessage(p,amount,type,method,note=''){const b=getLedgerBalance(p);return `${type==='gave'?'🟢 ${money(amount)} লেনদেন গ্রহণ করা হয়েছে':'🔴${money(amount)} লেনদেন প্রদান করা হয়েছে'}\n\n👤 ${p.name}\n💰 Amount: ৳${money(amount)}\n💳 মাধ্যম: ${method}${note?`\n📝 নোট: ${note}`:''}\n\n${b<0?'📥 বর্তমান পাওনা: ৳'+money(Math.abs(b)):b>0?'📤 বর্তমান দেনা: ৳'+money(b):'🤝 সকল হিসাব সমন্বয় হয়েছে'}\n\n🏪 Rubaiya Pharmacy\n📩 Sent by Rasidul AI 🤖\n\n🔐 এটি স্বয়ংক্রিয়ভাবে তৈরি করা বার্তা। কোনো ভুল বা অপরিচিত লেনদেন দেখলে দ্রুত জানাবেন।`}
+function buildWhatsAppMessage(p, amount, type, method, note=''){
+  const b = getLedgerBalance(p);
+  const received = type === 'gave';
+
+  const title = received
+    ? '🟢 লেনদেন গ্রহণ করা হয়েছে'
+    : '🔴 লেনদেন প্রদান করা হয়েছে';
+
+  const actionText = received
+    ? 'আপনার লেনদেনটি সফলভাবে আমাদের হিসাবে গ্রহণ করা হয়েছে।'
+    : 'আপনার লেনদেনটি সফলভাবে আমাদের হিসাব থেকে প্রদান করা হয়েছে।';
+
+  let balanceBlock = '';
+
+  if(b < 0){
+    balanceBlock =
+`📊 *বর্তমান হিসাব*
+
+📥 আমাদের পাওনা: *৳${money(Math.abs(b))}*`;
+  }else if(b > 0){
+    balanceBlock =
+`📊 *বর্তমান হিসাব*
+
+📤 আমাদের দেনা: *৳${money(b)}*`;
+  }else{
+    balanceBlock =
+`📊 *বর্তমান হিসাব*
+
+✅ *সকল হিসাব সম্পূর্ণ সমন্বয় হয়েছে*
+⚖️ বর্তমান বকেয়া: *৳0*`;
+  }
+
+  const noteBlock = note
+    ? `\n\n📝 *নোট*\n${note}`
+    : '';
+
+  const settlementText = b === 0
+    ? '\n\n🤝 আপনার সাথে সকল হিসাব বর্তমানে সম্পূর্ণ নিষ্পত্তি হয়েছে।'
+    : '';
+
+  return `💰━━━━━━━━━━━━━━━━━━💰
+        *৳ ${money(amount)}*
+   *${title}*
+💰━━━━━━━━━━━━━━━━━━💰
+
+👤 *গ্রাহক:* ${p.name}
+💳 *মাধ্যম:* ${method}
+
+📝 ${actionText}${noteBlock}
+
+${balanceBlock}${settlementText}
+
+━━━━━━━━━━━━━━━━━━━━
+🏪 *Rubaiya Pharmacy*
+🤖 *Sent by Rasidul AI*
+
+🔐 এটি একটি স্বয়ংক্রিয় কম্পিউটার-জেনারেটেড রিসিট।
+কোনো ভুল, অসঙ্গতি বা অপরিচিত লেনদেন দেখতে পেলে
+অনুগ্রহ করে আমাদের দ্রুত জানান।
+
+ধন্যবাদ। 🤝`;
+}
 function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function statementObject(source){const isArchive=source.archive!==undefined;if(isArchive){const a=ledgerArchives[source.archive];return{name:a.personName,mobile:a.personMobile||'',transactions:a.transactions||[],given:Number(a.totalGiven||0),taken:Number(a.totalTaken||0),balance:0,settledAt:a.settledAt||''}}const p=ledgerPeople[source.person];return{name:p.name,mobile:p.mobile||'',transactions:p.history||[],given:(p.history||[]).filter(h=>h.type==='gave').reduce((s,h)=>s+Number(h.amount||0),0),taken:(p.history||[]).filter(h=>h.type==='took').reduce((s,h)=>s+Number(h.amount||0),0),balance:getLedgerBalance(p),settledAt:''}}
 function makeStatementHTML(s){const rows=s.transactions.map((h,i)=>`<tr><td>${i+1}</td><td>${escapeHTML(h.time||'')}</td><td>${h.type==='gave'?'গ্রহণ':'প্রদান'}</td><td>${escapeHTML(h.method||'')}</td><td>৳${money(h.amount)}</td><td>${escapeHTML(h.note||'')}</td></tr>`).join('');return `<div id="statementDoc" class="statement"><h2 style="text-align:center">Rubaiya Pharmacy</h2><p style="text-align:center">Client Transaction Statement</p><hr><b>Client:</b> ${escapeHTML(s.name)}<br><b>Mobile:</b> ${escapeHTML(s.mobile||'')}<br>${s.settledAt?'<b>Settlement:</b> '+escapeHTML(s.settledAt):''}<hr><p>📥 Client দিয়েছে: <b>৳${money(s.given)}</b><br>📤 Client নিয়েছে: <b>৳${money(s.taken)}</b><br>⚖️ ${s.balance<0?'আমাদের পাওনা: ৳'+money(Math.abs(s.balance)):s.balance>0?'Client-এর কাছে আমাদের দেনা: ৳'+money(s.balance):'Final Balance: 0 ৳'}</p><table><thead><tr><th>#</th><th>সময়</th><th>ধরন</th><th>মাধ্যম</th><th>পরিমাণ</th><th>নোট</th></tr></thead><tbody>${rows||'<tr><td colspan="6">No Transaction</td></tr>'}</tbody></table><hr><p style="text-align:center">কম্পিউটার-জেনারেটেড স্টেটমেন্ট<br>Rubaiya Pharmacy</p></div>`}
