@@ -117,7 +117,15 @@ function closeProtectedCapitalEditor(e){if(e&&e.target&&e.target.id!=='protected
 async function saveProtectedCapitalSecure(){const nm=Number($('protectedEditMfs').value||0),nr=Number($('protectedEditRecharge').value||0);if(!Number.isFinite(nm)||nm<0||!Number.isFinite(nr)||nr<0)return alert('❌ Protected Capital-এর সঠিক amount দিন।');const old=getProtectedCapitalData();if(nm===old.mfs&&nr===old.recharge)return alert('ℹ️ কোনো পরিবর্তন করা হয়নি।');const first=!isProtectedConfigured();if(first){const p=$('protectedNewPassword').value,c=$('protectedConfirmPassword').value;if(p.length<4)return alert('🔐 Password কমপক্ষে 4 characters হতে হবে।');if(p!==c)return alert('❌ Password এবং Confirm Password মিলছে না।');if(!confirm('🛡️ প্রথমবার Protected Capital সেট করবেন?\n\nMFS: ৳'+money(nm)+'\nRecharge: ৳'+money(nr)+'\nTotal: ৳'+money(nm+nr)+'\n\nContinue?'))return;localStorage.setItem(PC_HASH,await hashProtectedPassword(p));localStorage.setItem(PC_CONFIG,'1')}else{const p1=$('protectedCurrentPassword').value,p2=$('protectedChangeConfirm').value;if(!p1||!p2)return alert('🔑 Current Password এবং Confirmation দুটোই দিন।');if(p1!==p2)return alert('❌ Password এবং Confirmation মিলছে না।');if(await hashProtectedPassword(p1)!==localStorage.getItem(PC_HASH))return alert('❌ Password সঠিক নয়। Protected Capital পরিবর্তন করা হয়নি।');if(!confirm('⚠️ Protected Capital পরিবর্তন করবেন?\n\nবর্তমান: ৳'+money(old.mfs+old.recharge)+'\nনতুন: ৳'+money(nm+nr)))return}localStorage.setItem(PC_KEY,JSON.stringify({mfs:nm,recharge:nr,updatedAt:new Date().toISOString()}));$('protectedMfsCapital').value=nm;$('protectedRechargeCapital').value=nr;autoSave();updateCapitalProtection();$('protectedCapitalModal').style.display='none';await cloudSave();alert('✅ Protected Capital Successfully Saved\n\n🛡️ MFS: ৳'+money(nm)+'\n📱 Recharge: ৳'+money(nr)+'\n💰 Total: ৳'+money(nm+nr))}
 function updateCapitalProtection(){const p=num('protectedMfsCapital')+num('protectedRechargeCapital'),o=getAccountTotals('opening').total,c=getAccountTotals('closing').total,a=c>0?c:o,e=getExternalBalanceTotal(),own=a-e,d=own-p;['protectedCapitalBox','currentOwnCapitalBox','capitalDifferenceBox'].forEach(()=>{});$('protectedCapitalBox').innerHTML=money(p)+' ৳';$('currentOwnCapitalBox').innerHTML='Current Own Capital: '+money(own)+' ৳';$('capitalDifferenceBox').innerHTML=(d>=0?'Available Above Floor: ':'Capital Shortage: ')+money(Math.abs(d))+' ৳';let cls=d<0?'danger':d===0?'warning':'safe';let msg=d<0?'🔴 Protected Floor-এর নিচে। ঘাটতি ৳'+money(Math.abs(d)):d===0?'🟡 Capital Boundary':'🟢 Capital Safe';$('capitalAlert').className='capital-alert '+cls;$('capitalAlert').innerHTML=msg;$('baseCapitalWarning').className='capital-alert '+cls;$('baseCapitalWarning').innerHTML=msg;$('capitalProtectionCard').className='mini capital-'+cls;$('capitalCheckBox').innerHTML=a<=0?'⏳ Closing Balance দিন।':(d<0?'🔴 Own Fund ৳'+money(own)+' | Protected ৳'+money(p):'🟢 Passed — Own Fund ৳'+money(own)+' | Protected ৳'+money(p));updateFinancialPosition()}
 function getAccountTotals(prefix){const x=prefix==='opening'?['obk','ong','ork','otk','omc','ogp','orobi','oair','obl','orc']:['cbk','cng','crk','ctk','cmc','cgp','crobi','cair','cbl','crc'];return{mfs:x.slice(0,5).reduce((s,id)=>s+num(id),0),recharge:x.slice(5).reduce((s,id)=>s+num(id),0),total:x.reduce((s,id)=>s+num(id),0)}}
-function getLedgerBalance(p){return(p.history||[]).reduce((s,h)=>s+(h.type==='gave'?Number(h.amount||0):h.type==='took'?-Number(h.amount||0):0),0)}
+function getLedgerBalance(p){
+  if(!p||!Array.isArray(p.history))return 0;
+  return p.history.reduce((s,h)=>{
+    if(!h||typeof h!=='object')return s;
+    const amount=Number(h.amount||0);
+    if(!Number.isFinite(amount))return s;
+    return s+(h.type==='gave'?amount:h.type==='took'?-amount:0);
+  },0);
+}
 function getExternalBalanceTotal(){return ledgerPeople.reduce((s,p)=>s+getLedgerBalance(p),0)}
 function getExternalPositionSummary(){let receivable=0,payable=0;ledgerPeople.forEach(p=>{const b=getLedgerBalance(p);if(b<0)receivable+=Math.abs(b);else payable+=b});return{receivable,payable,net:payable-receivable}}
 function getExternalMovementToday(){const started=Number(localStorage.getItem('rasidulDayStartedAt')||Date.now());let n=0;ledgerPeople.forEach(p=>(p.history||[]).forEach(h=>{const ts=Number(h.timestamp||new Date(h.time).getTime()||0);if(ts>=started)n+=h.type==='gave'?Number(h.amount||0):-Number(h.amount||0)}));return n}
@@ -139,19 +147,78 @@ $('importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)re
 function addPerson(){const name=$('personName').value.trim();if(!name)return alert('নাম লিখুন');ledgerPeople.push({id:'P-'+Date.now(),name,mobile:$('personMobile').value.trim(),history:[]});saveLedgerData();$('personName').value='';$('personMobile').value='';renderAll();cloudSave()}
 function editPerson(i){const p=ledgerPeople[i],n=prompt('Edit Name',p.name);if(n===null)return;const m=prompt('Edit Mobile',p.mobile||'');p.name=n;p.mobile=m===null?p.mobile:m;saveLedgerData();renderAll();cloudSave()}
 function deletePerson(i){if(confirm('Delete Client: '+ledgerPeople[i].name+' ?')){ledgerPeople.splice(i,1);saveLedgerData();renderAll();cloudSave()}}
-function saveLedgerTransaction(){if(!ledgerPeople.length)return alert('আগে Person Add করুন');const i=Number($('ledgerPerson').value),amount=Number($('ledgerAmount').value||0),type=$('ledgerType').value,method=$('ledgerMethod').value,source=$('ledgerFundSource').value,note=($('ledgerNote')?.value||'').trim();if(amount<=0)return alert('সঠিক Amount দিন');const p=ledgerPeople[i];const sign=type==='gave'?1:-1;const map=method.includes('Bkash')?'cbk':method.includes('Nagad')?'cng':method==='Rocket'?'crk':method==='GP'?'cgp':method==='Robi'?'crobi':method==='Airtel'?'cair':method==='Banglalink'?'cbl':method==='Tally'?'ctk':method==='Cash'?(source==='mfs'?'cmc':'crc'):null;if(map&&sign<0&&num(map)<amount)return alert('🚫 নির্বাচিত Account-এ পর্যাপ্ত টাকা নেই।');if(map)$(map).value=num(map)+sign*amount;p.history=p.history||[];p.history.push({amount,type,method,fundSource:source,note,time:new Date().toLocaleString(),timestamp:Date.now()});saveLedgerData();$('ledgerAmount').value='';if($('ledgerNote'))$('ledgerNote').value='';autoSave();updateLiveTotals();updateCapitalProtection();renderAll();cloudSave();if(Math.abs(getLedgerBalance(p)) < .001){
-  archiveSettledLedger(i);
-}else if(p.mobile){
-  const waNumber = normalizeWhatsAppNumber(p.mobile);
+function saveLedgerTransaction(){
+  if(!ledgerPeople.length)return alert('আগে Person Add করুন');
 
-  if(waNumber){
-    window.open(
-      'https://wa.me/' + waNumber +
-      '?text=' + encodeURIComponent(
-        buildWhatsAppMessage(p, amount, type, method, note)
-      ),
-      '_blank'
-    );
+  const i=Number($('ledgerPerson').value);
+  const amount=Number($('ledgerAmount').value||0);
+  const type=$('ledgerType').value;
+  const method=$('ledgerMethod').value;
+  const source=$('ledgerFundSource').value;
+  const note=($('ledgerNote')?.value||'').trim();
+
+  if(!Number.isFinite(amount)||amount<=0)return alert('সঠিক Amount দিন');
+
+  const p=ledgerPeople[i];
+  if(!p)return alert('Client নির্বাচন করুন');
+
+  const sign=type==='gave'?1:-1;
+  const map=method.includes('Bkash')?'cbk':
+    method.includes('Nagad')?'cng':
+    method==='Rocket'?'crk':
+    method==='GP'?'cgp':
+    method==='Robi'?'crobi':
+    method==='Airtel'?'cair':
+    method==='Banglalink'?'cbl':
+    method==='Tally'?'ctk':
+    method==='Cash'?(source==='mfs'?'cmc':'crc'):null;
+
+  if(map&&sign<0&&num(map)<amount)
+    return alert('🚫 নির্বাচিত Account-এ পর্যাপ্ত টাকা নেই।');
+
+  if(map)$(map).value=num(map)+sign*amount;
+
+  p.history=p.history||[];
+  p.history.push({
+    amount,
+    type,
+    method,
+    fundSource:source,
+    note,
+    time:new Date().toLocaleString(),
+    timestamp:Date.now()
+  });
+
+  saveLedgerData();
+  $('ledgerAmount').value='';
+  if($('ledgerNote'))$('ledgerNote').value='';
+
+  autoSave();
+  updateLiveTotals();
+  updateCapitalProtection();
+  renderAll();
+  cloudSave();
+
+  // Receipt তৈরি করার সময় Client-এর final balance এখনো history-তে আছে।
+  // তাই settled transaction-এর ক্ষেত্রেও সঠিক final balance দেখাবে।
+  const receiptMessage = p.mobile
+    ? buildWhatsAppMessage(p,amount,type,method,note)
+    : '';
+
+  if(p.mobile){
+    const waNumber=normalizeWhatsAppNumber(p.mobile);
+    if(waNumber&&receiptMessage){
+      window.open(
+        'https://wa.me/'+waNumber+
+        '?text='+encodeURIComponent(receiptMessage),
+        '_blank'
+      );
+    }
+  }
+
+  // WhatsApp receipt প্রস্তুত/খোলার পরে হিসাব 0 হলে archive করা হবে।
+  if(Math.abs(getLedgerBalance(p))<.001){
+    archiveSettledLedger(i);
   }
 }
 function editTransaction(pi,hi){const h=ledgerPeople[pi].history[hi],a=prompt('Edit Amount',h.amount);if(a===null)return;const n=Number(a);if(!Number.isFinite(n)||n<=0)return alert('Invalid Amount');h.amount=n;saveLedgerData();renderAll();cloudSave()}
