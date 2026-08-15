@@ -66,6 +66,8 @@ body.cloud-locked .bg{filter:blur(4px)}
 .cloud-lock-status{margin-top:15px;padding:12px;border-radius:12px;background:#111827;border:1px solid #334155;font-size:13px}
 .cloud-lock-retry{margin-top:14px;background:linear-gradient(135deg,#2563eb,#7c3aed)!important}
 
+.search-highlight{border-left:3px solid #60a5fa}.audit-empty{opacity:.7}
+@media(max-width:700px){.dash .mini h3{font-size:14px}.dash .mini h2{font-size:18px}.sectionTitle h2{font-size:20px}}
 .pdf{background:#dc2626!important}.download{background:#2563eb!important}.print{background:#475569!important}#finalBox{margin-top:18px;padding:20px;border-radius:18px;background:rgba(255,255,255,.12);font-size:20px;font-weight:bold;text-align:center}@media(max-width:700px){
   h1{font-size:30px}
   .top-grid{grid-template-columns:1fr 1fr!important;gap:8px}
@@ -127,6 +129,27 @@ body.cloud-locked .bg{filter:blur(4px)}
   <button class="download smallBtn" onclick="openCloudBackupManager()" style="margin-top:8px">🕒 View & Restore</button>
 </div><div class="mini"><h3>🏆 Best Profit Day</h3><p id="bestProfitDay">-</p></div><div class="mini"><h3>📉 Lowest Profit Day</h3><p id="lowestProfitDay">-</p></div><div class="mini"><h3>📈 Avg Daily Profit</h3><p id="avgProfit">0 ৳</p></div><div class="mini"><h3>💰 Lifetime Profit</h3><p id="lifetimeProfit">0 ৳</p></div><div class="mini"><h3>🎯 Target Progress</h3><p id="targetProgress">0%</p></div><div class="mini"><h3>🔔 Due Reminders</h3><p id="ReminderBox">No Alerts</p></div><div class="mini"><h3>👥 Total Clients Due</h3><p id="ClientsCount">0</p><button class="reminder smallBtn" onclick="sendAllDueReminders()" style="margin-top:8px">💬 Send Due Reminders</button></div><div class="mini"><h3>💰 Total Receivable</h3><p id="totalReceivable">0 ৳</p></div><div class="mini"><h3>🔴 High Risk Clients</h3><p id="highRiskCount">0</p></div><div class="mini"><h3>📤 মোট দেনা</h3><p id="totalPayable">0 ৳</p></div><div class="mini"><h3>⚖️ নেট ব্যালেন্স</h3><p id="netPosition">0 ৳</p></div>
 </div>
+<div class="card">
+  <div class="sectionTitle"><h2>🧠 Smart Accounting Center</h2><button class="download smallBtn" onclick="showReconciliation()">⚖️ Recheck</button></div>
+  <div class="dash" style="margin-top:10px">
+    <div class="mini"><h3>📌 Expected Closing</h3><h2 id="expectedClosingBox">0 ৳</h2></div>
+    <div class="mini"><h3>💰 Actual Closing</h3><h2 id="actualClosingBox">0 ৳</h2></div>
+    <div class="mini"><h3>📥 Today's Inflow</h3><h2 id="todayInflowBox">0 ৳</h2></div>
+    <div class="mini"><h3>📤 Today's Outflow</h3><h2 id="todayOutflowBox">0 ৳</h2></div>
+  </div>
+  <div id="reconcileResult" class="capital-alert safe">⏳ Reconciliation প্রস্তুত হচ্ছে...</div>
+  <p style="opacity:.8;font-size:13px">Expected Closing = Opening + আজকের account transaction-এর net movement. Client transaction Edit/Delete করলে account balance-ও একইসাথে সমন্বয় হবে।</p>
+</div>
+<div class="card">
+  <h2>🔎 Global Search</h2>
+  <input id="globalSearch" placeholder="Client / Mobile / Amount / Note / Method..." oninput="globalSearch()">
+  <div id="searchResults"><div class="history">🔎 Search করতে উপরের box ব্যবহার করুন।</div></div>
+</div>
+<div class="card">
+  <div class="sectionTitle"><h2>🔐 Audit Trail</h2><button class="smallBtn print" onclick="recordAudit('Audit Viewed',{});renderAuditLog()">Refresh</button></div>
+  <p style="opacity:.8;font-size:13px">Edit, Delete, Withdrawal, Client Transaction, Final Save এবং New Day-এর গুরুত্বপূর্ণ পরিবর্তন এখানে থাকবে।</p>
+  <div id="auditLogBox"><div class="history">Loading...</div></div>
+</div>
 <div class="top-grid"><div class="card"><h3>💎 Base Capital</h3><label>💰 MFS Base Capital</label><input id="mfsCapital" value="50000"><label>📱 Recharge Base Capital</label><input id="rechargeCapital" value="30000"><hr><div class="sectionTitle"><label>🛡️ Protected MFS Capital</label><button class="protected-inline-edit" onclick="openProtectedCapitalEditor()">🔐 Edit</button></div><input id="protectedMfsCapital" class="protected-readonly" readonly value="50000"><label>🛡️ Protected Recharge Capital</label><input id="protectedRechargeCapital" class="protected-readonly" readonly value="30000"><div id="baseCapitalWarning" class="capital-alert safe">🟢 আপনার Protected Capital নিরাপদ আছে।</div></div>
 <div class="card"><h3>📈 Reinvest Profit</h3><label>💰 MFS Reinvest</label><input id="mfsReinvest" value="0"><label>📱 Recharge Reinvest</label><input id="rechargeReinvest" value="0"><button style="margin-top:12px" onclick="applyReinvestment()">🚀 Add To Protected Capital</button></div></div>
 <div class="card"><h3>💸 Owner Withdrawal</h3><label>💰 Withdraw Amount</label><input id="withdrawAmount" value="0"><label>📝 Withdraw Reason</label><textarea id="withdrawReason"></textarea><label>🏦 Withdraw From</label><select id="withdrawSource"><option value="mfs">MFS Capital</option><option value="recharge">Recharge Capital</option></select><label>💳 Withdrawal Method</label><select id="withdrawMethod"><option>Cash</option><option>Bkash</option><option>Nagad</option><option>Rocket</option><option>GP</option><option>Robi</option><option>Airtel</option><option>Banglalink</option><option>Tally</option></select><button style="margin-top:12px" onclick="withdrawCapital()">💸 Withdraw From Capital</button></div>
@@ -167,13 +190,17 @@ body.cloud-locked .bg{filter:blur(4px)}
 
 <script>
 const FORM_KEY='rasidulForm', HIST_KEY='rasidulHistories', PEOPLE_KEY='ledgerPeople', ARCHIVE_KEY='rasidulLedgerArchives';
+const ACCOUNT_TX_KEY='rasidulAccountTransactions', AUDIT_KEY='rasidulAuditLog';
+const DAILY_ARCHIVE_KEY='rasidulDailyHistoryArchives';
 const CLOUD_HASH_KEY='rasidulLastCloudPayloadHash', CLOUD_PENDING_KEY='rasidulCloudSyncPending', CLOUD_REV_KEY='rasidulLocalRevision';
 const PC_KEY='rasidulProtectedCapital', PC_HASH='rasidulProtectedCapitalPasswordHash', PC_CONFIG='rasidulProtectedCapitalConfigured';
 let histories=JSON.parse(localStorage.getItem(HIST_KEY)||'[]');
 let ledgerPeople=JSON.parse(localStorage.getItem(PEOPLE_KEY)||'[]');
 let ledgerArchives=JSON.parse(localStorage.getItem(ARCHIVE_KEY)||'[]');
+let accountTransactions=JSON.parse(localStorage.getItem(ACCOUNT_TX_KEY)||'[]');
+let auditLog=JSON.parse(localStorage.getItem(AUDIT_KEY)||'[]');
 let editIndex=null, miniCalcTargetId=null, miniCalcExpression='', currentStatement=null;
-window.histories=histories;window.ledgerPeople=ledgerPeople;window.ledgerArchives=ledgerArchives;
+window.histories=histories;window.ledgerPeople=ledgerPeople;window.ledgerArchives=ledgerArchives;window.accountTransactions=accountTransactions;window.auditLog=auditLog;
 const $=id=>document.getElementById(id);const num=id=>Number($(id)?.value||0)||0;const money=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2});
 const openingIds=[['Bkash','obk'],['Nagad','ong'],['Rocket','ork'],['Tally Khata','otk'],['MFS Cash','omc'],['GP','ogp'],['Robi','orobi'],['Airtel','oair'],['Banglalink','obl'],['Recharge Cash','orc']];
 const closingIds=[['Bkash','cbk'],['Nagad','cng'],['Rocket','crk'],['Tally Khata','ctk'],['MFS Cash','cmc'],['GP','cgp'],['Robi','crobi'],['Airtel','cair'],['Banglalink','cbl'],['Recharge Cash','crc']];
@@ -188,6 +215,8 @@ function markLocalDirty(){
 function autoSave(){
   localStorage.setItem(FORM_KEY,JSON.stringify(formData()));
   localStorage.setItem('lastUpdateTime',new Date().toLocaleString());
+  saveAccountTransactions();
+  saveAuditLog();
   markLocalDirty();
   scheduleCloudSync();
 }
@@ -201,6 +230,85 @@ function localStateIsDirty(){
 function restore(){try{const d=JSON.parse(localStorage.getItem(FORM_KEY)||'{}');Object.keys(d).forEach(k=>{if($(k))$(k).value=d[k]})}catch(e){}}
 function saveLedgerData(){localStorage.setItem(PEOPLE_KEY,JSON.stringify(ledgerPeople));sessionStorage.setItem(PEOPLE_KEY,JSON.stringify(ledgerPeople));window.ledgerPeople=ledgerPeople}
 function saveLedgerArchives(){localStorage.setItem(ARCHIVE_KEY,JSON.stringify(ledgerArchives));sessionStorage.setItem(ARCHIVE_KEY,JSON.stringify(ledgerArchives));window.ledgerArchives=ledgerArchives}
+function saveAccountTransactions(){localStorage.setItem(ACCOUNT_TX_KEY,JSON.stringify(accountTransactions));window.accountTransactions=accountTransactions}
+function saveAuditLog(){localStorage.setItem(AUDIT_KEY,JSON.stringify(auditLog));window.auditLog=auditLog}
+function recordAudit(action,details={}){
+  auditLog.unshift({id:'AUD-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),time:new Date().toLocaleString(),timestamp:Date.now(),action,details});
+  if(auditLog.length>500)auditLog=auditLog.slice(0,500);
+  saveAuditLog();
+}
+function recordAccountTransaction({type='adjustment',amount=0,account=null,openingDelta=0,closingDelta=0,source='system',note='',personId=null,personName=null}={}){
+  const tx={id:'TX-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),timestamp:Date.now(),time:new Date().toLocaleString(),dayStartedAt:Number(localStorage.getItem('rasidulDayStartedAt')||0),type,amount:Number(amount)||0,account,openingDelta:Number(openingDelta)||0,closingDelta:Number(closingDelta)||0,source,note,personId,personName};
+  accountTransactions.unshift(tx);
+  if(accountTransactions.length>3000)accountTransactions=accountTransactions.slice(0,3000);
+  saveAccountTransactions();
+  return tx;
+}
+function accountFieldMap(method,source='mfs'){
+  const map={Bkash:'cbk',Nagad:'cng',Rocket:'crk',GP:'cgp',Robi:'crobi',Airtel:'cair',Banglalink:'cbl',Tally:'ctk'};
+  return map[method]||(method==='Cash'?(source==='mfs'?'cmc':'crc'):null);
+}
+function accountOpeningId(closingId){return {cbk:'obk',cng:'ong',crk:'ork',ctk:'otk',cmc:'omc',cgp:'ogp',crobi:'orobi',cair:'oair',cbl:'obl',crc:'orc'}[closingId]||null}
+function applyAccountDelta(closingId,delta,{alsoOpening=true}={}){
+  if(!closingId||!$(closingId))return;
+  $(closingId).value=Number(num(closingId)+Number(delta));
+  if(alsoOpening){
+    const oid=accountOpeningId(closingId);
+    if(oid&&$(oid))$(oid).value=Number(num(oid)+Number(delta));
+  }
+}
+function getTodayAccountTransactions(){
+  const start=Number(localStorage.getItem('rasidulDayStartedAt')||0);
+  return accountTransactions.filter(t=>Number(t.timestamp||0)>=start);
+}
+function reconcileAccounts(){
+  const o=getAccountTotals('opening'),c=getAccountTotals('closing');
+  const today=getTodayAccountTransactions();
+  const expectedDelta=today.reduce((s,t)=>s+Number(t.closingDelta||0),0);
+  const expectedClosing=o.total+expectedDelta;
+  const difference=c.total-expectedClosing;
+  const inflow=today.filter(t=>Number(t.closingDelta||0)>0).reduce((s,t)=>s+Number(t.closingDelta||0),0);
+  const outflow=today.filter(t=>Number(t.closingDelta||0)<0).reduce((s,t)=>s+Math.abs(Number(t.closingDelta||0)),0);
+  return {opening:o.total,actual:c.total,expected:expectedClosing,difference,inflow,outflow,net:inflow-outflow,count:today.length};
+}
+function showReconciliation(){
+  const r=reconcileAccounts();
+  const ok=Math.abs(r.difference)<0.01;
+  $('expectedClosingBox').innerHTML=money(r.expected)+' ৳';
+  $('actualClosingBox').innerHTML=money(r.actual)+' ৳';
+  $('todayInflowBox').innerHTML=money(r.inflow)+' ৳';
+  $('todayOutflowBox').innerHTML=money(r.outflow)+' ৳';
+  const box=$('reconcileResult');
+  if(box){
+    box.innerHTML=(ok?'🟢 <b>হিসাব সম্পূর্ণ মিলেছে</b>':'🔴 <b>হিসাবে পার্থক্য পাওয়া গেছে</b>')+
+      `<br>Opening: ৳${money(r.opening)} | In: +৳${money(r.inflow)} | Out: -৳${money(r.outflow)}`+
+      `<br>Expected Closing: <b>৳${money(r.expected)}</b> | Actual Closing: <b>৳${money(r.actual)}</b>`+
+      `<br>Difference: <b>৳${money(Math.abs(r.difference))}</b>`+
+      (ok?'':'<br>⚠️ Closing Balance-এর manual পরিবর্তনটি পরীক্ষা করুন।');
+    box.className='capital-alert '+(ok?'safe':'danger');
+  }
+  return r;
+}
+function renderAuditLog(){
+  const box=$('auditLogBox'); if(!box)return;
+  box.innerHTML=auditLog.slice(0,30).map(x=>`<div class="history"><b>🔐 ${escapeHTML(x.action||'Activity')}</b><br>🕒 ${escapeHTML(x.time||'')}<br><small>${escapeHTML(JSON.stringify(x.details||{}))}</small></div>`).join('')||'<div class="history">কোনো Audit Activity নেই।</div>';
+}
+function globalSearch(){
+  const q=String($('globalSearch')?.value||'').trim().toLowerCase();
+  const box=$('searchResults'); if(!box)return;
+  if(!q){box.innerHTML='<div class="history">🔎 Search করতে নাম, mobile, amount, note বা method লিখুন।</div>';return}
+  const rows=[];
+  ledgerPeople.forEach((p,i)=>{
+    const text=(p.name+' '+(p.mobile||'')).toLowerCase();
+    if(text.includes(q))rows.push(`👤 <b>${escapeHTML(p.name)}</b> • ${escapeHTML(p.mobile||'')} • Balance ৳${money(getLedgerBalance(p))} <button class="smallBtn edit" onclick="openClientStatement(${i})">Statement</button>`);
+    (p.history||[]).forEach((h,hi)=>{
+      const hay=(p.name+' '+p.mobile+' '+h.amount+' '+h.method+' '+h.note+' '+h.time).toLowerCase();
+      if(hay.includes(q))rows.push(`💳 ${escapeHTML(p.name)} • ${escapeHTML(h.type==='gave'?'গ্রহণ':'প্রদান')} • ৳${money(h.amount)} • ${escapeHTML(h.method||'')} • ${escapeHTML(h.time||'')}`);
+    });
+  });
+  histories.forEach(h=>{const hay=(h.date+' '+h.profit+' '+h.note).toLowerCase();if(hay.includes(q))rows.push(`📜 Daily History • ${escapeHTML(h.date||'')} • Profit ৳${money(h.profit)} • ${escapeHTML(h.note||'')}`)});
+  box.innerHTML=rows.slice(0,80).map(x=>`<div class="history">${x}</div>`).join('')||'<div class="history">❌ কোনো ফলাফল পাওয়া যায়নি।</div>';
+}
 function getProtectedCapitalData(){try{const d=JSON.parse(localStorage.getItem(PC_KEY)||'null');if(d&&typeof d==='object')return{mfs:Number(d.mfs||0),recharge:Number(d.recharge||0)}}catch(e){}return{mfs:0,recharge:0}}
 function isProtectedConfigured(){return localStorage.getItem(PC_CONFIG)==='1'&&!!localStorage.getItem(PC_HASH)}
 async function hashProtectedPassword(password){const t=String(password||'');if(!t)return'';if(crypto?.subtle&&window.TextEncoder){const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('')}let x=2166136261;for(let i=0;i<t.length;i++){x^=t.charCodeAt(i);x=Math.imul(x,16777619)}return'fallback-'+(x>>>0).toString(16)}
@@ -224,7 +332,7 @@ function getExternalBalanceTotal(){return ledgerPeople.reduce((s,p)=>s+getLedger
 function getExternalPositionSummary(){let receivable=0,payable=0;ledgerPeople.forEach(p=>{const b=getLedgerBalance(p);if(b<0)receivable+=Math.abs(b);else payable+=b});return{receivable,payable,net:payable-receivable}}
 function getExternalMovementToday(){const started=Number(localStorage.getItem('rasidulDayStartedAt')||Date.now());let n=0;ledgerPeople.forEach(p=>(p.history||[]).forEach(h=>{const ts=Number(h.timestamp||new Date(h.time).getTime()||0);if(ts>=started)n+=h.type==='gave'?Number(h.amount||0):-Number(h.amount||0)}));return n}
 function calculate(){const o=getAccountTotals('opening'),c=getAccountTotals('closing'),wd=Number(localStorage.getItem('rasidulOwnerWithdrawToday')||0),ci=Number(localStorage.getItem('rasidulCapitalInjectionToday')||0);const profit=c.total-o.total+wd-ci;window.profit=profit;window.mfsProfit=profit;window.rechargeProfit=0;const external=getExternalBalanceTotal(),pos=getExternalPositionSummary(),own=c.total-external,prot=num('protectedMfsCapital')+num('protectedRechargeCapital');window.currentOwnFund=own;window.externalFund=external;window.retainedProfit=own-prot;$('mfsProfitBox').innerHTML=money(profit)+' ৳';$('rechargeProfitBox').innerHTML='0 ৳';$('dailyProfit').innerHTML=money(profit)+' ৳';$('finalBox').innerHTML='💸 Business Profit: '+money(profit)+' টাকা<br><br>📥 Client-এর কাছে আমাদের পাওনা: '+money(pos.receivable)+' টাকা<br><br>📤 Client-এর কাছে আমাদের দেনা: '+money(pos.payable)+' টাকা<br><br>💰 Own Business Fund: '+money(own)+' টাকা<br><br>📊 Actual Closing Money: '+money(c.total)+' টাকা';$('insight').innerHTML=profit>=0?'📈 Profit চলছে':'🔴 Loss চলছে';$('achieve').innerHTML=profit>=3000?'🚀 Business Booster':'🏅 Daily Achievement';updateLiveTotals();updateFinancialPosition();updateCapitalProtection();return profit}
-function saveFinal(){const p=calculate(),item={date:new Date().toLocaleString(),mfs:window.mfsProfit||0,recharge:0,profit:p,note:$('note').value};if(editIndex!==null){histories[editIndex]=item;editIndex=null}else histories.unshift(item);localStorage.setItem(HIST_KEY,JSON.stringify(histories));renderHistory();updateMonthly();cloudSave()}
+function saveFinal(){const p=calculate(),item={date:new Date().toLocaleString(),mfs:window.mfsProfit||0,recharge:0,profit:p,note:$('note').value};recordAudit('Daily Final Saved',{profit:p,closing:getAccountTotals('closing').total});if(editIndex!==null){histories[editIndex]=item;editIndex=null}else histories.unshift(item);localStorage.setItem(HIST_KEY,JSON.stringify(histories));renderHistory();updateMonthly();cloudSave()}
 function renderHistory(){$('historyBox').innerHTML=histories.map((h,i)=>`<div class="history"><div class="tag"><button class="smallBtn edit" onclick="editHistory(${i})">Edit</button><button class="smallBtn del" onclick="deleteHistory(${i})">Delete</button></div>📅 ${h.date}<br>💸 MFS Profit: ${h.mfs||0} ৳<br>📱 Recharge Profit: ${h.recharge||0} ৳<br>💰 Total Profit: ${h.profit||0} ৳<br>📝 ${h.note||''}</div>`).join('')||'<div class="history">No History</div>'}
 function editHistory(i){$('note').value=histories[i].note||'';editIndex=i;window.scrollTo({top:0,behavior:'smooth'})}function deleteHistory(i){if(confirm('Delete this history?')){histories.splice(i,1);localStorage.setItem(HIST_KEY,JSON.stringify(histories));renderHistory();updateMonthly();cloudSave()}}
 function updateMonthly(){const total=histories.reduce((s,h)=>s+Number(h.profit||0),0);$('monthlyProfit').innerHTML=money(total)+' ৳';$('lifetimeProfit').innerHTML=money(total)+' ৳';if(histories.length){const best=histories.reduce((a,b)=>Number(a.profit)>Number(b.profit)?a:b),low=histories.reduce((a,b)=>Number(a.profit)<Number(b.profit)?a:b);$('bestProfitDay').innerHTML=money(best.profit)+' ৳';$('lowestProfitDay').innerHTML=money(low.profit)+' ৳';$('avgProfit').innerHTML=money(total/histories.length)+' ৳'}const t=num('target');$('targetProgress').innerHTML=t?Math.min(100,Math.max(0,(Number(window.profit||0)/t)*100)).toFixed(1)+'%':'0%'}
@@ -232,111 +340,94 @@ function updateLiveTotals(){const o=getAccountTotals('opening'),c=getAccountTota
 function updateFinancialPosition(){const c=getAccountTotals('closing'),o=getAccountTotals('opening'),actual=c.total>0?c.total:o.total,ext=getExternalBalanceTotal(),own=actual-ext,prot=num('protectedMfsCapital')+num('protectedRechargeCapital'),pos=getExternalPositionSummary();$('workingCapitalBox').innerHTML=money(own)+' ৳';$('actualMoneyBox').innerHTML=money(actual)+' ৳';$('externalFundBox').innerHTML=money(pos.receivable)+' ৳';$('externalMovementBox').innerHTML='আমাদের দেনা: '+money(pos.payable)+' ৳ | আজকের Net Movement: '+money(getExternalMovementToday())+' ৳';$('ownFundBox').innerHTML=money(own)+' ৳';$('retainedProfitBox').innerHTML='Above Protected Floor: '+money(own-prot)+' ৳';$('moneyPositionBox').innerHTML='Own: '+money(own)+' ৳ | External: '+money(ext)+' ৳';updateDueDashboard()}
 function calcCash(){const t=num('n1000')*1000+num('n500')*500+num('n200')*200+num('n100')*100+num('n50')*50+num('n20')*20+num('n10')*10;$('cashTotal').innerHTML=money(t);return t}function applyCash(){const t=calcCash();$( $('cashTarget').value ).value=t;autoSave();updateLiveTotals();updateCapitalProtection()}function clearCalc(){document.querySelectorAll('.cash-grid input').forEach(e=>e.value='');$('cashTotal').innerHTML='0'}
 async function applyReinvestment(){const m=num('mfsReinvest'),r=num('rechargeReinvest');if(m<0||r<0||m+r<=0)return alert('❌ Reinvest amount দিন');openProtectedCapitalEditor(num('protectedMfsCapital')+m,num('protectedRechargeCapital')+r)}
-function withdrawCapital(){const amount=num('withdrawAmount');if(amount<=0)return alert('Enter Valid Amount');const actual=getAccountTotals('closing').total||getAccountTotals('opening').total,own=actual-getExternalBalanceTotal(),prot=num('protectedMfsCapital')+num('protectedRechargeCapital');if(amount>own-prot)return alert('🚫 Protected Capital ভাঙা যাবে না। Available Above Floor: ৳'+money(own-prot));const method=$('withdrawMethod').value,source=$('withdrawSource').value;const map={Bkash:'cbk',Nagad:'cng',Rocket:'crk',GP:'cgp',Robi:'crobi',Airtel:'cair',Banglalink:'cbl',Tally:'ctk'};const id=map[method]||(source==='mfs'?'cmc':'crc');$(id).value=Math.max(0,num(id)-amount);localStorage.setItem('rasidulOwnerWithdrawToday',String(Number(localStorage.getItem('rasidulOwnerWithdrawToday')||0)+amount));histories.unshift({date:new Date().toLocaleString(),mfs:0,recharge:0,profit:0,note:'💸 Owner Withdrawal: '+money(amount)+' ৳ | '+method+' | '+($('withdrawReason').value||'No Reason')});localStorage.setItem(HIST_KEY,JSON.stringify(histories));$('withdrawAmount').value='0';$('withdrawReason').value='';renderHistory();updateMonthly();autoSave();updateLiveTotals();updateCapitalProtection();cloudSave();alert('💸 Withdrawal Saved')}
-function newDay(){if(!confirm('🆕 New Day শুরু করবেন? Closing → Opening হবে এবং Protected Capital অপরিবর্তিত থাকবে।'))return;archiveCurrentDailyHistory();closingIds.forEach(([,cid],i)=>{$(openingIds[i][1]).value=$(cid).value});localStorage.setItem('rasidulDayStartedAt',String(Date.now()));localStorage.setItem('rasidulOwnerWithdrawToday','0');localStorage.setItem('rasidulCapitalInjectionToday','0');autoSave();updateLiveTotals();updateCapitalProtection();alert('🆕 New Day Started')}
+function withdrawCapital(){const amount=num('withdrawAmount');if(amount<=0)return alert('Enter Valid Amount');const actual=getAccountTotals('closing').total||getAccountTotals('opening').total,own=actual-getExternalBalanceTotal(),prot=num('protectedMfsCapital')+num('protectedRechargeCapital');if(amount>own-prot)return alert('🚫 Protected Capital ভাঙা যাবে না। Available Above Floor: ৳'+money(own-prot));const method=$('withdrawMethod').value,source=$('withdrawSource').value;const map={Bkash:'cbk',Nagad:'cng',Rocket:'crk',GP:'cgp',Robi:'crobi',Airtel:'cair',Banglalink:'cbl',Tally:'ctk'};const id=map[method]||(source==='mfs'?'cmc':'crc');$(id).value=Math.max(0,num(id)-amount);
+localStorage.setItem('rasidulOwnerWithdrawToday',String(Number(localStorage.getItem('rasidulOwnerWithdrawToday')||0)+amount));
+recordAccountTransaction({type:'owner-withdrawal',amount,account:id,openingDelta:0,closingDelta:-amount,source:'owner-withdrawal',note:$('withdrawReason').value||'No Reason'});
+recordAudit('Owner Withdrawal',{amount,method,source,account:id,reason:$('withdrawReason').value||'No Reason'});
+histories.unshift({date:new Date().toLocaleString(),mfs:0,recharge:0,profit:0,note:'💸 Owner Withdrawal: '+money(amount)+' ৳ | '+method+' | '+($('withdrawReason').value||'No Reason')});localStorage.setItem(HIST_KEY,JSON.stringify(histories));$('withdrawAmount').value='0';$('withdrawReason').value='';renderHistory();updateMonthly();autoSave();updateLiveTotals();updateCapitalProtection();cloudSave();alert('💸 Withdrawal Saved')}
+function newDay(){if(!confirm('🆕 New Day শুরু করবেন? Closing → Opening হবে এবং Protected Capital অপরিবর্তিত থাকবে।'))return;recordAudit('New Day Started',{previousClosing:getAccountTotals('closing').total});archiveCurrentDailyHistory();closingIds.forEach(([,cid],i)=>{$(openingIds[i][1]).value=$(cid).value});localStorage.setItem('rasidulDayStartedAt',String(Date.now()));localStorage.setItem('rasidulOwnerWithdrawToday','0');localStorage.setItem('rasidulCapitalInjectionToday','0');autoSave();updateLiveTotals();updateCapitalProtection();alert('🆕 New Day Started')}
 function archiveCurrentDailyHistory(){if(!histories.length)return;const a=JSON.parse(localStorage.getItem('rasidulDailyHistoryArchives')||'[]');a.unshift({dateKey:new Date().toISOString().slice(0,10),archivedAt:new Date().toLocaleString(),items:histories.slice()});localStorage.setItem('rasidulDailyHistoryArchives',JSON.stringify(a));histories=[];localStorage.setItem(HIST_KEY,'[]');renderHistory();renderDailyHistoryArchives()}
 function renderDailyHistoryArchives(){const a=JSON.parse(localStorage.getItem('rasidulDailyHistoryArchives')||'[]');$('dailyHistoryArchiveBox').innerHTML=a.map(x=>`<details class="partner"><summary>📦 ${x.dateKey} · ${(x.items||[]).length} Entries</summary>${(x.items||[]).map(h=>`<div class="history">📅 ${h.date||''}<br>💰 Profit: ${h.profit||0} ৳<br>📝 ${h.note||''}</div>`).join('')}</details>`).join('')||'<div class="history">📦 কোনো Daily Archive নেই।</div>'}
-function exportData(){const d={histories,ledgerPeople,ledgerArchives,form:formData(),protectedCapital:getProtectedCapitalData(),protectedCapitalPasswordHash:localStorage.getItem(PC_HASH)||null,protectedCapitalConfigured:isProtectedConfigured(),backupDate:new Date().toLocaleString()};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.download='rasidul_backup.json';a.click();localStorage.setItem('lastExportDate',new Date().toLocaleString());$('lastExportStatus').innerHTML='📦 '+localStorage.getItem('lastExportDate')}
-$('importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);histories=d.histories||[];ledgerPeople=d.ledgerPeople||[];ledgerArchives=d.ledgerArchives||[];localStorage.setItem(HIST_KEY,JSON.stringify(histories));saveLedgerData();saveLedgerArchives();localStorage.setItem(FORM_KEY,JSON.stringify(d.form||{}));if(d.protectedCapital)localStorage.setItem(PC_KEY,JSON.stringify(d.protectedCapital));if(d.protectedCapitalPasswordHash)localStorage.setItem(PC_HASH,d.protectedCapitalPasswordHash);if(d.protectedCapitalConfigured)localStorage.setItem(PC_CONFIG,'1');restore();initProtectedCapital();renderAll();alert('✅ Import Successful')}catch(err){alert('❌ Invalid Backup File')}};r.readAsText(f)})
+function exportData(){const d={histories,ledgerPeople,ledgerArchives,accountTransactions,auditLog,form:formData(),protectedCapitalPasswordHash:localStorage.getItem(PC_HASH)||null,protectedCapitalConfigured:isProtectedConfigured(),backupDate:new Date().toLocaleString()};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.download='rasidul_backup.json';a.click();localStorage.setItem('lastExportDate',new Date().toLocaleString());$('lastExportStatus').innerHTML='📦 '+localStorage.getItem('lastExportDate')}
+$('importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);histories=d.histories||[];ledgerPeople=d.ledgerPeople||[];ledgerArchives=d.ledgerArchives||[];accountTransactions=d.accountTransactions||[];auditLog=d.auditLog||[];localStorage.setItem(HIST_KEY,JSON.stringify(histories));saveLedgerData();saveLedgerArchives();saveAccountTransactions();saveAuditLog();localStorage.setItem(FORM_KEY,JSON.stringify(d.form||{}));if(d.protectedCapital)localStorage.setItem(PC_KEY,JSON.stringify(d.protectedCapital));if(d.protectedCapitalPasswordHash)localStorage.setItem(PC_HASH,d.protectedCapitalPasswordHash);if(d.protectedCapitalConfigured)localStorage.setItem(PC_CONFIG,'1');restore();initProtectedCapital();renderAll();alert('✅ Import Successful')}catch(err){alert('❌ Invalid Backup File')}};r.readAsText(f)})
 function addPerson(){const name=$('personName').value.trim();if(!name)return alert('নাম লিখুন');ledgerPeople.push({id:'P-'+Date.now(),name,mobile:$('personMobile').value.trim(),history:[]});saveLedgerData();$('personName').value='';$('personMobile').value='';renderAll();cloudSave()}
 function editPerson(i){const p=ledgerPeople[i],n=prompt('Edit Name',p.name);if(n===null)return;const m=prompt('Edit Mobile',p.mobile||'');p.name=n;p.mobile=m===null?p.mobile:m;saveLedgerData();renderAll();cloudSave()}
 function deletePerson(i){if(confirm('Delete Client: '+ledgerPeople[i].name+' ?')){ledgerPeople.splice(i,1);saveLedgerData();renderAll();cloudSave()}}
 function saveLedgerTransaction(){
   if(!ledgerPeople.length)return alert('আগে Person Add করুন');
-
   const i=Number($('ledgerPerson').value);
   const amount=Number($('ledgerAmount').value||0);
   const type=$('ledgerType').value;
   const method=$('ledgerMethod').value;
   const source=$('ledgerFundSource').value;
   const note=($('ledgerNote')?.value||'').trim();
-
   if(!Number.isFinite(amount)||amount<=0)return alert('সঠিক Amount দিন');
-
   const p=ledgerPeople[i];
   if(!p)return alert('Client নির্বাচন করুন');
 
   const sign=type==='gave'?1:-1;
-  const map=method.includes('Bkash')?'cbk':
-    method.includes('Nagad')?'cng':
-    method==='Rocket'?'crk':
-    method==='GP'?'cgp':
-    method==='Robi'?'crobi':
-    method==='Airtel'?'cair':
-    method==='Banglalink'?'cbl':
-    method==='Tally'?'ctk':
-    method==='Cash'?(source==='mfs'?'cmc':'crc'):null;
-
+  const map=accountFieldMap(method,source);
   if(map&&sign<0&&num(map)<amount)
     return alert('🚫 নির্বাচিত Account-এ পর্যাপ্ত টাকা নেই।');
 
-  /*
-   * Ledger balance rule:
-   *   gave = money came IN  -> add to BOTH opening-adjusted base and closing
-   *   took = money went OUT -> subtract from BOTH
-   *
-   * This makes an external fund transaction part of the account balance
-   * itself, instead of creating a separate hidden adjustment that can vanish
-   * after refresh/cloud restore.
-   */
-  if(map){
-    $(map).value=num(map)+sign*amount;
-
-    const openingMap={
-      cbk:'obk', cng:'ong', crk:'ork', cgp:'ogp', crobi:'orobi',
-      cair:'oair', cbl:'obl', ctk:'otk', cmc:'omc', crc:'orc'
-    }[map];
-
-    if(openingMap){
-      $(openingMap).value=num(openingMap)+sign*amount;
-    }
-  }
+  if(map)applyAccountDelta(map,sign*amount,{alsoOpening:true});
 
   p.history=p.history||[];
-  p.history.push({
+  p.history.push({amount,type,method,fundSource:source,note,time:new Date().toLocaleString(),timestamp:Date.now()});
+
+  recordAccountTransaction({
+    type:type==='gave'?'external-in':'external-out',
     amount,
-    type,
-    method,
-    fundSource:source,
+    account:map,
+    openingDelta:sign*amount,
+    closingDelta:sign*amount,
+    source:'client-ledger',
     note,
-    time:new Date().toLocaleString(),
-    timestamp:Date.now()
+    personId:p.id,
+    personName:p.name
   });
+  recordAudit('Client Transaction Saved',{person:p.name,amount,type,method,account:map,note});
 
   saveLedgerData();
-  $('ledgerAmount').value='';
-  if($('ledgerNote'))$('ledgerNote').value='';
-
-  autoSave();
-  updateLiveTotals();
-  updateCapitalProtection();
-  renderAll();
-  cloudSave();
-
-  // Receipt তৈরি করার সময় Client-এর final balance এখনো history-তে আছে।
-  // তাই settled transaction-এর ক্ষেত্রেও সঠিক final balance দেখাবে।
-  const receiptMessage = p.mobile
-    ? buildWhatsAppMessage(p,amount,type,method,note)
-    : '';
+  $('ledgerAmount').value=''; if($('ledgerNote'))$('ledgerNote').value='';
+  autoSave(); updateLiveTotals(); updateCapitalProtection(); renderAll(); cloudSave();
 
   if(p.mobile){
+    const receiptMessage=buildWhatsAppMessage(p,amount,type,method,note);
     const waNumber=normalizeWhatsAppNumber(p.mobile);
-    if(waNumber&&receiptMessage){
-      window.open(
-        'https://wa.me/'+waNumber+
-        '?text='+encodeURIComponent(receiptMessage),
-        '_blank'
-      );
-    }
+    if(waNumber&&receiptMessage)window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(receiptMessage),'_blank');
   }
-
-  // WhatsApp receipt প্রস্তুত/খোলার পরে হিসাব 0 হলে archive করা হবে।
-  if(Math.abs(getLedgerBalance(p))<.001){
-    archiveSettledLedger(i);
-  }
+  if(Math.abs(getLedgerBalance(p))<.001)archiveSettledLedger(i);
 }
-function editTransaction(pi,hi){const h=ledgerPeople[pi].history[hi],a=prompt('Edit Amount',h.amount);if(a===null)return;const n=Number(a);if(!Number.isFinite(n)||n<=0)return alert('Invalid Amount');h.amount=n;saveLedgerData();renderAll();cloudSave()}
-function deleteTransaction(pi,hi){if(confirm('Delete Transaction?')){ledgerPeople[pi].history.splice(hi,1);saveLedgerData();renderAll();cloudSave()}}
+function editTransaction(pi,hi){
+  const p=ledgerPeople[pi],h=p?.history?.[hi];
+  if(!h)return;
+  const a=prompt('Edit Amount',h.amount); if(a===null)return;
+  const n=Number(a); if(!Number.isFinite(n)||n<=0)return alert('Invalid Amount');
+  const oldSigned=h.type==='gave'?Number(h.amount): -Number(h.amount);
+  const newSigned=h.type==='gave'?n:-n;
+  const delta=newSigned-oldSigned;
+  const map=accountFieldMap(h.method,h.fundSource||'mfs');
+  if(map&&delta<0&&num(map)<Math.abs(delta))return alert('🚫 Account balance যথেষ্ট নয়।');
+  if(map)applyAccountDelta(map,delta,{alsoOpening:true});
+  h.amount=n; h.editedAt=new Date().toLocaleString();
+  recordAccountTransaction({type:'transaction-edit',amount:Math.abs(delta),account:map,openingDelta:delta,closingDelta:delta,source:'client-ledger-edit',note:'Transaction amount edited',personId:p.id,personName:p.name});
+  recordAudit('Client Transaction Edited',{person:p.name,oldAmount:Math.abs(oldSigned),newAmount:n,method:h.method});
+  saveLedgerData();autoSave();renderAll();cloudSave();
+}
+function deleteTransaction(pi,hi){
+  const p=ledgerPeople[pi],h=p?.history?.[hi];
+  if(!p||!h)return;
+  if(!confirm('Delete Transaction?'))return;
+  const signed=h.type==='gave'?Number(h.amount):-Number(h.amount);
+  const map=accountFieldMap(h.method,h.fundSource||'mfs');
+  if(map&&num(map)-signed<0)return alert('🚫 Transaction delete করলে Account balance negative হবে।');
+  if(map)applyAccountDelta(map,-signed,{alsoOpening:true});
+  p.history.splice(hi,1);
+  recordAccountTransaction({type:'transaction-delete',amount:Number(h.amount||0),account:map,openingDelta:-signed,closingDelta:-signed,source:'client-ledger-delete',note:'Transaction deleted',personId:p.id,personName:p.name});
+  recordAudit('Client Transaction Deleted',{person:p.name,amount:h.amount,method:h.method});
+  saveLedgerData();autoSave();renderAll();cloudSave();
+}
 function archiveSettledLedger(i){const p=ledgerPeople[i];if(!p||!p.history?.length||Math.abs(getLedgerBalance(p))>.001)return false;const given=p.history.filter(h=>h.type==='gave').reduce((s,h)=>s+Number(h.amount||0),0),taken=p.history.filter(h=>h.type==='took').reduce((s,h)=>s+Number(h.amount||0),0);ledgerArchives.unshift({archiveId:'ARC-'+Date.now()+'-'+i,personId:p.id,personName:p.name,personMobile:p.mobile||'',settledAt:new Date().toLocaleString(),businessDate:new Date().toISOString().slice(0,10),finalBalance:0,totalGiven:given,totalTaken:taken,transactions:JSON.parse(JSON.stringify(p.history))});p.history=[];saveLedgerArchives();saveLedgerData();renderAll();cloudSave();return true}
 function renderLedger(){const s=$('ledgerPerson');s.innerHTML=ledgerPeople.map((p,i)=>`<option value="${i}">${escapeHTML(p.name)}</option>`).join('');$('ledgerBox').innerHTML=ledgerPeople.map((p,i)=>{const b=getLedgerBalance(p),given=(p.history||[]).filter(h=>h.type==='gave').reduce((s,h)=>s+Number(h.amount||0),0),taken=(p.history||[]).filter(h=>h.type==='took').reduce((s,h)=>s+Number(h.amount||0),0);return `<div class="partner"><div class="tag"><button class="smallBtn edit" onclick="editPerson(${i})">Edit</button><button class="smallBtn del" onclick="deletePerson(${i})">Delete</button></div><h3>👤 ${escapeHTML(p.name)}</h3>📱 ${escapeHTML(p.mobile||'No Mobile')}<br><br>📥 Given: <b>৳${money(given)}</b><br>📤 Taken: <b>৳${money(taken)}</b><br><br><b>${b<0?'🟢 আমি তার কাছে পাবে ৳'+money(Math.abs(b)):b>0?'🔴 সে আমার কাছে পাবে ৳'+money(b):'⚖️ Settled'}</b><div class="share-actions"><button onclick="openClientStatement(${i})">📄 Statement</button><button class="wa" onclick="shareClientWhatsApp(${i})">💬 WhatsApp</button>${b<0?`<button class="reminder" onclick="sendDueReminder(${i})">🔔 Due Reminder</button>`:""}<button class="print" onclick="printClient58(${i})">🖨️ 58mm</button></div>${(p.history||[]).slice().reverse().map((h,hi)=>{const real=p.history.length-1-hi;return `<div class="history">📅 ${escapeHTML(h.time||'')}<br>💰 ৳${money(h.amount)}<br>📌 ${h.type==='gave'?'সে আমাকে টাকা দিল':'সে আমার কাছ থেকে টাকা নিল'}<br>💳 ${escapeHTML(h.method||'Not Set')}${h.note?'<br>📝 '+escapeHTML(h.note):''}<div class="tag"><button class="smallBtn edit" onclick="editTransaction(${i},${real})">Edit</button><button class="smallBtn del" onclick="deleteTransaction(${i},${real})">Delete</button></div></div>`}).join('')||'<div class="history">No Transaction</div>'}</div>`}).join('')||'<div class="history">কোনো Client নেই।</div>'}
 function renderLedgerArchives(){$('ledgerArchiveBox').innerHTML=ledgerArchives.map((a,i)=>`<div class="partner"><h3>📦 ${escapeHTML(a.personName)}</h3>📱 ${escapeHTML(a.personMobile||'No Mobile')}<br>🗓️ ${escapeHTML(a.settledAt||'')}<br>💸 Given: ৳${money(a.totalGiven)}<br>💵 Taken: ৳${money(a.totalTaken)}<br>⚖️ Final Balance: 0 ৳<div class="share-actions"><button onclick="openArchiveStatement(${i})">📄 Statement</button><button class="wa" onclick="shareArchiveWhatsApp(${i})">💬 WhatsApp</button><button class="print" onclick="printArchive58(${i})">🖨️ 58mm</button></div><details><summary>📜 View Transactions (${(a.transactions||[]).length})</summary>${(a.transactions||[]).map(h=>`<div class="history">📅 ${escapeHTML(h.time||'')}<br>💰 ৳${money(h.amount)}<br>📌 ${h.type==='gave'?'সে আমাকে টাকা দিল':'সে আমার কাছ থেকে টাকা নিল'}<br>💳 ${escapeHTML(h.method||'Not Set')}${h.note?'<br>📝 '+escapeHTML(h.note):''}</div>`).join('')}</details></div>`).join('')||'<div class="history">📦 কোনো Settled Ledger Archive নেই।</div>'}
@@ -597,7 +688,7 @@ function printCurrentStatement(){
 }
 function printClient58(i){currentStatement={person:i};printCurrentStatement()}function printArchive58(i){currentStatement={archive:i};printCurrentStatement()}
 function openBalanceCalculator(id){miniCalcTargetId=id;miniCalcExpression=$(id).value||'';$('miniCalcDisplay').value=miniCalcExpression||'0';$('miniCalcTitle').innerHTML='🧮 '+($(id).previousElementSibling?.textContent||'Balance')+' হিসাব';$('miniCalcOverlay').style.display='flex'}function closeBalanceCalculator(e){if(e&&e.target&&e.target.id!=='miniCalcOverlay')return;$('miniCalcOverlay').style.display='none';miniCalcTargetId=null;miniCalcExpression=''}function miniCalcPress(v){miniCalcExpression+=v;$('miniCalcDisplay').value=miniCalcExpression}function miniCalcClear(){miniCalcExpression='';$('miniCalcDisplay').value='0'}function miniCalcEquals(){try{if(!/^[0-9+\-*/().\s]+$/.test(miniCalcExpression))throw 0;const r=Function('"use strict";return ('+miniCalcExpression+')')();if(!Number.isFinite(r))throw 0;miniCalcExpression=String(Math.round(r*100)/100);$('miniCalcDisplay').value=miniCalcExpression}catch(e){$('miniCalcDisplay').value='Error'}}function miniCalcApply(){miniCalcEquals();const v=$('miniCalcDisplay').value;if(v!=='Error'&&miniCalcTargetId){$(miniCalcTargetId).value=v;$(miniCalcTargetId).dispatchEvent(new Event('input',{bubbles:true}))}closeBalanceCalculator()}
-function renderAll(){renderHistory();renderLedger();renderLedgerArchives();renderDailyHistoryArchives();updateMonthly();updateLiveTotals();updateFinancialPosition();updateCapitalProtection()}
+function renderAll(){renderHistory();renderLedger();renderLedgerArchives();renderDailyHistoryArchives();updateMonthly();updateLiveTotals();updateFinancialPosition();updateCapitalProtection();showReconciliation();renderAuditLog()}
 
 // ===== FIREBASE CLOUD / ONLINE-ONLY SECURITY =====
 let firebaseReady=false,db=null;
@@ -606,7 +697,7 @@ let cloudSyncTimer=null;
 let cloudBusy=false;
 let suppressAutoSync=false;
 let firebaseInitializing=null;
-const ERP_VERSION='v6.1-cloud-integrity-fixed';
+const ERP_VERSION='v7.0-smart-ledger-reconciliation';
 const ERP_MAIN_PATH=['erpData','main'];
 
 async function sha256Text(text){
@@ -637,6 +728,12 @@ function integrityPayload(d){
     histories:Array.isArray(d?.histories)?d.histories:[],
     ledgerPeople:Array.isArray(d?.ledgerPeople)?d.ledgerPeople:[],
     ledgerArchives:Array.isArray(d?.ledgerArchives)?d.ledgerArchives:[],
+    accountTransactions:Array.isArray(d?.accountTransactions)?d.accountTransactions:[],
+    auditLog:Array.isArray(d?.auditLog)?d.auditLog:[],
+    dailyHistoryArchives:Array.isArray(d?.dailyHistoryArchives)?d.dailyHistoryArchives:[],
+    ownerWithdrawToday:d?.ownerWithdrawToday??'0',
+    capitalInjectionToday:d?.capitalInjectionToday??'0',
+    dayStartedAt:d?.dayStartedAt??'',
     form:(d?.form&&typeof d.form==='object')?d.form:{},
     protectedCapital:(d?.protectedCapital&&typeof d.protectedCapital==='object')?d.protectedCapital:{},
     protectedCapitalPasswordHash:d?.protectedCapitalPasswordHash||null,
@@ -714,6 +811,12 @@ function localPayload(){
     histories,
     ledgerPeople,
     ledgerArchives,
+    accountTransactions,
+    auditLog,
+    dailyHistoryArchives: JSON.parse(localStorage.getItem(DAILY_ARCHIVE_KEY)||'[]'),
+    ownerWithdrawToday: localStorage.getItem('rasidulOwnerWithdrawToday') || '0',
+    capitalInjectionToday: localStorage.getItem('rasidulCapitalInjectionToday') || '0',
+    dayStartedAt: localStorage.getItem('rasidulDayStartedAt') || '',
     form:formData(),
     protectedCapital:getProtectedCapitalData(),
     protectedCapitalPasswordHash:localStorage.getItem(PC_HASH)||null,
@@ -803,18 +906,22 @@ async function applyCloudData(d){
   histories=Array.isArray(d.histories)?d.histories:[];
   ledgerPeople=Array.isArray(d.ledgerPeople)?d.ledgerPeople:[];
   ledgerArchives=Array.isArray(d.ledgerArchives)?d.ledgerArchives:[];
-  window.histories=histories;window.ledgerPeople=ledgerPeople;window.ledgerArchives=ledgerArchives;
+  accountTransactions=Array.isArray(d.accountTransactions)?d.accountTransactions:[];
+  auditLog=Array.isArray(d.auditLog)?d.auditLog:[];
+  window.histories=histories;window.ledgerPeople=ledgerPeople;window.ledgerArchives=ledgerArchives;window.accountTransactions=accountTransactions;window.auditLog=auditLog;
 
   localStorage.setItem(HIST_KEY,JSON.stringify(histories));
   localStorage.setItem(PEOPLE_KEY,JSON.stringify(ledgerPeople));
   localStorage.setItem(ARCHIVE_KEY,JSON.stringify(ledgerArchives));
+  localStorage.setItem(ACCOUNT_TX_KEY,JSON.stringify(accountTransactions));
+  localStorage.setItem(AUDIT_KEY,JSON.stringify(auditLog));
 
   if(d.form)localStorage.setItem(FORM_KEY,JSON.stringify(d.form));
   if(d.protectedCapital)localStorage.setItem(PC_KEY,JSON.stringify(d.protectedCapital));
   if(d.protectedCapitalPasswordHash)localStorage.setItem(PC_HASH,d.protectedCapitalPasswordHash);
   if(d.protectedCapitalConfigured)localStorage.setItem(PC_CONFIG,'1');
 
-  if(d.dailyHistoryArchives)localStorage.setItem('rasidulDailyHistoryArchives',JSON.stringify(d.dailyHistoryArchives));
+  if(d.dailyHistoryArchives)localStorage.setItem(DAILY_ARCHIVE_KEY,JSON.stringify(d.dailyHistoryArchives));
   if(d.ownerWithdrawToday!==undefined)localStorage.setItem('rasidulOwnerWithdrawToday',String(d.ownerWithdrawToday));
   if(d.capitalInjectionToday!==undefined)localStorage.setItem('rasidulCapitalInjectionToday',String(d.capitalInjectionToday));
   if(d.dayStartedAt!==undefined)localStorage.setItem('rasidulDayStartedAt',String(d.dayStartedAt));
@@ -1008,9 +1115,10 @@ async function cloudVerifyAndLoad(){
       // If local changes were made after the last successful Cloud sync,
       // NEVER overwrite them with the older Cloud snapshot.
       const localNow=localPayload();
-      const localHash=await sha256Text(stableIntegrityString(localNow));
-      const cloudHash=String(d.integrityHash||'');
-      const dirty=localStateIsDirty() || (cloudHash && localHash!==cloudHash);
+      // The explicit pending flag is the source of truth for startup conflict
+      // resolution. A schema/hash difference alone must never cause an older
+      // Cloud snapshot to overwrite a user's local state.
+      const dirty=localStateIsDirty();
 
       if(dirty){
         setCloudLockMessage('🔄 Local হিসাবের নতুন পরিবর্তন পাওয়া গেছে। Cloud পুরনো হলে local data preserve করে sync করা হবে...');
@@ -1088,7 +1196,9 @@ function buildCloudBackupPayload(){
     histories: JSON.parse(JSON.stringify(histories || [])),
     ledgerPeople: JSON.parse(JSON.stringify(ledgerPeople || [])),
     ledgerArchives: JSON.parse(JSON.stringify(ledgerArchives || [])),
-    dailyHistoryArchives: JSON.parse(localStorage.getItem('rasidulDailyHistoryArchives') || '[]'),
+    accountTransactions: JSON.parse(JSON.stringify(accountTransactions || [])),
+    auditLog: JSON.parse(JSON.stringify(auditLog || [])),
+    dailyHistoryArchives: JSON.parse(localStorage.getItem(DAILY_ARCHIVE_KEY) || '[]'),
     form: formData(),
     protectedCapital: getProtectedCapitalData(),
     protectedCapitalPasswordHash: localStorage.getItem(PC_HASH) || null,
@@ -1097,7 +1207,7 @@ function buildCloudBackupPayload(){
     capitalInjectionToday: localStorage.getItem('rasidulCapitalInjectionToday') || '0',
     dayStartedAt: localStorage.getItem('rasidulDayStartedAt') || '',
     createdAt: new Date().toISOString(),
-    appVersion: 'v5-cloud-recovery-points'
+    appVersion: 'v7-smart-ledger-recovery'
   };
 }
 
@@ -1214,14 +1324,20 @@ async function restoreCloudBackup(id){
     histories=d.histories||[];
     ledgerPeople=d.ledgerPeople||[];
     ledgerArchives=d.ledgerArchives||[];
+    accountTransactions=d.accountTransactions||[];
+    auditLog=d.auditLog||[];
     window.histories=histories;
     window.ledgerPeople=ledgerPeople;
     window.ledgerArchives=ledgerArchives;
+    window.accountTransactions=accountTransactions;
+    window.auditLog=auditLog;
 
     localStorage.setItem(HIST_KEY,JSON.stringify(histories));
     localStorage.setItem(PEOPLE_KEY,JSON.stringify(ledgerPeople));
     localStorage.setItem(ARCHIVE_KEY,JSON.stringify(ledgerArchives));
-    localStorage.setItem('rasidulDailyHistoryArchives',JSON.stringify(d.dailyHistoryArchives||[]));
+    localStorage.setItem(ACCOUNT_TX_KEY,JSON.stringify(accountTransactions));
+    localStorage.setItem(AUDIT_KEY,JSON.stringify(auditLog));
+    localStorage.setItem(DAILY_ARCHIVE_KEY,JSON.stringify(d.dailyHistoryArchives||[]));
     localStorage.setItem(FORM_KEY,JSON.stringify(d.form||{}));
     if(d.protectedCapital) localStorage.setItem(PC_KEY,JSON.stringify(d.protectedCapital));
     if(d.protectedCapitalPasswordHash) localStorage.setItem(PC_HASH,d.protectedCapitalPasswordHash);
@@ -1279,6 +1395,7 @@ function startCloudBackupScheduler(){
 }
 
 async function manualCloudSync(){
+  recordAudit('Manual Cloud Backup Requested',{});
   if(!appVerified)return alert('🔐 আগে Cloud Verification সম্পন্ন করুন।');
   if(!navigator.onLine)return alert('🔴 Internet নেই। Cloud Backup করা যাবে না।');
   const ok=await cloudSave(true);
@@ -1307,6 +1424,16 @@ async function manualCloudRestore(){
   }
 }
 function buildDevice(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?'📱 Mobile':'💻 PC'}
+
+// ===== LOCAL DATA MIGRATION =====
+(function migrateLocalState(){
+  try{
+    if(!Array.isArray(accountTransactions)){accountTransactions=[];saveAccountTransactions()}
+    if(!Array.isArray(auditLog)){auditLog=[];saveAuditLog()}
+    if(!localStorage.getItem(DAILY_ARCHIVE_KEY))localStorage.setItem(DAILY_ARCHIVE_KEY,'[]');
+    if(!localStorage.getItem('rasidulDayStartedAt'))localStorage.setItem('rasidulDayStartedAt',String(Date.now()));
+  }catch(e){console.warn('Local state migration skipped',e)}
+})();
 
 // ===== EVENTS / STARTUP =====
 document.addEventListener('input',e=>{if(e.target.matches('input,textarea,select')){if(!appVerified)return;autoSave();updateLiveTotals();updateFinancialPosition();updateCapitalProtection();updateMonthly()}});
