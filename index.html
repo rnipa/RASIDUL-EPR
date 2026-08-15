@@ -21,14 +21,14 @@
 <button onclick="manualCloudSync()">🔒 Final Cloud Backup</button>
 <div class="mini"><h3>🛡️ Cloud Status</h3><p id="cloudStatus">🟢 Connected</p></div>
 <div class="mini"><h3>💸 MFS Profit</h3><h2 id="mfsProfitBox">0 ৳</h2></div><div class="mini"><h3>📱 Recharge Profit</h3><h2 id="rechargeProfitBox">0 ৳</h2></div><div class="mini"><h3>📅 Daily Profit</h3><h2 id="dailyProfit">0 ৳</h2></div><div class="mini"><h3>📈 Monthly Profit</h3><h2 id="monthlyProfit">0 ৳</h2></div>
-<div class="mini"><h3>💎 Total Working Capital</h3><h2 id="workingCapitalBox">0 ৳</h2></div><div class="mini"><h3>💰 Actual Total Money</h3><h2 id="actualMoneyBox">0 ৳</h2><p id="moneyPositionBox">Waiting...</p></div><div class="mini"><h3>🤝 External Capital</h3><h2 id="externalFundBox">0 ৳</h2><p id="externalMovementBox">আজকের Capital Movement: 0 ৳</p></div><div class="mini"><h3>🏦 Total Business Capital</h3><h2 id="ownFundBox">0 ৳</h2><p id="retainedProfitBox">Above Protected Floor: 0 ৳</p></div>
+<div class="mini"><h3>💎 Total Working Capital</h3><h2 id="workingCapitalBox">0 ৳</h2></div><div class="mini"><h3>💰 Actual Total Money</h3><h2 id="actualMoneyBox">0 ৳</h2><p id="moneyPositionBox">Waiting...</p></div><div class="mini"><h3>👥 Client Receivable</h3><h2 id="externalFundBox">0 ৳</h2><p id="externalMovementBox">আমাদের দেনা: 0 ৳</p></div><div class="mini"><h3>🏦 Own Business Fund</h3><h2 id="ownFundBox">0 ৳</h2><p id="retainedProfitBox">Above Protected Floor: 0 ৳</p></div>
 <div class="mini" id="capitalProtectionCard"><div class="sectionTitle"><h3>🛡️ Protected Capital</h3><button class="protected-edit-btn" onclick="openProtectedCapitalEditor()">🔐 Edit</button></div><h2 id="protectedCapitalBox">0 ৳</h2><p id="currentOwnCapitalBox">Current Own Capital: 0 ৳</p><p id="capitalDifferenceBox">Difference: 0 ৳</p><div id="capitalAlert" class="capital-alert safe">🟢 Capital Safe</div></div>
 <div class="mini"><h3>🧮 Day-End Capital Check</h3><p id="capitalCheckBox">Waiting...</p></div><div class="mini"><h3>🎯 Daily Target</h3><input id="target"></div><div class="mini"><h3>🧠 Smart Insight</h3><p id="insight">Waiting...</p></div><div class="mini"><h3>🏆 Achievement</h3><p id="achieve">Locked 😄</p></div><div class="mini"><h3>☁️ Last Cloud Sync</h3><p id="syncStatus">Waiting...</p></div><div class="mini"><h3>📦 Last Export</h3><p id="lastExportStatus">Never</p></div><div class="mini"><h3>🔄 Last Restore</h3><p id="lastRestoreStatus">Never</p></div><div class="mini"><h3>🏆 Best Profit Day</h3><p id="bestProfitDay">-</p></div><div class="mini"><h3>📉 Lowest Profit Day</h3><p id="lowestProfitDay">-</p></div><div class="mini"><h3>📈 Avg Daily Profit</h3><p id="avgProfit">0 ৳</p></div><div class="mini"><h3>💰 Lifetime Profit</h3><p id="lifetimeProfit">0 ৳</p></div><div class="mini"><h3>🎯 Target Progress</h3><p id="targetProgress">0%</p></div><div class="mini"><h3>🔔 Due Reminders</h3><p id="ReminderBox">No Alerts</p></div><div class="mini"><h3>👥 Total Clients Due</h3><p id="ClientsCount">0</p></div><div class="mini"><h3>💰 Total Receivable</h3><p id="totalReceivable">0 ৳</p></div><div class="mini"><h3>🔴 High Risk Clients</h3><p id="highRiskCount">0</p></div><div class="mini"><h3>📤 মোট দেনা</h3><p id="totalPayable">0 ৳</p></div><div class="mini"><h3>⚖️ নেট ব্যালেন্স</h3><p id="netPosition">0 ৳</p></div>
 </div>
 <div class="top-grid"><div class="card"><h3>💎 Base Capital</h3><label>💰 MFS Base Capital</label><input id="mfsCapital" value="50000"><label>📱 Recharge Base Capital</label><input id="rechargeCapital" value="30000"><hr><div class="sectionTitle"><label>🛡️ Protected MFS Capital</label><button class="protected-inline-edit" onclick="openProtectedCapitalEditor()">🔐 Edit</button></div><input id="protectedMfsCapital" class="protected-readonly" readonly value="50000"><label>🛡️ Protected Recharge Capital</label><input id="protectedRechargeCapital" class="protected-readonly" readonly value="30000"><div id="baseCapitalWarning" class="capital-alert safe">🟢 আপনার Protected Capital নিরাপদ আছে।</div></div>
 <div class="card"><h3>📈 Reinvest Profit</h3><label>💰 MFS Reinvest</label><input id="mfsReinvest" value="0"><label>📱 Recharge Reinvest</label><input id="rechargeReinvest" value="0"><button style="margin-top:12px" onclick="applyReinvestment()">🚀 Add To Protected Capital</button></div></div>
 <div class="card"><h3>💸 Owner Withdrawal</h3><label>💰 Withdraw Amount</label><input id="withdrawAmount" value="0"><label>📝 Withdraw Reason</label><textarea id="withdrawReason"></textarea><label>🏦 Withdraw From</label><select id="withdrawSource"><option value="mfs">MFS Capital</option><option value="recharge">Recharge Capital</option></select><label>💳 Withdrawal Method</label><select id="withdrawMethod"><option>Cash</option><option>Bkash</option><option>Nagad</option><option>Rocket</option><option>GP</option><option>Robi</option><option>Airtel</option><option>Banglalink</option><option>Tally</option></select><button style="margin-top:12px" onclick="withdrawCapital()">💸 Withdraw From Capital</button></div>
-<div class="card"><h2>🌅 Opening Balance</h2><div class="grid" id="openingGrid">
+<div class="card"><h2>🌅 Opening Balance</h2><div class="capital-alert safe" style="margin-bottom:10px">ℹ️ External Fund দিলে/নিলে <b>Opening Balance</b> Adjust হবে। <b>Closing Balance</b> শুধু দিনশেষে হাতে থাকা আসল টাকা অনুযায়ী আপনি নিজে দেবেন।</div><div class="grid" id="openingGrid">
 <div class="balance-item"><label>Bkash</label><button class="balance-calc-btn" onclick="openBalanceCalculator('obk')">🧮</button><input id="obk" inputmode="decimal"></div>
 <div class="balance-item"><label>Nagad</label><button class="balance-calc-btn" onclick="openBalanceCalculator('ong')">🧮</button><input id="ong" inputmode="decimal"></div>
 <div class="balance-item"><label>Rocket</label><button class="balance-calc-btn" onclick="openBalanceCalculator('ork')">🧮</button><input id="ork" inputmode="decimal"></div>
@@ -56,7 +56,7 @@
 <div class="card"><h2>📝 Special Note</h2><textarea id="note"></textarea></div>
 <div class="actions"><button onclick="calculate()">📈 Calculate</button><button onclick="saveFinal()">✅ Final Save</button><button onclick="newDay()">🆕 New Day</button><button onclick="exportData()">📦 Export</button><button onclick="manualCloudSync()">🔒 Final Cloud Backup</button><button onclick="manualCloudRestore()">🔄 Cloud Restore</button><label class="importLabel">📥 Import<input type="file" id="importFile" hidden></label></div>
 <div id="finalBox">আজকের হিসাব এখনো Final হয়নি</div><div class="card"><h2>📜 Daily History</h2><div id="historyBox"></div></div><div class="card"><h2>📦 Daily History Archive</h2><div id="dailyHistoryArchiveBox"></div></div>
-<div class="card"><h2>👥 Smart External Fund Ledger</h2><p style="opacity:.8;margin:0 0 10px">💡 এখানে টাকা দেওয়া/নেওয়া Profit নয়। তবে টাকা ব্যবসায় ঢুকলে Capital ও সংশ্লিষ্ট Closing Balance বাড়বে, আর টাকা বের হলে দুটোই কমবে। পরের New Day-তে Closing → Opening হবে।</p><div class="grid"><div><label>👤 Person Name</label><input id="personName" placeholder="Person Name"></div><div><label>📱 Mobile</label><input id="personMobile" placeholder="8801XXXXXXXXX"></div></div><button onclick="addPerson()">➕ Add Person</button><hr><div class="grid"><div><label>👤 Select Person</label><select id="ledgerPerson"></select></div><div><label>💰 Amount</label><input id="ledgerAmount" type="number"></div><div><label>📌 Type</label><select id="ledgerType"><option value="gave">সে আমাকে টাকা দিল</option><option value="took">সে আমার থেকে টাকা নিল</option></select></div><div><label>💳 Method</label><select id="ledgerMethod"><option>Cash</option><option>Bkash Personal</option><option>Bkash B2B</option><option>Nagad Personal</option><option>Nagad Merchant</option><option>Rocket</option><option>GP</option><option>Robi</option><option>Airtel</option><option>Banglalink</option><option>Tally</option><option>Bank Transfer</option><option>Card</option><option>Other</option></select></div><div><label>📂 Fund Source</label><select id="ledgerFundSource"><option value="mfs">💸 MFS</option><option value="recharge">📱 Recharge</option></select></div><div style="grid-column:1/-1"><label>📝 Note</label><textarea id="ledgerNote" placeholder="কেন টাকা নিল / কেন টাকা দিল / কবে ফেরত দিবে / বিস্তারিত লিখুন..."></textarea></div></div><button onclick="saveLedgerTransaction()">💾 Save Transaction</button><div id="ledgerBox"></div></div>
+<div class="card"><h2>👥 Smart External Fund Ledger</h2><div class="grid"><div><label>👤 Person Name</label><input id="personName" placeholder="Person Name"></div><div><label>📱 Mobile</label><input id="personMobile" placeholder="8801XXXXXXXXX"></div></div><button onclick="addPerson()">➕ Add Person</button><hr><div class="grid"><div><label>👤 Select Person</label><select id="ledgerPerson"></select></div><div><label>💰 Amount</label><input id="ledgerAmount" type="number"></div><div><label>📌 Type</label><select id="ledgerType"><option value="gave">সে আমাকে টাকা দিল</option><option value="took">সে আমার থেকে টাকা নিল</option></select></div><div><label>💳 Method</label><select id="ledgerMethod"><option>Cash</option><option>Bkash Personal</option><option>Bkash B2B</option><option>Nagad Personal</option><option>Nagad Merchant</option><option>Rocket</option><option>GP</option><option>Robi</option><option>Airtel</option><option>Banglalink</option><option>Tally</option><option>Bank Transfer</option><option>Card</option><option>Other</option></select></div><div><label>📂 Fund Source</label><select id="ledgerFundSource"><option value="mfs">💸 MFS</option><option value="recharge">📱 Recharge</option></select></div><div style="grid-column:1/-1"><label>📝 Note</label><textarea id="ledgerNote" placeholder="কেন টাকা নিল / কেন টাকা দিল / কবে ফেরত দিবে / বিস্তারিত লিখুন..."></textarea></div></div><button onclick="saveLedgerTransaction()">💾 Save Transaction</button><div id="ledgerBox"></div></div>
 <div class="card"><h2>📦 Settled Ledger Archive</h2><p style="opacity:.8">Client-এর হিসাব 0 হলে সম্পূর্ণ লেনদেন Archive হবে।</p><div id="ledgerArchiveBox"></div></div>
 </div>
 
@@ -97,23 +97,107 @@ function updateProtectedPasswordUI(){const has=isProtectedConfigured();$('protec
 function openProtectedCapitalEditor(prefMfs=null,prefRecharge=null){const d=getProtectedCapitalData();$('protectedEditMfs').value=prefMfs===null?d.mfs:prefMfs;$('protectedEditRecharge').value=prefRecharge===null?d.recharge:prefRecharge;$('protectedCurrentPassword').value='';$('protectedChangeConfirm').value='';$('protectedNewPassword').value='';$('protectedConfirmPassword').value='';$('protectedCurrentTotal').innerHTML=money(d.mfs+d.recharge)+' ৳';updateProtectedPasswordUI();$('protectedCapitalModal').style.display='flex'}
 function closeProtectedCapitalEditor(e){if(e&&e.target&&e.target.id!=='protectedCapitalModal')return;$('protectedCapitalModal').style.display='none'}
 async function saveProtectedCapitalSecure(){const nm=Number($('protectedEditMfs').value||0),nr=Number($('protectedEditRecharge').value||0);if(!Number.isFinite(nm)||nm<0||!Number.isFinite(nr)||nr<0)return alert('❌ Protected Capital-এর সঠিক amount দিন।');const old=getProtectedCapitalData();if(nm===old.mfs&&nr===old.recharge)return alert('ℹ️ কোনো পরিবর্তন করা হয়নি।');const first=!isProtectedConfigured();if(first){const p=$('protectedNewPassword').value,c=$('protectedConfirmPassword').value;if(p.length<4)return alert('🔐 Password কমপক্ষে 4 characters হতে হবে।');if(p!==c)return alert('❌ Password এবং Confirm Password মিলছে না।');if(!confirm('🛡️ প্রথমবার Protected Capital সেট করবেন?\n\nMFS: ৳'+money(nm)+'\nRecharge: ৳'+money(nr)+'\nTotal: ৳'+money(nm+nr)+'\n\nContinue?'))return;localStorage.setItem(PC_HASH,await hashProtectedPassword(p));localStorage.setItem(PC_CONFIG,'1')}else{const p1=$('protectedCurrentPassword').value,p2=$('protectedChangeConfirm').value;if(!p1||!p2)return alert('🔑 Current Password এবং Confirmation দুটোই দিন।');if(p1!==p2)return alert('❌ Password এবং Confirmation মিলছে না।');if(await hashProtectedPassword(p1)!==localStorage.getItem(PC_HASH))return alert('❌ Password সঠিক নয়। Protected Capital পরিবর্তন করা হয়নি।');if(!confirm('⚠️ Protected Capital পরিবর্তন করবেন?\n\nবর্তমান: ৳'+money(old.mfs+old.recharge)+'\nনতুন: ৳'+money(nm+nr)))return}localStorage.setItem(PC_KEY,JSON.stringify({mfs:nm,recharge:nr,updatedAt:new Date().toISOString()}));$('protectedMfsCapital').value=nm;$('protectedRechargeCapital').value=nr;autoSave();updateCapitalProtection();$('protectedCapitalModal').style.display='none';await cloudSave();alert('✅ Protected Capital Successfully Saved\n\n🛡️ MFS: ৳'+money(nm)+'\n📱 Recharge: ৳'+money(nr)+'\n💰 Total: ৳'+money(nm+nr))}
-function updateCapitalProtection(){const p=num('protectedMfsCapital')+num('protectedRechargeCapital'),o=getAccountTotals('opening').total,c=getAccountTotals('closing').total,a=c>0?c:o,d=a-p;$('protectedCapitalBox').innerHTML=money(p)+' ৳';$('currentOwnCapitalBox').innerHTML='Current Business Capital: '+money(a)+' ৳';$('capitalDifferenceBox').innerHTML=(d>=0?'Available Above Floor: ':'Capital Shortage: ')+money(Math.abs(d))+' ৳';let cls=d<0?'danger':d===0?'warning':'safe';let msg=d<0?'🔴 Protected Floor-এর নিচে। ঘাটতি ৳'+money(Math.abs(d)):d===0?'🟡 Capital Boundary':'🟢 Capital Safe';$('capitalAlert').className='capital-alert '+cls;$('capitalAlert').innerHTML=msg;$('baseCapitalWarning').className='capital-alert '+cls;$('baseCapitalWarning').innerHTML=msg;$('capitalProtectionCard').className='mini capital-'+cls;$('capitalCheckBox').innerHTML=a<=0?'⏳ Closing Balance দিন।':(d<0?'🔴 Business Capital ৳'+money(a)+' | Protected ৳'+money(p):'🟢 Passed — Business Capital ৳'+money(a)+' | Protected ৳'+money(p));updateFinancialPosition()}
+function updateCapitalProtection(){
+  const p=num('protectedMfsCapital')+num('protectedRechargeCapital'),
+        o=getAccountTotals('opening').total,
+        c=getAccountTotals('closing').total,
+        a=c>0?c:o,
+        own=a,
+        d=own-p;
+
+  $('protectedCapitalBox').innerHTML=money(p)+' ৳';
+  $('currentOwnCapitalBox').innerHTML='Current Business Capital: '+money(own)+' ৳';
+  $('capitalDifferenceBox').innerHTML=
+    (d>=0?'Available Above Floor: ':'Capital Shortage: ')+money(Math.abs(d))+' ৳';
+
+  let cls=d<0?'danger':d===0?'warning':'safe';
+  let msg=d<0?'🔴 Protected Floor-এর নিচে। ঘাটতি ৳'+money(Math.abs(d)):
+    d===0?'🟡 Capital Boundary':'🟢 Capital Safe';
+
+  $('capitalAlert').className='capital-alert '+cls;
+  $('capitalAlert').innerHTML=msg;
+  $('baseCapitalWarning').className='capital-alert '+cls;
+  $('baseCapitalWarning').innerHTML=msg;
+  $('capitalProtectionCard').className='mini capital-'+cls;
+  $('capitalCheckBox').innerHTML=
+    a<=0?'⏳ Closing Balance দিন।':
+    (d<0?'🔴 Business Capital ৳'+money(own)+' | Protected ৳'+money(p):
+     '🟢 Passed — Business Capital ৳'+money(own)+' | Protected ৳'+money(p));
+
+  updateFinancialPosition();
+}
 function getAccountTotals(prefix){const x=prefix==='opening'?['obk','ong','ork','otk','omc','ogp','orobi','oair','obl','orc']:['cbk','cng','crk','ctk','cmc','cgp','crobi','cair','cbl','crc'];return{mfs:x.slice(0,5).reduce((s,id)=>s+num(id),0),recharge:x.slice(5).reduce((s,id)=>s+num(id),0),total:x.reduce((s,id)=>s+num(id),0)}}
 function getLedgerBalance(p){return(p.history||[]).reduce((s,h)=>s+(h.type==='gave'?Number(h.amount||0):h.type==='took'?-Number(h.amount||0):0),0)}
 function getExternalBalanceTotal(){return ledgerPeople.reduce((s,p)=>s+getLedgerBalance(p),0)}
 function getExternalPositionSummary(){let receivable=0,payable=0;ledgerPeople.forEach(p=>{const b=getLedgerBalance(p);if(b<0)receivable+=Math.abs(b);else payable+=b});return{receivable,payable,net:payable-receivable}}
 function getExternalMovementToday(){const started=Number(localStorage.getItem('rasidulDayStartedAt')||Date.now());let n=0;ledgerPeople.forEach(p=>(p.history||[]).forEach(h=>{const ts=Number(h.timestamp||new Date(h.time).getTime()||0);if(ts>=started)n+=h.type==='gave'?Number(h.amount||0):-Number(h.amount||0)}));return n}
-function calculate(){const o=getAccountTotals('opening'),c=getAccountTotals('closing'),ext=getExternalMovementToday(),wd=Number(localStorage.getItem('rasidulOwnerWithdrawToday')||0),ci=Number(localStorage.getItem('rasidulCapitalInjectionToday')||0);const profit=c.total-o.total-ext+wd-ci;const businessCapital=c.total;const externalNet=getExternalBalanceTotal();window.profit=profit;window.mfsProfit=profit;window.rechargeProfit=0;window.currentOwnFund=businessCapital;window.externalFund=externalNet;window.retainedProfit=businessCapital-(num('protectedMfsCapital')+num('protectedRechargeCapital'));$('mfsProfitBox').innerHTML=money(profit)+' ৳';$('rechargeProfitBox').innerHTML='0 ৳';$('dailyProfit').innerHTML=money(profit)+' ৳';$('finalBox').innerHTML='💸 Business Profit: '+money(profit)+' টাকা<br><br>🤝 External Capital Net Movement Today: '+money(ext)+' টাকা<br><br>🏦 Total Business Capital: '+money(businessCapital)+' টাকা<br><br>📊 Actual Closing Money: '+money(c.total)+' টাকা';$('insight').innerHTML=profit>=0?'📈 Profit চলছে':'🔴 Loss চলছে';$('achieve').innerHTML=profit>=3000?'🚀 Business Booster':'🏅 Daily Achievement';updateLiveTotals();updateFinancialPosition();updateCapitalProtection();return profit}
+function calculate(){
+
+let openMFS=v('obk')+v('ong')+v('ork')+v('omc');
+let closeMFS=v('cbk')+v('cng')+v('crk')+v('cmc');
+
+let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc');
+let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
+
+window.mfsProfit=closeMFS-openMFS;
+window.rechargeProfit=closeRecharge-openRecharge;
+
+let rawProfit=mfsProfit+rechargeProfit;
+
+window.profit=rawProfit;
+
+mfsProfitBox.innerHTML=mfsProfit+' ৳';
+rechargeProfitBox.innerHTML=rechargeProfit+' ৳';
+
+dailyProfit.innerHTML=profit+' ৳';
+
+finalBox.innerHTML=
+'💸 MFS Profit: '+mfsProfit+' টাকা<br><br>'+
+'📱 Recharge Profit: '+rechargeProfit+' টাকা<br><br>'+
+ '💰 Total Profit: '+profit+' টাকা';
+
+insight.innerHTML=profit>=0?'📈 Profit চলছে':'🔴 Loss চলছে';
+
+achieve.innerHTML=profit>=3000?'🚀 Business Booster':'🏅 Daily Achievement';
+
+return profit;
+}
 function saveFinal(){const p=calculate(),item={date:new Date().toLocaleString(),mfs:window.mfsProfit||0,recharge:0,profit:p,note:$('note').value};if(editIndex!==null){histories[editIndex]=item;editIndex=null}else histories.unshift(item);localStorage.setItem(HIST_KEY,JSON.stringify(histories));renderHistory();updateMonthly();cloudSave()}
 function renderHistory(){$('historyBox').innerHTML=histories.map((h,i)=>`<div class="history"><div class="tag"><button class="smallBtn edit" onclick="editHistory(${i})">Edit</button><button class="smallBtn del" onclick="deleteHistory(${i})">Delete</button></div>📅 ${h.date}<br>💸 MFS Profit: ${h.mfs||0} ৳<br>📱 Recharge Profit: ${h.recharge||0} ৳<br>💰 Total Profit: ${h.profit||0} ৳<br>📝 ${h.note||''}</div>`).join('')||'<div class="history">No History</div>'}
 function editHistory(i){$('note').value=histories[i].note||'';editIndex=i;window.scrollTo({top:0,behavior:'smooth'})}function deleteHistory(i){if(confirm('Delete this history?')){histories.splice(i,1);localStorage.setItem(HIST_KEY,JSON.stringify(histories));renderHistory();updateMonthly();cloudSave()}}
 function updateMonthly(){const total=histories.reduce((s,h)=>s+Number(h.profit||0),0);$('monthlyProfit').innerHTML=money(total)+' ৳';$('lifetimeProfit').innerHTML=money(total)+' ৳';if(histories.length){const best=histories.reduce((a,b)=>Number(a.profit)>Number(b.profit)?a:b),low=histories.reduce((a,b)=>Number(a.profit)<Number(b.profit)?a:b);$('bestProfitDay').innerHTML=money(best.profit)+' ৳';$('lowestProfitDay').innerHTML=money(low.profit)+' ৳';$('avgProfit').innerHTML=money(total/histories.length)+' ৳'}const t=num('target');$('targetProgress').innerHTML=t?Math.min(100,Math.max(0,(Number(window.profit||0)/t)*100)).toFixed(1)+'%':'0%'}
 function updateLiveTotals(){const o=getAccountTotals('opening'),c=getAccountTotals('closing');$('openingEmoney').innerHTML=money(num('obk')+num('ong')+num('ork')+num('ogp')+num('orobi')+num('oair')+num('obl')+num('otk'))+' ৳';$('openingCash').innerHTML=money(num('omc')+num('orc'))+' ৳';$('closingEmoney').innerHTML=money(num('cbk')+num('cng')+num('crk')+num('cgp')+num('crobi')+num('cair')+num('cbl')+num('ctk'))+' ৳';$('closingCash').innerHTML=money(num('cmc')+num('crc'))+' ৳'}
-function updateFinancialPosition(){const c=getAccountTotals('closing'),o=getAccountTotals('opening'),actual=c.total>0?c.total:o.total,ext=getExternalBalanceTotal(),prot=num('protectedMfsCapital')+num('protectedRechargeCapital'),pos=getExternalPositionSummary();$('workingCapitalBox').innerHTML=money(actual)+' ৳';$('actualMoneyBox').innerHTML=money(actual)+' ৳';$('externalFundBox').innerHTML=(ext>=0?'+':'')+money(ext)+' ৳';$('externalMovementBox').innerHTML='আজকের Capital Movement: '+(getExternalMovementToday()>=0?'+':'')+money(getExternalMovementToday())+' ৳';$('ownFundBox').innerHTML=money(actual)+' ৳';$('retainedProfitBox').innerHTML='Above Protected Floor: '+money(actual-prot)+' ৳';$('moneyPositionBox').innerHTML='Business Capital: '+money(actual)+' ৳ | External Net: '+(ext>=0?'+':'')+money(ext)+' ৳';updateDueDashboard()}
+function updateFinancialPosition(){
+  const c=getAccountTotals('closing'),
+        o=getAccountTotals('opening'),
+        actual=c.total>0?c.total:o.total,
+        pos=getExternalPositionSummary(),
+        prot=num('protectedMfsCapital')+num('protectedRechargeCapital');
+
+  /*
+    External Fund is already inside Opening/Closing account balances.
+    Never subtract it from the physical money total.
+  */
+  const own=actual;
+
+  $('workingCapitalBox').innerHTML=money(own)+' ৳';
+  $('actualMoneyBox').innerHTML=money(actual)+' ৳';
+  $('externalFundBox').innerHTML=money(pos.receivable)+' ৳';
+  $('externalMovementBox').innerHTML=
+    'আমাদের দেনা: '+money(pos.payable)+' ৳ | আজকের Net Movement: '+money(getExternalMovementToday())+' ৳';
+  $('ownFundBox').innerHTML=money(own)+' ৳';
+  $('retainedProfitBox').innerHTML='Above Protected Floor: '+money(own-prot)+' ৳';
+  $('moneyPositionBox').innerHTML=
+    'Business Money: '+money(actual)+' ৳ | External Ledger: '+
+    (pos.receivable>0?'আমাদের পাওনা ৳'+money(pos.receivable):
+     pos.payable>0?'আমাদের দেনা ৳'+money(pos.payable):'সমন্বিত') ;
+
+  updateDueDashboard();
+}
 function calcCash(){const t=num('n1000')*1000+num('n500')*500+num('n200')*200+num('n100')*100+num('n50')*50+num('n20')*20+num('n10')*10;$('cashTotal').innerHTML=money(t);return t}function applyCash(){const t=calcCash();$( $('cashTarget').value ).value=t;autoSave();updateLiveTotals();updateCapitalProtection()}function clearCalc(){document.querySelectorAll('.cash-grid input').forEach(e=>e.value='');$('cashTotal').innerHTML='0'}
 async function applyReinvestment(){const m=num('mfsReinvest'),r=num('rechargeReinvest');if(m<0||r<0||m+r<=0)return alert('❌ Reinvest amount দিন');openProtectedCapitalEditor(num('protectedMfsCapital')+m,num('protectedRechargeCapital')+r)}
 function withdrawCapital(){const amount=num('withdrawAmount');if(amount<=0)return alert('Enter Valid Amount');const actual=getAccountTotals('closing').total||getAccountTotals('opening').total,own=actual-getExternalBalanceTotal(),prot=num('protectedMfsCapital')+num('protectedRechargeCapital');if(amount>own-prot)return alert('🚫 Protected Capital ভাঙা যাবে না। Available Above Floor: ৳'+money(own-prot));const method=$('withdrawMethod').value,source=$('withdrawSource').value;const map={Bkash:'cbk',Nagad:'cng',Rocket:'crk',GP:'cgp',Robi:'crobi',Airtel:'cair',Banglalink:'cbl',Tally:'ctk'};const id=map[method]||(source==='mfs'?'cmc':'crc');$(id).value=Math.max(0,num(id)-amount);localStorage.setItem('rasidulOwnerWithdrawToday',String(Number(localStorage.getItem('rasidulOwnerWithdrawToday')||0)+amount));histories.unshift({date:new Date().toLocaleString(),mfs:0,recharge:0,profit:0,note:'💸 Owner Withdrawal: '+money(amount)+' ৳ | '+method+' | '+($('withdrawReason').value||'No Reason')});localStorage.setItem(HIST_KEY,JSON.stringify(histories));$('withdrawAmount').value='0';$('withdrawReason').value='';renderHistory();updateMonthly();autoSave();updateLiveTotals();updateCapitalProtection();cloudSave();alert('💸 Withdrawal Saved')}
-function newDay(){if(!confirm('🆕 New Day শুরু করবেন? আজকের Closing → আগামী দিনের Opening হবে। External Capital/Profit আলাদা থাকবে, Protected Capital অপরিবর্তিত থাকবে।'))return;archiveCurrentDailyHistory();closingIds.forEach(([,cid],i)=>{$(openingIds[i][1]).value=$(cid).value});localStorage.setItem('rasidulDayStartedAt',String(Date.now()));localStorage.setItem('rasidulOwnerWithdrawToday','0');localStorage.setItem('rasidulCapitalInjectionToday','0');autoSave();updateLiveTotals();updateCapitalProtection();alert('🆕 New Day Started')}
+function newDay(){if(!confirm('🆕 New Day শুরু করবেন? Closing → Opening হবে এবং Protected Capital অপরিবর্তিত থাকবে।'))return;archiveCurrentDailyHistory();closingIds.forEach(([,cid],i)=>{$(openingIds[i][1]).value=$(cid).value});localStorage.setItem('rasidulDayStartedAt',String(Date.now()));localStorage.setItem('rasidulOwnerWithdrawToday','0');localStorage.setItem('rasidulCapitalInjectionToday','0');autoSave();updateLiveTotals();updateCapitalProtection();alert('🆕 New Day Started')}
 function archiveCurrentDailyHistory(){if(!histories.length)return;const a=JSON.parse(localStorage.getItem('rasidulDailyHistoryArchives')||'[]');a.unshift({dateKey:new Date().toISOString().slice(0,10),archivedAt:new Date().toLocaleString(),items:histories.slice()});localStorage.setItem('rasidulDailyHistoryArchives',JSON.stringify(a));histories=[];localStorage.setItem(HIST_KEY,'[]');renderHistory();renderDailyHistoryArchives()}
 function renderDailyHistoryArchives(){const a=JSON.parse(localStorage.getItem('rasidulDailyHistoryArchives')||'[]');$('dailyHistoryArchiveBox').innerHTML=a.map(x=>`<details class="partner"><summary>📦 ${x.dateKey} · ${(x.items||[]).length} Entries</summary>${(x.items||[]).map(h=>`<div class="history">📅 ${h.date||''}<br>💰 Profit: ${h.profit||0} ৳<br>📝 ${h.note||''}</div>`).join('')}</details>`).join('')||'<div class="history">📦 কোনো Daily Archive নেই।</div>'}
 function exportData(){const d={histories,ledgerPeople,ledgerArchives,form:formData(),protectedCapital:getProtectedCapitalData(),protectedCapitalPasswordHash:localStorage.getItem(PC_HASH)||null,protectedCapitalConfigured:isProtectedConfigured(),backupDate:new Date().toLocaleString()};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.download='rasidul_backup.json';a.click();localStorage.setItem('lastExportDate',new Date().toLocaleString());$('lastExportStatus').innerHTML='📦 '+localStorage.getItem('lastExportDate')}
@@ -122,7 +206,76 @@ function normalizeWhatsAppNumber(value){let n=String(value||'').replace(/[^0-9]/
 function addPerson(){const name=$('personName').value.trim(),mobile=normalizeWhatsAppNumber($('personMobile').value.trim());if(!name)return alert('নাম লিখুন');const duplicate=ledgerPeople.find(p=>String(p.name||'').trim().toLowerCase()===name.toLowerCase()&&(!mobile||normalizeWhatsAppNumber(p.mobile||'')===mobile));if(duplicate)return alert('⚠️ এই Client আগে থেকেই আছে।');ledgerPeople.push({id:'P-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),name,mobile,history:[]});saveLedgerData();$('personName').value='';$('personMobile').value='';renderAll();cloudSave()}
 function editPerson(i){const p=ledgerPeople[i],n=prompt('Edit Name',p.name);if(n===null)return;const m=prompt('Edit Mobile',p.mobile||'');p.name=n;p.mobile=m===null?p.mobile:m;saveLedgerData();renderAll();cloudSave()}
 function deletePerson(i){if(confirm('Delete Client: '+ledgerPeople[i].name+' ?')){ledgerPeople.splice(i,1);saveLedgerData();renderAll();cloudSave()}}
-function saveLedgerTransaction(){if(!ledgerPeople.length)return alert('আগে Person Add করুন');const i=Number($('ledgerPerson').value),amount=Number($('ledgerAmount').value||0),type=$('ledgerType').value,method=$('ledgerMethod').value,source=$('ledgerFundSource').value,note=($('ledgerNote')?.value||'').trim(),p=ledgerPeople[i];if(!p)return alert('❌ Client নির্বাচন করা হয়নি।');if(amount<=0)return alert('সঠিক Amount দিন');const sign=type==='gave'?1:-1;const map=method.includes('Bkash')?'cbk':method.includes('Nagad')?'cng':method==='Rocket'?'crk':method==='GP'?'cgp':method==='Robi'?'crobi':method==='Airtel'?'cair':method==='Banglalink'?'cbl':method==='Tally'?'ctk':method==='Cash'?(source==='mfs'?'cmc':'crc'):null;if(map&&sign<0&&num(map)<amount)return alert('🚫 নির্বাচিত Account-এ পর্যাপ্ত টাকা নেই।');if(map)$(map).value=num(map)+sign*amount;p.history=p.history||[];p.history.push({amount,type,method,fundSource:source,note,time:new Date().toLocaleString(),timestamp:Date.now()});saveLedgerData();$('ledgerAmount').value='';if($('ledgerNote'))$('ledgerNote').value='';autoSave();updateLiveTotals();updateCapitalProtection();renderAll();const waNumber=normalizeWhatsAppNumber(p.mobile||''),waText=buildWhatsAppMessage(p,amount,type,method,note),settled=Math.abs(getLedgerBalance(p))<.001;if(settled)archiveSettledLedger(i);saveLedgerData();saveLedgerArchives();cloudSave();if(waNumber){const win=window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText),'_blank');if(!win){navigator.clipboard?.writeText(waText).catch(()=>{});alert('💬 WhatsApp tab blocked. Message copied; browser pop-up allow করুন।')}}else alert('ℹ️ Transaction saved. Client-এর WhatsApp number নেই।')}
+function saveLedgerTransaction(){
+  if(!ledgerPeople.length)return alert('আগে Person Add করুন');
+  const i=Number($('ledgerPerson').value),amount=Number($('ledgerAmount').value||0),
+        type=$('ledgerType').value,method=$('ledgerMethod').value,
+        source=$('ledgerFundSource').value,note=($('ledgerNote')?.value||'').trim(),
+        p=ledgerPeople[i];
+  if(!p)return alert('❌ Client নির্বাচন করা হয়নি।');
+  if(amount<=0)return alert('সঠিক Amount দিন');
+
+  /*
+    IMPORTANT ACCOUNTING RULE:
+    External Fund NEVER changes today's Closing Balance.
+    It adjusts TODAY'S OPENING BALANCE because it is a capital movement
+    that happened before/at the start of the day's working position.
+  */
+  const sign=type==='gave'?1:-1;
+  const map=method.includes('Bkash')?'obk':
+    method.includes('Nagad')?'ong':
+    method==='Rocket'?'ork':
+    method==='GP'?'ogp':
+    method==='Robi'?'orobi':
+    method==='Airtel'?'oair':
+    method==='Banglalink'?'obl':
+    method==='Tally'?'otk':
+    method==='Cash'?(source==='mfs'?'omc':'orc'):null;
+
+  if(map && sign<0 && num(map)<amount)
+    return alert('🚫 Opening Balance-এ নির্বাচিত Account-এ পর্যাপ্ত টাকা নেই।');
+
+  if(map){
+    $(map).value=num(map)+sign*amount;
+    autoSave();
+  }
+
+  p.history=p.history||[];
+  p.history.push({
+    amount,type,method,fundSource:source,note,
+    time:new Date().toLocaleString(),
+    timestamp:Date.now()
+  });
+
+  saveLedgerData();
+  $('ledgerAmount').value='';
+  if($('ledgerNote'))$('ledgerNote').value='';
+
+  autoSave();
+  updateLiveTotals();
+  updateCapitalProtection();
+  renderAll();
+
+  const waNumber=normalizeWhatsAppNumber(p.mobile||'');
+  const waText=buildWhatsAppMessage(p,amount,type,method,note);
+  const settled=Math.abs(getLedgerBalance(p))<.001;
+
+  if(settled)archiveSettledLedger(i);
+
+  saveLedgerData();
+  saveLedgerArchives();
+  cloudSave();
+
+  if(waNumber){
+    const win=window.open('https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText),'_blank');
+    if(!win){
+      navigator.clipboard?.writeText(waText).catch(()=>{});
+      alert('💬 WhatsApp tab blocked. Message copied; browser pop-up allow করুন।');
+    }
+  }else{
+    alert('ℹ️ Transaction saved. Client-এর WhatsApp number নেই।');
+  }
+}
 function editTransaction(pi,hi){const h=ledgerPeople[pi].history[hi],a=prompt('Edit Amount',h.amount);if(a===null)return;const n=Number(a);if(!Number.isFinite(n)||n<=0)return alert('Invalid Amount');h.amount=n;saveLedgerData();renderAll();cloudSave()}
 function deleteTransaction(pi,hi){if(confirm('Delete Transaction?')){ledgerPeople[pi].history.splice(hi,1);saveLedgerData();renderAll();cloudSave()}}
 function archiveSettledLedger(i){const p=ledgerPeople[i];if(!p||!p.history?.length||Math.abs(getLedgerBalance(p))>.001)return false;const given=p.history.filter(h=>h.type==='gave').reduce((s,h)=>s+Number(h.amount||0),0),taken=p.history.filter(h=>h.type==='took').reduce((s,h)=>s+Number(h.amount||0),0);ledgerArchives.unshift({archiveId:'ARC-'+Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2,7),personId:p.id,personName:p.name,personMobile:p.mobile||'',settledAt:new Date().toLocaleString(),businessDate:new Date().toISOString().slice(0,10),finalBalance:0,totalGiven:given,totalTaken:taken,transactions:JSON.parse(JSON.stringify(p.history))});p.history=[];saveLedgerArchives();saveLedgerData();renderAll();return true}
