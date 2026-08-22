@@ -233,6 +233,11 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="dash">
 <button onclick="manualCloudSync()">🔒 Final Cloud Backup</button>
 <div class="mini"><h3>🛡️ Cloud Status</h3><p id="cloudStatus">🟢 Connected</p></div>
+<div class="mini" id="monthlyWithdrawalCard">
+<h3>💸 এই মাসে Owner Withdrawal</h3>
+<h2 id="monthlyOwnerWithdrawal">0 ৳</h2>
+<p id="withdrawalMonthLabel" style="margin:0;opacity:.75">চলতি মাস</p>
+</div>
 <div class="mini"><h3>💸 MFS Profit</h3><h2 id="mfsProfitBox">0 ৳</h2></div><div class="mini"><h3>📱 Recharge Profit</h3><h2 id="rechargeProfitBox">0 ৳</h2></div><div class="mini"><h3>📅 Daily Profit</h3><h2 id="dailyProfit">0 ৳</h2></div>
 <div class="mini"><h3>📈 Monthly Profit</h3><h2 id="monthlyProfit">0 ৳</h2></div>
 <div class="mini"><h3>💎 Total Working Capital</h3><h2 id="workingCapitalBox">0 ৳</h2></div>
@@ -630,6 +635,34 @@ el=document.getElementById('targetProgress');
 if(el) el.innerHTML=progress+'%';
 }
 
+function updateMonthlyOwnerWithdrawal(){
+  const now=new Date();
+  const y=now.getFullYear();
+  const m=now.getMonth();
+  let total=0;
+
+  (window.histories||[]).forEach(h=>{
+    if(h.type!=='ownerWithdrawal') return;
+
+    let d=new Date(h.date);
+    if(isNaN(d.getTime())){
+      const match=String(h.date||'').match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+      if(match){
+        d=new Date(Number(match[3])<100?2000+Number(match[3]):Number(match[3]),Number(match[2])-1,Number(match[1]));
+      }
+    }
+
+    if(!isNaN(d.getTime()) && d.getFullYear()===y && d.getMonth()===m){
+      total+=Number(h.withdrawalAmount||0);
+    }
+  });
+
+  const box=document.getElementById('monthlyOwnerWithdrawal');
+  const label=document.getElementById('withdrawalMonthLabel');
+  if(box) box.textContent=total+' ৳';
+  if(label) label.textContent=now.toLocaleDateString('bn-BD',{month:'long',year:'numeric'});
+}
+
 function updateMonthly(){
 
 let total=0;
@@ -637,6 +670,7 @@ let total=0;
 histories.forEach(h=> total+=Number(h.profit));
 
 monthlyProfit.innerHTML=total+' ৳';
+updateMonthlyOwnerWithdrawal();
 updateAnalytics();
 
 }
@@ -738,6 +772,10 @@ else{
 
 histories.unshift({
 date:new Date().toLocaleString(),
+type:'ownerWithdrawal',
+withdrawalAmount:amount,
+withdrawalMethod:method,
+withdrawalSource:source,
 mfs:0,
 recharge:0,
 profit:0,
@@ -1282,12 +1320,13 @@ cloudArchives.push(docSnap.data());
 
 if(cloudArchives.length>0){
 
-window.ledgerArchives=cloudArchives.sort((a,b)=>{
+const merged=[...(window.ledgerArchives||[]),...cloudArchives];
+window.ledgerArchives=merged.sort((a,b)=>{
 return new Date(b.settledAt).getTime()-new Date(a.settledAt).getTime();
 });
 
+dedupeLedgerArchives();
 saveLedgerArchives();
-
 renderLedgerArchives();
 
 }
@@ -1562,7 +1601,25 @@ sessionStorage.getItem('rasidulLedgerArchives')||
 '[]'
 );
 
+function dedupeLedgerArchives(){
+  const seen=new Set();
+  const out=[];
+  (window.ledgerArchives||[]).forEach(a=>{
+    const key=String(
+      a.archiveId ||
+      ((a.personId||'')+'|'+(a.personName||'')+'|'+(a.settledAt||'')+'|'+(a.businessDate||''))
+    );
+    if(seen.has(key)) return;
+    seen.add(key);
+    out.push(a);
+  });
+  window.ledgerArchives=out;
+  return out;
+}
+
 function saveLedgerArchives(){
+
+dedupeLedgerArchives();
 
 localStorage.setItem(
 'rasidulLedgerArchives',
@@ -1933,7 +1990,7 @@ if(h.type==='refundReceived') refundReceived+=amount;
 
 let archiveItem={
 
-archiveId:'ARC-'+Date.now()+'-'+personIndex,
+archiveId:'ARC-'+Date.now()+'-'+personIndex+'-'+Math.random().toString(36).slice(2,8),
 
 personId:person.id||null,
 
@@ -1959,8 +2016,23 @@ transactions:JSON.parse(JSON.stringify(person.history))
 
 };
 
-window.ledgerArchives.unshift(archiveItem);
+dedupeLedgerArchives();
 
+const duplicateArchive=window.ledgerArchives.some(a =>
+  String(a.archiveId)===String(archiveItem.archiveId) ||
+  (
+    String(a.personName||'')===String(archiveItem.personName||'') &&
+    String(a.settledAt||'')===String(archiveItem.settledAt||'') &&
+    Number(a.finalBalance||0)===0 &&
+    JSON.stringify(a.transactions||[])===JSON.stringify(archiveItem.transactions||[])
+  )
+);
+
+if(!duplicateArchive){
+  window.ledgerArchives.unshift(archiveItem);
+}
+
+dedupeLedgerArchives();
 saveLedgerArchives();
 
 // Current ledger starts a fresh cycle.
@@ -1975,7 +2047,10 @@ updateDueReminders();
 updateDueDashboard();
 
 if(window.saveLedgerArchiveToCloud){
-window.saveLedgerArchiveToCloud(archiveItem);
+  // Keep the archive cloud write in the settlement flow.
+  // The caller does not await this legacy helper, but the archive is already
+  // saved locally and the main cloud backup is awaited before WhatsApp opens.
+  window.saveLedgerArchiveToCloud(archiveItem);
 }
 
 alert(
@@ -1990,6 +2065,8 @@ return true;
 }
 
 function renderLedgerArchives(){
+
+dedupeLedgerArchives();
 
 let box=document.getElementById('ledgerArchiveBox');
 
@@ -2057,7 +2134,7 @@ ${txHTML}
 
 }
 
-function saveLedgerTransaction(){
+async function saveLedgerTransaction(){
 
 if(ledgerPeople.length===0){
 return alert('আগে Person Add করুন');
@@ -2118,10 +2195,34 @@ orc.value=(+orc.value||0)+(amount*sign);
 let settledNow = archiveSettledLedger(personIndex);
 
 if(settledNow){
-updateWorkingCapital();
-updateLiveTotals();
-autoSave();
-return;
+  // Settlement archive must also trigger the normal WhatsApp confirmation.
+  // archiveSettledLedger() clears the live history, so build the message
+  // from the settled transaction before returning.
+  updateWorkingCapital();
+  updateLiveTotals();
+  autoSave();
+
+  saveLedgerData();
+
+  if(window.erpCloudSave){
+    await erpCloudSave();
+  }
+
+  let person=ledgerPeople[personIndex];
+
+  if(person && person.mobile && person.mobile.trim()!==''){
+    const message=buildWhatsAppSettlementMessage(person,amount,type,method);
+    const waUrl='https://wa.me/'+person.mobile+'?text='+encodeURIComponent(message);
+
+    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+      window.location.href=waUrl;
+    }else{
+      window.open(waUrl,'_blank');
+    }
+  }
+
+  document.getElementById('ledgerAmount').value='';
+  return;
 }
 
 updateWorkingCapital();
@@ -2168,6 +2269,37 @@ if(h.type==='took' || h.type==='refundGiven') balance-=Number(h.amount||0);
 return balance;
 }
 
+
+function buildWhatsAppSettlementMessage(person,amount,type,method){
+  let title='';
+  if(type==='gave') title='🟢 ৳'+amount+' টাকা গ্রহণ করা হয়েছে';
+  else if(type==='took') title='🔴 ৳'+amount+' টাকা প্রদান করা হয়েছে';
+  else if(type==='refundReceived') title='💚 ৳'+amount+' টাকা ফেরত গ্রহণ করা হয়েছে';
+  else title='🧾 ৳'+amount+' টাকা ফেরত প্রদান করা হয়েছে';
+
+  return `${title}
+
+👤 NAME: ${person.name}
+💳 মাধ্যম: ${method}
+
+🤝 বর্তমান পাওনা: ৳0
+⚖️ সকল হিসাব সমন্বয় হয়ে গেছে।
+
+📦 সম্পূর্ণ হিসাবটি Archive-এ সংরক্ষণ করা হয়েছে।
+🧾 এই লেনদেনের পর নতুন হিসাবের সাইকেল শুরু হবে।
+
+✅ লেনদেন সফলভাবে সংরক্ষিত হয়েছে।
+
+⚠️ অনুগ্রহ করে হিসাবটি যাচাই করুন। কোনো ভুল, অপরিচিত বা অস্বাভাবিক লেনদেন দেখতে পেলে দ্রুত আমাদের জানান।
+
+🏪 Rubaiya Pharmacy
+📩 *Sent by RasidulAI*
+
+🤖*This is a computer-generated message.*
+
+💙 ধন্যবাদ।
+`;
+}
 
 function buildWhatsAppMessage(person,amount,type,method){
 const balance=getLedgerBalance(person);
