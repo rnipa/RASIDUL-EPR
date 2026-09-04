@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
-<title>Rasidul Premium ERP</title>
+<title>Rasidul Premium ERP v17</title>
 <style>
 *{box-sizing:border-box;transition:.3s}
 body{
@@ -122,6 +122,34 @@ font-weight:bold;
 text-align:center;
 }
 
+/* ===== v15 TOP DASHBOARD + CLOSING REPORT ===== */
+.dash{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:stretch}
+.dash>.mini{min-width:0}
+.dash>button{min-height:112px;border-radius:20px;border:none;padding:14px;font-size:17px}
+.dash>.mini{min-height:112px}
+.ui-action-btn{background:linear-gradient(135deg,#f59e0b,#ea580c)!important}
+.ui-closing-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.ui-closing-actions button{margin:0}
+#closingReportOverlay{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:99998;display:none;align-items:center;justify-content:center;padding:18px}
+#closingReportOverlay.open{display:flex}
+.closing-report-card{width:min(430px,100%);background:linear-gradient(145deg,#24134f,#5b21b6);color:#fff;border-radius:24px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.15)}
+.closing-report-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.closing-report-head h3{margin:0;font-size:20px}
+.closing-report-close{width:38px!important;min-width:38px!important;height:38px!important;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.14)!important}
+.closing-report-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.closing-report-item{background:rgba(255,255,255,.10);border-radius:15px;padding:11px}
+.closing-report-item small{display:block;opacity:.75;margin-bottom:3px}
+.closing-report-item b{font-size:16px}
+.closing-report-note{margin-top:12px;padding:11px;border-radius:15px;background:rgba(255,255,255,.08);line-height:1.5;white-space:pre-wrap}
+.closing-report-footer{display:flex;gap:9px;margin-top:14px}
+.closing-report-footer button{flex:1}
+.closing-check-box{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);font-size:13px;line-height:1.6}
+.closing-check-box.ok{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.35)}
+.closing-check-box.warn{background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.35)}
+.closing-check-box.error{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.35)}
+@media(max-width:900px){.dash{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.dash{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dash>button,.dash>.mini{min-height:92px}.dash>button{font-size:14px}.ui-closing-actions{grid-template-columns:1fr}.closing-report-grid{grid-template-columns:1fr 1fr}}
+
 /* ===== COMPACT BALANCE CALCULATOR + 58MM ARCHIVE PRINT ===== */
 .balance-item{position:relative}
 .balance-item label{padding-right:36px}
@@ -184,6 +212,312 @@ text-align:center;
   .no-print{display:none !important}
 }
 
+
+/* ===== v12 PREMIUM COMPACT UI LAYER ===== */
+:root{--ui-glass:rgba(15,23,42,.42);--ui-border:rgba(255,255,255,.16)}
+body{padding-bottom:30px}
+.container{max-width:1280px;padding:14px}
+h1{font-size:32px;margin:8px 0 2px}
+.sub{font-size:13px;margin-bottom:14px}
+
+.dash{gap:10px}
+.dash>.mini{
+  padding:13px 14px;margin-top:0;border-radius:17px;
+  min-height:0;
+}
+.dash>.mini h3{margin:0 0 5px;font-size:14px}
+.dash>.mini h2{margin:0;font-size:21px}
+.dash>.mini p{margin:3px 0;font-size:13px}
+
+.ui-control-panel{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+  gap:9px;
+  margin:14px 0 8px;
+}
+.ui-panel-btn{
+  width:100%;padding:12px 10px;margin:0;border-radius:15px;
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 7px 18px rgba(0,0,0,.14);
+  font-size:14px;
+}
+.ui-panel-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.2)}
+.ui-panel-btn.active{background:linear-gradient(135deg,#2563eb,#7c3aed)}
+
+.ui-section{
+  display:none;
+  margin-top:10px;
+  padding:16px;
+  border-radius:20px;
+  background:rgba(15,23,42,.42);
+  border:1px solid var(--ui-border);
+  box-shadow:0 10px 28px rgba(0,0,0,.18);
+}
+.ui-section.open{display:block}
+.ui-section-title{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;margin:0 0 13px;font-size:19px;
+}
+.ui-close{
+  width:auto!important;margin:0!important;padding:7px 11px!important;
+  border-radius:10px!important;font-size:12px!important;
+  background:rgba(255,255,255,.12)!important;
+}
+.ui-balance-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:9px;
+}
+.ui-balance-item{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:13px;padding:9px;
+}
+.ui-balance-item label{font-size:12px;margin:0 0 3px}
+.ui-balance-item input{padding:10px;font-size:14px;margin:0}
+
+.ui-note{
+  margin-top:12px;padding:11px;border-radius:14px;
+  background:rgba(255,255,255,.07);
+}
+.ui-note label{font-size:13px}
+.ui-note textarea{min-height:70px;padding:10px;margin:0}
+
+.ui-summary-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:11px
+}
+.ui-summary{
+  padding:11px;border-radius:13px;background:rgba(255,255,255,.08);
+  text-align:center
+}
+.ui-summary h3{font-size:12px;margin:0 0 3px}
+.ui-summary h2{font-size:18px;margin:0}
+
+.ui-main-actions{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(125px,1fr));
+  gap:8px;margin-top:12px
+}
+.ui-main-actions button,.ui-main-actions .importLabel{
+  margin:0!important;padding:11px 9px!important;font-size:13px
+}
+
+.ui-hidden-original{display:none!important}
+
+.ui-archive-group{
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.06);
+  border-radius:15px;margin:9px 0;overflow:hidden
+}
+.ui-archive-folder{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:12px 13px;background:rgba(255,255,255,.08);
+  cursor:pointer;font-weight:bold
+}
+.ui-archive-folder .count{font-size:11px;opacity:.8;font-weight:normal}
+.ui-archive-items{display:none;padding:0 10px 10px}
+.ui-archive-group.open .ui-archive-items{display:block}
+.ui-archive-item{
+  padding:10px;margin-top:8px;border-radius:12px;
+  background:rgba(0,0,0,.14)
+}
+
+.ui-client-tabs{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px
+}
+.ui-client-tab{
+  padding:11px;border-radius:12px;background:rgba(255,255,255,.09);
+  text-align:center;font-weight:bold;cursor:pointer
+}
+.ui-client-tab.active{background:rgba(37,99,235,.75)}
+.ui-client-list{display:none}
+.ui-client-list.open{display:block}
+.ui-client-card{
+  padding:11px;margin:8px 0;border-radius:13px;
+  background:rgba(255,255,255,.07)
+}
+.ui-client-card h3{margin:0 0 5px;font-size:15px}
+
+@media(max-width:600px){
+  .container{padding:9px}
+  h1{font-size:25px}
+  .ui-control-panel{grid-template-columns:repeat(2,1fr)}
+  .ui-panel-btn{font-size:12px;padding:11px 7px}
+  .ui-section{padding:12px}
+  .ui-balance-grid{grid-template-columns:repeat(2,1fr)}
+  .ui-summary-grid{grid-template-columns:1fr}
+  .card{padding:13px;border-radius:17px}
+}
+
+
+
+/* ===== v18 PREMIUM TOP DASHBOARD ===== */
+.ui-top-dashboard{
+  display:grid;grid-template-columns:repeat(7,minmax(105px,1fr));gap:8px;margin:12px 0 10px;
+}
+.ui-top-card{
+  min-height:82px;padding:10px 8px;border-radius:16px;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.11);color:inherit;text-align:center;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+button.ui-top-card{cursor:pointer;font:inherit}
+.ui-top-card>span{font-size:18px}.ui-top-card small{font-size:10px;opacity:.86;font-weight:700;line-height:1.25}.ui-top-card b{font-size:14px;line-height:1.2}.ui-top-backup{background:rgba(37,99,235,.20)!important}
+.ui-client-tab strong{display:block;margin-top:3px;font-size:12px;opacity:.95}
+@media(max-width:700px){
+  .ui-top-dashboard{grid-template-columns:repeat(2,1fr);gap:7px}
+  .ui-top-card{min-height:76px;padding:9px 6px}
+  .ui-top-card b{font-size:13px}
+  .ui-top-card small{font-size:9px}
+  .ui-top-card:first-child{grid-column:span 2}
+}
+
+/* ===== v13 CLEAN DASHBOARD UI ===== */
+.ui-dashboard-stats{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(120px,1fr));
+  gap:8px;
+  margin:12px 0 10px;
+}
+.ui-stat-card{
+  margin:0!important;padding:11px 9px!important;border-radius:15px!important;
+  min-height:72px;background:rgba(255,255,255,.11)!important;
+  text-align:center;
+}
+.ui-stat-card h3{font-size:11px!important;margin:0 0 4px!important;opacity:.9}
+.ui-stat-card h2,.ui-stat-card p{margin:0!important;font-size:17px!important}
+.ui-core-actions-label{grid-column:1/-1;font-size:12px;font-weight:800;opacity:.82;margin:2px 0 -4px;padding-left:2px}
+.ui-middle-actions{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(125px,1fr));
+  gap:9px;
+  max-width:1000px;
+  margin:14px auto 12px;
+}
+.ui-middle-btn{
+  margin:0!important;padding:12px 9px!important;border-radius:14px!important;
+  font-size:13px!important;background:rgba(255,255,255,.13)!important;
+  border:1px solid rgba(255,255,255,.14);
+}
+.ui-middle-btn:hover,.ui-middle-btn.active{
+  background:linear-gradient(135deg,#2563eb,#7c3aed)!important;
+}
+.ui-extra-dashboard{
+  display:none;
+  margin-top:10px;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:9px;
+}
+.ui-extra-dashboard.open{display:grid}
+.ui-extra-dashboard .mini{
+  margin:0!important;padding:11px!important;border-radius:15px!important
+}
+.ui-business-panel{
+  display:none;margin:10px 0;
+  padding:15px;border-radius:19px;
+  background:rgba(15,23,42,.44);
+  border:1px solid rgba(255,255,255,.15)
+}
+.ui-business-panel.open{display:block}
+.ui-business-panel .card{
+  margin:0!important;padding:0!important;background:transparent!important;
+  box-shadow:none!important
+}
+.ui-business-panel h3{margin-top:0}
+.ui-panel-close{
+  float:right;width:auto!important;padding:6px 10px!important;margin:0!important;
+  font-size:11px!important;border-radius:9px!important;
+  background:rgba(255,255,255,.12)!important
+}
+@media(max-width:1000px){
+ .ui-dashboard-stats{grid-template-columns:repeat(4,1fr)}
+ .ui-middle-actions{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:600px){
+ .ui-dashboard-stats{grid-template-columns:repeat(2,1fr)}
+ .ui-middle-actions{grid-template-columns:repeat(2,1fr)}
+}
+
+
+/* ===== v14 MOBILE-FIRST UI ONLY ===== */
+.ui-middle-actions{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:100%;
+  max-width:720px;
+  gap:8px;
+  margin:12px auto 10px;
+}
+.ui-middle-btn,.ui-import-btn{
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:10px 8px!important;
+  margin:0!important;
+  font-size:13px!important;
+  line-height:1.2;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.ui-import-btn{cursor:pointer}
+.ui-middle-btn:active,.ui-import-btn:active{transform:scale(.98)!important}
+.ui-section,.ui-business-panel{
+  width:100%;
+  max-width:100%;
+  overflow:hidden;
+}
+.ui-balance-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+.ui-balance-item input,
+.ui-note textarea,
+.ui-section select,
+.ui-section button,
+.ui-business-panel input,
+.ui-business-panel textarea,
+.ui-business-panel select{
+  font-size:16px!important;
+}
+#uiPanelHost .card{
+  max-width:100%;
+}
+@media(max-width:480px){
+  .container{padding:8px!important}
+  h1{font-size:23px!important}
+  .sub{font-size:12px!important}
+  .ui-middle-actions{
+    gap:7px!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .ui-middle-btn,.ui-import-btn{
+    min-height:48px!important;
+    border-radius:13px!important;
+    font-size:12px!important;
+    padding:9px 6px!important;
+  }
+  .ui-section,.ui-business-panel{
+    padding:11px!important;
+    border-radius:16px!important;
+  }
+  .ui-balance-grid{
+    gap:7px!important;
+  }
+  .ui-balance-item{
+    padding:8px!important;
+    border-radius:11px!important;
+  }
+  .ui-balance-item input{
+    padding:10px 8px!important;
+  }
+  .ui-summary-grid{
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  .ui-summary{padding:9px!important}
+  .ui-summary h2{font-size:16px!important}
+}
+
 </style>
 
 <script>
@@ -230,14 +564,19 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <h1>💼 Rasidul Premium ERP</h1>
 <p class="sub">Stable Smart Business Control Center 🚀</p>
 
-<div class="dash">
-<button onclick="manualCloudSync()">🔒 Final Cloud Backup</button>
-<div class="mini"><h3>🛡️ Cloud Status</h3><p id="cloudStatus">🟢 Connected</p></div>
-<div class="mini" id="monthlyWithdrawalCard">
-<h3>💸 এই মাসে Owner Withdrawal</h3>
-<h2 id="monthlyOwnerWithdrawal">0 ৳</h2>
-<p id="withdrawalMonthLabel" style="margin:0;opacity:.75">চলতি মাস</p>
+<!-- ===== v18 PREMIUM TOP DASHBOARD STATS ===== -->
+<div class="ui-top-dashboard">
+  <button class="ui-top-card ui-top-backup" type="button" onclick="manualCloudSync()">
+    <span>🔒</span><small>Final Cloud Backup</small><b>Backup</b>
+  </button>
+  <div class="ui-top-card"><span>🛡️</span><small>Cloud Status</small><b id="ui_cloudStatus">🟢 Connected</b></div>
+  <div class="ui-top-card"><span>💸</span><small>এই মাসের Owner Withdrawal</small><b id="ui_monthlyWithdrawal">0 ৳</b></div>
+  <div class="ui-top-card"><span>💸</span><small>MFS Profit</small><b id="ui_mfsProfit">0 ৳</b></div>
+  <div class="ui-top-card"><span>📱</span><small>Recharge Profit</small><b id="ui_rechargeProfit">0 ৳</b></div>
+  <div class="ui-top-card"><span>📈</span><small>এই মাসের মোট Profit</small><b id="ui_monthlyProfit">0 ৳</b></div>
+  <div class="ui-top-card"><span>💎</span><small>Total Working Capital</small><b id="ui_workingCapital">0 ৳</b></div>
 </div>
+
 <div class="mini"><h3>💸 MFS Profit</h3><h2 id="mfsProfitBox">0 ৳</h2></div><div class="mini"><h3>📱 Recharge Profit</h3><h2 id="rechargeProfitBox">0 ৳</h2></div><div class="mini"><h3>📅 Daily Profit</h3><h2 id="dailyProfit">0 ৳</h2></div>
 <div class="mini"><h3>📈 Monthly Profit</h3><h2 id="monthlyProfit">0 ৳</h2></div>
 <div class="mini"><h3>💎 Total Working Capital</h3><h2 id="workingCapitalBox">0 ৳</h2></div>
@@ -270,9 +609,204 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 </div>
 
+
+
+<!-- ===== v13 CLEAN DASHBOARD CONTROL CENTER ===== -->
+<div class="ui-dashboard-stats" style="display:none!important" aria-hidden="true"></div>
+
+<div class="ui-middle-actions">
+  <div class="ui-core-actions-label">⚙️ মূল হিসাবের Action</div>
+  <button class="ui-middle-btn" data-business="capitalPanel">💎 Base Capital</button>
+  <button class="ui-middle-btn" data-business="reinvestPanel">📈 Reinvest Profit</button>
+  <button class="ui-middle-btn" data-business="withdrawPanel">💸 Owner Withdrawal</button>
+  <button class="ui-middle-btn" data-section="openingPanel">🌅 Opening Balance</button>
+  <button class="ui-middle-btn" data-section="closingPanel">🌙 Closing Balance</button>
+  <button class="ui-middle-btn ui-action-btn" type="button" onclick="calculate()">📈 Calculate</button>
+  <button class="ui-middle-btn ui-action-btn" type="button" onclick="saveFinal()">✅ Final Save</button>
+  <button class="ui-middle-btn ui-action-btn ui-new-day-btn" type="button" onclick="newDay()">🆕 New Day</button>
+  <button class="ui-middle-btn" data-section="cashPanel">🧮 Cash Calculator</button>
+  <button class="ui-middle-btn" data-section="historyPanel">📜 Daily History</button>
+  <button class="ui-middle-btn" data-section="externalPanel">👤 External Person</button>
+  <button class="ui-middle-btn" data-section="clientPanel">👥 Client View</button>
+  <button class="ui-middle-btn" data-section="archivePanel">📦 Archive</button>
+  <button class="ui-middle-btn" id="ui_cloudBackup">☁️ Final Cloud Backup</button>
+  <button class="ui-middle-btn" data-extra="extraDashboard">📊 More Dashboard</button>
+  <button class="ui-middle-btn" id="ui_manualExport" type="button">📦 Export</button>
+  <label class="ui-middle-btn ui-import-btn" for="ui_manualImport">📥 Import</label>
+  <input id="ui_manualImport" type="file" accept=".json,application/json" hidden>
+</div>
+
+<div id="extraDashboard" class="ui-extra-dashboard"></div>
+
+<div id="closingReportOverlay" aria-hidden="true">
+  <div class="closing-report-card">
+    <div class="closing-report-head">
+      <h3>🌙 দিনশেষের ছোট রিপোর্ট</h3>
+      <button class="closing-report-close" type="button" onclick="closeClosingReport()">✕</button>
+    </div>
+    <div id="closingReportDate" style="opacity:.78"></div>
+    <div class="closing-report-grid">
+      <div class="closing-report-item"><small>💸 MFS Profit</small><b id="cr_mfs">0 ৳</b></div>
+      <div class="closing-report-item"><small>📱 Recharge Profit</small><b id="cr_recharge">0 ৳</b></div>
+      <div class="closing-report-item"><small>💰 Total Profit</small><b id="cr_total">0 ৳</b></div>
+      <div class="closing-report-item"><small>💎 Working Capital</small><b id="cr_capital">0 ৳</b></div>
+      <div class="closing-report-item"><small>💵 Closing Cash</small><b id="cr_cash">0 ৳</b></div>
+      <div class="closing-report-item"><small>🏦 Closing E-Money</small><b id="cr_emoney">0 ৳</b></div>
+    </div>
+    <div class="closing-report-note" id="cr_note">কোনো Closing Note নেই।</div>
+    <div class="closing-report-footer">
+      <button type="button" onclick="closeClosingReport()">ঠিক আছে</button>
+    </div>
+  </div>
+</div>
+
+<div id="uiPanelHost">
+  <section id="openingPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>🌅 Opening Balance</span>
+    <button class="ui-close" type="button" data-close="openingPanel">✕ Close</button>
+  </div>
+  <div class="ui-balance-grid">
+    <div class="ui-balance-item"><label>Bkash</label><input id="ui_obk"></div>
+    <div class="ui-balance-item"><label>Nagad</label><input id="ui_ong"></div>
+    <div class="ui-balance-item"><label>Rocket</label><input id="ui_ork"></div>
+    <div class="ui-balance-item"><label>MFS Cash</label><input id="ui_omc"></div>
+    <div class="ui-balance-item"><label>GP</label><input id="ui_ogp"></div>
+    <div class="ui-balance-item"><label>Robi</label><input id="ui_orobi"></div>
+    <div class="ui-balance-item"><label>Airtel</label><input id="ui_oair"></div>
+    <div class="ui-balance-item"><label>Banglalink</label><input id="ui_obl"></div>
+    <div class="ui-balance-item"><label>Tally Khata</label><input id="ui_otk"></div>
+    <div class="ui-balance-item"><label>Recharge Cash</label><input id="ui_orc"></div>
+  </div>
+  <div class="ui-summary-grid">
+    <div class="ui-summary"><h3>💰 Opening E-Money</h3><h2 id="ui_openingEmoney">0 ৳</h2></div>
+    <div class="ui-summary"><h3>💵 Opening Cash</h3><h2 id="ui_openingCash">0 ৳</h2></div>
+  </div>
+  <div class="ui-note">
+    <label>📝 Opening Special Note</label>
+    <textarea id="ui_openingNote" placeholder="Opening Balance সম্পর্কে বিশেষ নোট লিখুন"></textarea>
+  </div>
+</section>
+<section id="closingPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>🌙 Closing Balance</span>
+    <button class="ui-close" type="button" data-close="closingPanel">✕ Close</button>
+  </div>
+  <div class="ui-balance-grid">
+    <div class="ui-balance-item"><label>Bkash</label><input id="ui_cbk"></div>
+    <div class="ui-balance-item"><label>Nagad</label><input id="ui_cng"></div>
+    <div class="ui-balance-item"><label>Rocket</label><input id="ui_crk"></div>
+    <div class="ui-balance-item"><label>MFS Cash</label><input id="ui_cmc"></div>
+    <div class="ui-balance-item"><label>GP</label><input id="ui_cgp"></div>
+    <div class="ui-balance-item"><label>Robi</label><input id="ui_crobi"></div>
+    <div class="ui-balance-item"><label>Airtel</label><input id="ui_cair"></div>
+    <div class="ui-balance-item"><label>Banglalink</label><input id="ui_cbl"></div>
+    <div class="ui-balance-item"><label>Tally Khata</label><input id="ui_ctk"></div>
+    <div class="ui-balance-item"><label>Recharge Cash</label><input id="ui_crc"></div>
+  </div>
+  <div class="ui-summary-grid">
+    <div class="ui-summary"><h3>💰 Closing E-Money</h3><h2 id="ui_closingEmoney">0 ৳</h2></div>
+    <div class="ui-summary"><h3>💵 Closing Cash</h3><h2 id="ui_closingCash">0 ৳</h2></div>
+  </div>
+  <div class="ui-note">
+    <label>📝 Closing Special Note</label>
+    <textarea id="ui_closingNote" placeholder="Closing Balance সম্পর্কে বিশেষ নোট লিখুন"></textarea>
+  </div>
+  <div class="ui-closing-actions">
+    <button type="button" onclick="calculateClosingCheck()">📈 Calculate & Check</button>
+    <button type="button" onclick="saveFinal()">✅ Final Save</button>
+  </div>
+  <div id="closingCheckBox" class="closing-check-box">📌 Closing Balance Calculate করলে এখানে ছোট্ট যাচাই রিপোর্ট দেখাবে।</div>
+</section>
+<section id="cashPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>🧮 Cash Calculator</span>
+    <button class="ui-close" type="button" data-close="cashPanel">✕ Close</button>
+  </div>
+  <div id="ui_cash_mount"></div>
+</section>
+<section id="historyPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>📜 Daily History</span>
+    <button class="ui-close" type="button" data-close="historyPanel">✕ Close</button>
+  </div>
+  <div id="ui_history_mount"></div>
+</section>
+<section id="externalPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>👤 External Person & Ledger</span>
+    <button class="ui-close" type="button" data-close="externalPanel">✕ Close</button>
+  </div>
+  <div id="ui_external_mount"></div>
+</section>
+<section id="clientPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>👥 Client View</span>
+    <button class="ui-close" type="button" data-close="clientPanel">✕ Close</button>
+  </div>
+  <div class="ui-client-tabs">
+    <div class="ui-client-tab active" data-client-tab="receivable">📥 আমি যাদের কাছে পাবো <strong id="ui_receivableTotal">0 ৳</strong></div>
+    <div class="ui-client-tab" data-client-tab="payable">📤 যারা আমার কাছে পাবে <strong id="ui_payableTotal">0 ৳</strong></div>
+  </div>
+  <div id="ui_receivable" class="ui-client-list open"></div>
+  <div id="ui_payable" class="ui-client-list"></div>
+</section>
+<section id="archivePanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>📦 Settled Archive</span>
+    <button class="ui-close" type="button" data-close="archivePanel">✕ Close</button>
+  </div>
+  <div id="ui_archive_mount"></div>
+</section>
+
+<section id="capitalPanel" class="ui-business-panel">
+  <button class="ui-panel-close" type="button" data-business-close="capitalPanel">✕ Close</button>
+  <h3>💎 Base Capital</h3>
+  <div class="grid">
+    <div><label>💰 MFS Base Capital</label><input id="ui_mfsCapital" value="50000"></div>
+    <div><label>📱 Recharge Base Capital</label><input id="ui_rechargeCapital" value="30000"></div>
+  </div>
+</section>
+
+<section id="reinvestPanel" class="ui-business-panel">
+  <button class="ui-panel-close" type="button" data-business-close="reinvestPanel">✕ Close</button>
+  <h3>📈 Reinvest Profit</h3>
+  <div class="grid">
+    <div><label>💰 MFS Reinvest</label><input id="ui_mfsReinvest" value="0"></div>
+    <div><label>📱 Recharge Reinvest</label><input id="ui_rechargeReinvest" value="0"></div>
+  </div>
+  <button id="ui_applyReinvestment" type="button" style="margin-top:10px">🚀 Add To Main Capital</button>
+</section>
+
+<section id="withdrawPanel" class="ui-business-panel">
+  <button class="ui-panel-close" type="button" data-business-close="withdrawPanel">✕ Close</button>
+  <h3>💸 Owner Withdrawal</h3>
+  <div class="grid">
+    <div><label>💰 Withdraw Amount</label><input id="ui_withdrawAmount" value="0"></div>
+    <div><label>📝 Withdraw Reason</label><textarea id="ui_withdrawReason" placeholder="Reason"></textarea></div>
+    <div><label>🏦 Withdraw From</label>
+      <select id="ui_withdrawSource"><option value="mfs">MFS Capital</option><option value="recharge">Recharge Capital</option></select>
+    </div>
+    <div><label>💳 Withdrawal Method</label>
+      <select id="ui_withdrawMethod">
+        <option value="Cash">💵 Cash</option><option value="Bkash">📱 Bkash</option>
+        <option value="Nagad">📱 Nagad</option><option value="Rocket">🚀 Rocket</option>
+        <option value="GP">📶 GP</option><option value="Robi">📶 Robi</option>
+        <option value="Airtel">📶 Airtel</option><option value="Banglalink">📶 Banglalink</option>
+        <option value="Tally">📒 Tally Khata</option>
+      </select>
+    </div>
+  </div>
+  <button id="ui_withdrawCapital" type="button" style="margin-top:10px">💸 Withdraw From Capital</button>
+</section>
+
+</div>
+<!-- ===== END v13 CLEAN DASHBOARD CONTROL CENTER ===== -->
+
+
 <div class="top-grid">
 
-<div class="card">
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
 <h3>💎 Base Capital</h3>
 
 <label>💰 MFS Base Capital</label>
@@ -282,7 +816,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <input id="rechargeCapital" value="30000">
 </div>
 
-<div class="card">
+</div><div class="ui-hidden-original" aria-hidden="true"><div class="card">
 <h3>📈 Reinvest Profit</h3>
 
 <label>💰 MFS Reinvest</label>
@@ -295,11 +829,11 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 </div>
 
-</div>
+</div></div>
 
 </div>
 
-<div class="card">
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
 <h3>💸 Owner Withdrawal</h3>
 
 <label>💰 Withdraw Amount</label>
@@ -331,23 +865,23 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 </div>
 
-</div>
+</div></div>
 
-<div class="card">
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
 <h2>🌅 Opening Balance</h2>
 
 <div class="grid">
-<div class="balance-item"><label>Bkash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'obk\')">🧮</button><input id="obk"></div>
-<div class="balance-item"><label>Nagad</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ong\')">🧮</button><input id="ong"></div>
-<div class="balance-item"><label>Rocket</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ork\')">🧮</button><input id="ork"></div>
-<div class="balance-item"><label>MFS Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'omc\')">🧮</button><input id="omc"></div>
+<div class="balance-item"><label>Bkash</label><input id="obk"></div>
+<div class="balance-item"><label>Nagad</label><input id="ong"></div>
+<div class="balance-item"><label>Rocket</label><input id="ork"></div>
+<div class="balance-item"><label>MFS Cash</label><input id="omc"></div>
 
-<div class="balance-item"><label>GP</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ogp\')">🧮</button><input id="ogp"></div>
-<div class="balance-item"><label>Robi</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'orobi\')">🧮</button><input id="orobi"></div>
-<div class="balance-item"><label>Airtel</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'oair\')">🧮</button><input id="oair"></div>
-<div class="balance-item"><label>Banglalink</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'obl\')">🧮</button><input id="obl"></div>
-<div class="balance-item"><label>Tally Khata</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'otk\')">🧮</button><input id="otk"></div>
-<div class="balance-item"><label>Recharge Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'orc\')">🧮</button><input id="orc"></div>
+<div class="balance-item"><label>GP</label><input id="ogp"></div>
+<div class="balance-item"><label>Robi</label><input id="orobi"></div>
+<div class="balance-item"><label>Airtel</label><input id="oair"></div>
+<div class="balance-item"><label>Banglalink</label><input id="obl"></div>
+<div class="balance-item"><label>Tally Khata</label><input id="otk"></div>
+<div class="balance-item"><label>Recharge Cash</label><input id="orc"></div>
 
 
 <div class="top-grid" style="margin-top:15px">
@@ -357,20 +891,20 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 </div>
 
-<div class="card">
+</div><div class="ui-hidden-original" aria-hidden="true"><div class="card">
 <h2>🌙 Closing Balance</h2>
 <div class="grid">
-<div class="balance-item"><label>Bkash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cbk\')">🧮</button><input id="cbk"></div>
-<div class="balance-item"><label>Nagad</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cng\')">🧮</button><input id="cng"></div>
-<div class="balance-item"><label>Rocket</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'crk\')">🧮</button><input id="crk"></div>
-<div class="balance-item"><label>MFS Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cmc\')">🧮</button><input id="cmc"></div>
+<div class="balance-item"><label>Bkash</label><input id="cbk"></div>
+<div class="balance-item"><label>Nagad</label><input id="cng"></div>
+<div class="balance-item"><label>Rocket</label><input id="crk"></div>
+<div class="balance-item"><label>MFS Cash</label><input id="cmc"></div>
 
-<div class="balance-item"><label>GP</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cgp\')">🧮</button><input id="cgp"></div>
-<div class="balance-item"><label>Robi</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'crobi\')">🧮</button><input id="crobi"></div>
-<div class="balance-item"><label>Airtel</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cair\')">🧮</button><input id="cair"></div>
-<div class="balance-item"><label>Banglalink</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'cbl\')">🧮</button><input id="cbl"></div>
-<div class="balance-item"><label>Tally Khata</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'ctk\')">🧮</button><input id="ctk"></div>
-<div class="balance-item"><label>Recharge Cash</label><button type="button" class="balance-calc-btn" title="হিসাব মিলাতে Calculator খুলুন" onclick="openBalanceCalculator(\'crc\')">🧮</button><input id="crc"></div>
+<div class="balance-item"><label>GP</label><input id="cgp"></div>
+<div class="balance-item"><label>Robi</label><input id="crobi"></div>
+<div class="balance-item"><label>Airtel</label><input id="cair"></div>
+<div class="balance-item"><label>Banglalink</label><input id="cbl"></div>
+<div class="balance-item"><label>Tally Khata</label><input id="ctk"></div>
+<div class="balance-item"><label>Recharge Cash</label><input id="crc"></div>
 
 
 <div class="top-grid" style="margin-top:15px">
@@ -380,7 +914,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 </div>
 
-<div class="card">
+</div><div class="ui-hidden-original" aria-hidden="true"><div class="card">
 <h2>🧮 Smart Cash Calculator</h2>
 
 <select id="cashTarget">
@@ -400,7 +934,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <input id="n10" placeholder="10">
 </div>
 
-<div class="actions">
+</div><div class="actions">
 <button onclick="calcCash()">🧮 Calculate</button>
 <button onclick="applyCash()">✅ Apply</button>
 <button onclick="clearCalc()">🧹 Clear</button>
@@ -409,10 +943,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <h3>💰 Total Cash: <span id="cashTotal">0</span> ৳</h3>
 </div>
 
-<div class="card">
-<h2>📝 Special Note</h2>
-<textarea id="note"></textarea>
-</div>
+
 
 <div class="actions">
 <button onclick="calculate()">📈 Calculate</button>
@@ -426,7 +957,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 <div id="finalBox">আজকের হিসাব এখনো Final হয়নি</div>
 
-<div class="card">
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
 <h2>📜 Daily History</h2>
 <div id="historyBox"></div>
 </div>
@@ -440,6 +971,10 @@ let editIndex=null;
 
 document.querySelectorAll('input,textarea,select').forEach(el=>{
 el.addEventListener('input',()=>{window.__ERP_SYNC_PENDING__=true;autoSave();});
+});
+
+document.addEventListener('input',function(e){
+  if(e.target && e.target.closest && e.target.closest('.cash-grid')) calcCash();
 });
 
 function autoSave(){
@@ -676,37 +1211,41 @@ updateAnalytics();
 }
 
 function calcCash(){
-
-let t=
-v('n1000')*1000+
-v('n500')*500+
-v('n200')*200+
-v('n100')*100+
-v('n50')*50+
-v('n20')*20+
-v('n10')*10;
-
-cashTotal.innerHTML=t;
-
-return t;
-
+  const noteValues={
+    n1000:1000,n500:500,n200:200,n100:100,n50:50,n20:20,n10:10
+  };
+  let t=0;
+  Object.keys(noteValues).forEach(id=>{
+    const el=document.getElementById(id);
+    const qty=el ? Number(String(el.value||'').replace(/,/g,'')) : 0;
+    t += (Number.isFinite(qty)&&qty>0 ? qty : 0) * noteValues[id];
+  });
+  const total=document.getElementById('cashTotal');
+  if(total) total.textContent=t.toLocaleString('en-US');
+  window.__ERP_CASH_TOTAL__=t;
+  return t;
 }
 
 function applyCash(){
-
-let t=calcCash();
-
-document.getElementById(cashTarget.value).value=t;
-updateLiveTotals();
-
+  const t=calcCash();
+  const target=document.getElementById('cashTarget');
+  const fieldId=target ? target.value : '';
+  const field=document.getElementById(fieldId);
+  if(!field){
+    alert('Cash Target পাওয়া যায়নি।');
+    return;
+  }
+  field.value=t;
+  field.dispatchEvent(new Event('input',{bubbles:true}));
+  updateLiveTotals();
+  autoSave();
 }
 
 function clearCalc(){
-
-document.querySelectorAll('.cash-grid input').forEach(el=>el.value='');
-
-cashTotal.innerHTML='0';
-
+  document.querySelectorAll('.cash-grid input').forEach(el=>el.value='');
+  const total=document.getElementById('cashTotal');
+  if(total) total.textContent='0';
+  window.__ERP_CASH_TOTAL__=0;
 }
 
 function updateWorkingCapital(){
@@ -943,7 +1482,7 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 
 </script>
 
-<div class="card">
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
 <h2>👥 Smart External Fund Ledger</h2>
 
 <div class="grid">
@@ -1022,7 +1561,7 @@ if(rs && localStorage.getItem('lastRestoreDate')){
 
 </div>
 
-<div class="card">
+</div></div><div class="card">
 <h2>📦 Settled Ledger Archive</h2>
 <p style="opacity:.8">
 যে Client-এর সকল হিসাব 0 ৳-তে সমন্বয় হবে, তার সম্পূর্ণ লেনদেন এখানে স্থায়ীভাবে Archive হবে।
@@ -1196,10 +1735,501 @@ ${tx}
 <div class="center">সকল হিসাব সমন্বয় হয়েছে</div>
 <div class="center">Thank you</div>
 <script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script>
+
+
+
+
+<script>
+/* ===== v17 UI-ONLY PATCH: Closing Check + Final Save Report + Cash Calculator ===== */
+(function(){
+  const money = n => Number(n||0).toLocaleString('bn-BD') + ' ৳';
+  const ids = ['cbk','cng','crk','cmc','cgp','crobi','cair','cbl','ctk','crc'];
+
+  window.calculateClosingCheck = function(){
+    let profit = 0;
+    try { profit = (typeof calculate==='function') ? Number(calculate()||0) : 0; } catch(e) { profit=0; }
+
+    const errors=[];
+    ids.forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      const raw=String(el.value||'').trim();
+      if(raw==='') errors.push(id.toUpperCase()+' খালি');
+      else if(Number(raw)<0) errors.push(id.toUpperCase()+' ঋণাত্মক');
+    });
+
+    const box=document.getElementById('closingCheckBox');
+    if(!box) return profit;
+
+    const mfs=(Number(document.getElementById('cbk')?.value||0)+Number(document.getElementById('cng')?.value||0)+Number(document.getElementById('crk')?.value||0)+Number(document.getElementById('cmc')?.value||0));
+    const recharge=(Number(document.getElementById('cgp')?.value||0)+Number(document.getElementById('crobi')?.value||0)+Number(document.getElementById('cair')?.value||0)+Number(document.getElementById('cbl')?.value||0)+Number(document.getElementById('ctk')?.value||0)+Number(document.getElementById('crc')?.value||0));
+
+    if(errors.length){
+      box.className='closing-check-box warn';
+      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Calculated Profit: '+money(profit);
+    }else{
+      box.className='closing-check-box ok';
+      box.innerHTML='✅ <b>কোনো ইনপুট ত্রুটি ধরা পড়েনি।</b><br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Total Profit: '+money(profit)+'<br>📌 Final Save চাপলে দিনশেষের রিপোর্ট Popup হবে।';
+    }
+    return profit;
+  };
+
+  // Final Save remains the original business function. Only the UI report is added after it succeeds.
+  if(typeof window.saveFinal==='function' && !window.__v16SaveWrapped){
+    const originalSaveFinal=window.saveFinal;
+    window.saveFinal=function(){
+      const result=originalSaveFinal.apply(this,arguments);
+      setTimeout(function(){
+        if(typeof window.showClosingReport==='function') window.showClosingReport();
+      },80);
+      return result;
+    };
+    window.__v16SaveWrapped=true;
+  }
+
+  // Keep the original cash-calculation behavior, but make the denomination inputs and buttons reliable.
+  if(typeof window.calcCash==='function' && !window.__v16CashWrapped){
+    const originalCalcCash=window.calcCash;
+    window.calcCash=function(){
+      try{
+        const values={n1000:1000,n500:500,n200:200,n100:100,n50:50,n20:20,n10:10};
+        let total=0;
+        Object.keys(values).forEach(id=>{
+          const el=document.getElementById(id);
+          if(!el) return;
+          const q=Number(String(el.value||'').replace(/,/g,''));
+          if(Number.isFinite(q) && q>0) total += q*values[id];
+        });
+        const out=document.getElementById('cashTotal');
+        if(out) out.textContent=total.toLocaleString('bn-BD');
+        window.__ERP_CASH_TOTAL__=total;
+        return total;
+      }catch(e){
+        return originalCalcCash.apply(this,arguments);
+      }
+    };
+    window.__v16CashWrapped=true;
+  }
+
+  function ensureCashButtons(){
+    const card=Array.from(document.querySelectorAll('.card')).find(c=>{
+      const h=c.querySelector('h2'); return h && h.textContent.trim()==='🧮 Smart Cash Calculator';
+    });
+    if(!card) return;
+    const buttons=card.querySelectorAll('.actions button');
+    if(buttons[0]) buttons[0].onclick=function(e){e.preventDefault();window.calcCash();};
+    if(buttons[1]) buttons[1].onclick=function(e){e.preventDefault();if(typeof window.applyCash==='function')window.applyCash();};
+    if(buttons[2]) buttons[2].onclick=function(e){e.preventDefault();if(typeof window.clearCalc==='function')window.clearCalc();};
+    card.querySelectorAll('.cash-grid input').forEach(el=>{
+      el.type='number';
+      el.min='0';
+      el.step='1';
+      el.addEventListener('input',window.calcCash);
+    });
+  }
+
+  window.addEventListener('load',function(){
+    setTimeout(ensureCashButtons,100);
+    setTimeout(ensureCashButtons,500);
+  });
+})();
+</script>
 </body>
 </html>`);
   win.document.close();
 }
+</script>
+
+<script>
+/* ===== v17 UI-ONLY CONTROLLER ===== */
+(function(){
+  const map = {
+    ui_obk:'obk', ui_ong:'ong', ui_ork:'ork', ui_omc:'omc',
+    ui_ogp:'ogp', ui_orobi:'orobi', ui_oair:'oair', ui_obl:'obl',
+    ui_otk:'otk', ui_orc:'orc',
+    ui_cbk:'cbk', ui_cng:'cng', ui_crk:'crk', ui_cmc:'cmc',
+    ui_cgp:'cgp', ui_crobi:'crobi', ui_cair:'cair', ui_cbl:'cbl',
+    ui_ctk:'ctk', ui_crc:'crc'
+  };
+
+  const noteMap = {
+    ui_openingNote:'note',
+    ui_closingNote:'note'
+  };
+
+  function syncOne(uiId, originalId){
+    const ui=document.getElementById(uiId), original=document.getElementById(originalId);
+    if(!ui||!original) return;
+    ui.value=original.value||'';
+  }
+
+  function bindMirror(uiId, originalId){
+    const ui=document.getElementById(uiId), original=document.getElementById(originalId);
+    if(!ui||!original) return;
+    ui.addEventListener('input',function(){
+      original.value=ui.value;
+      original.dispatchEvent(new Event('input',{bubbles:true}));
+      if(typeof updateLiveTotals==='function') updateLiveTotals();
+    });
+    original.addEventListener('input',function(){
+      if(document.activeElement!==ui) ui.value=original.value||'';
+    });
+    syncOne(uiId,originalId);
+  }
+
+  Object.keys(map).forEach(k=>bindMirror(k,map[k]));
+
+  function organizeDashboard(){
+    const dash=document.querySelector('.dash');
+    const extra=document.getElementById('extraDashboard');
+    if(!dash || !extra) return;
+    const keep=[
+      'monthlyWithdrawalCard',
+      'mfsProfitBox',
+      'rechargeProfitBox',
+      'workingCapitalBox'
+    ];
+    const miniCards=Array.from(dash.querySelectorAll('.mini'));
+    miniCards.forEach(card=>{
+      const h2=card.querySelector('h2[id]');
+      const p=card.querySelector('p[id]');
+      const id=(h2&&h2.id)||(p&&p.id)||'';
+      const shouldKeep=keep.includes(card.id)||id==='cloudStatus'||id==='mfsProfitBox'||id==='rechargeProfitBox'||id==='workingCapitalBox';
+      if(!shouldKeep) extra.appendChild(card);
+    });
+    const status=dash.querySelector('.mini:has(#cloudStatus)');
+    if(status && status.parentNode!==dash) dash.insertBefore(status,dash.children[1]||null);
+    extra.classList.remove('open');
+  }
+
+  window.closeClosingReport=function(){
+    const ov=document.getElementById('closingReportOverlay');
+    if(ov){ov.classList.remove('open');ov.setAttribute('aria-hidden','true');}
+  };
+
+  window.showClosingReport=function(){
+    // Reuse the existing calculation function. Nothing is saved here.
+    try{ if(typeof calculate==='function') calculate(); }catch(e){}
+    const g=id=>document.getElementById(id);
+    const val=id=>{const e=g(id);return e?e.value||'0':'0'};
+    const text=id=>{const e=g(id);return e?e.textContent||e.innerHTML||'0':'0'};
+    const ov=g('closingReportOverlay');
+    if(!ov)return;
+    g('closingReportDate').textContent=new Date().toLocaleString('bn-BD');
+    g('cr_mfs').textContent=(window.mfsProfit||0)+' ৳';
+    g('cr_recharge').textContent=(window.rechargeProfit||0)+' ৳';
+    g('cr_total').textContent=(window.profit||0)+' ৳';
+    g('cr_capital').textContent=text('workingCapitalBox');
+    g('cr_cash').textContent=text('closingCash');
+    g('cr_emoney').textContent=text('closingEmoney');
+    const note=val('note');
+    g('cr_note').textContent=note.trim()?('📝 '+note):'📝 কোনো Closing Note নেই।';
+    ov.classList.add('open');
+    ov.setAttribute('aria-hidden','false');
+  };
+
+  function openPanel(id){
+    document.querySelectorAll('.ui-section').forEach(s=>s.classList.remove('open'));
+    document.querySelectorAll('.ui-panel-btn').forEach(b=>b.classList.remove('active'));
+    const s=document.getElementById(id), b=document.querySelector('[data-section="'+id+'"]');
+    if(s){s.classList.add('open'); if(b)b.classList.add('active');}
+    if(id==='clientPanel') renderClientView();
+    if(id==='archivePanel') renderGroupedArchives();
+  }
+
+  document.querySelectorAll('.ui-panel-btn').forEach(b=>{
+    b.addEventListener('click',function(){openPanel(this.dataset.section);});
+  });
+  document.querySelectorAll('.ui-close').forEach(b=>{
+    b.addEventListener('click',function(){
+      const s=document.getElementById(this.dataset.close);
+      if(s)s.classList.remove('open');
+      const btn=document.querySelector('[data-section="'+this.dataset.close+'"]');
+      if(btn)btn.classList.remove('active');
+    });
+  });
+
+  // Move the existing live calculators/history/ledger DOM into compact panels.
+  function mount(id, selector){
+    const target=document.getElementById(id), source=document.querySelector(selector);
+    if(target && source && source.parentNode!==target) target.appendChild(source);
+  }
+
+  // Original hidden cards remain in DOM and are used as the live source.
+  function findCardByHeading(text){
+    return Array.from(document.querySelectorAll('.ui-hidden-original .card')).find(c=>{
+      const h=c.querySelector('h2'); return h && h.textContent.trim()===text;
+    });
+  }
+
+  function mountCards(){
+    const pairs=[
+      ['ui_cash_mount','🧮 Smart Cash Calculator'],
+      ['ui_history_mount','📜 Daily History'],
+      ['ui_external_mount','👥 Smart External Fund Ledger'],
+      ['ui_archive_mount','📦 Settled Ledger Archive']
+    ];
+    pairs.forEach(([targetId,title])=>{
+      const target=document.getElementById(targetId), card=findCardByHeading(title);
+      if(target&&card&&card.parentNode!==target) target.appendChild(card);
+    });
+  }
+
+  // Mirror the single legacy note field into opening/closing notes.
+  function bindNotes(){
+    const legacy=document.getElementById('note');
+    const op=document.getElementById('ui_openingNote');
+    const cl=document.getElementById('ui_closingNote');
+    if(!legacy||!op||!cl)return;
+    op.value=legacy.value||'';
+    cl.value=legacy.value||'';
+    [op,cl].forEach(x=>x.addEventListener('input',()=>{
+      legacy.value=x.value;
+      legacy.dispatchEvent(new Event('input',{bubbles:true}));
+    }));
+    legacy.addEventListener('input',()=>{
+      if(document.activeElement!==op)op.value=legacy.value||'';
+      if(document.activeElement!==cl)cl.value=legacy.value||'';
+    });
+  }
+
+  function renderClientView(){
+    const rec=document.getElementById('ui_receivable'), pay=document.getElementById('ui_payable');
+    if(!rec||!pay)return;
+    rec.innerHTML=''; pay.innerHTML='';
+    let receivableTotal=0, payableTotal=0;
+    (window.ledgerPeople||[]).forEach((p,i)=>{
+      const bal=typeof getLedgerBalance==='function'?Number(getLedgerBalance(p)):0;
+      const card=`<div class="ui-client-card">
+        <h3>👤 ${p.name||'Unnamed'}</h3>
+        <div>📱 ${p.mobile||'No Mobile'}</div>
+        <div style="margin-top:5px;font-weight:bold">${bal<0?'📥 আমার পাওনা: '+Math.abs(bal)+' ৳':'📤 তার পাওনা: '+bal+' ৳'}</div>
+        <button style="margin-top:8px;padding:8px" onclick="openPanelFromUI('externalPanel')">📒 Ledger</button>
+      </div>`;
+      if(bal<0){ receivableTotal+=Math.abs(bal); rec.insertAdjacentHTML('beforeend',card); }
+      if(bal>0){ payableTotal+=bal; pay.insertAdjacentHTML('beforeend',card); }
+    });
+    const rt=document.getElementById('ui_receivableTotal'), pt=document.getElementById('ui_payableTotal');
+    if(rt)rt.textContent=receivableTotal+' ৳';
+    if(pt)pt.textContent=payableTotal+' ৳';
+    if(!rec.innerHTML)rec.innerHTML='<div class="ui-client-card">📥 কোনো পাওনা নেই</div>';
+    if(!pay.innerHTML)pay.innerHTML='<div class="ui-client-card">📤 কোনো দেনা নেই</div>';
+  }
+
+  window.openPanelFromUI=function(id){openPanel(id);};
+
+  function renderGroupedArchives(){
+    const mount=document.getElementById('ui_archive_mount');
+    if(!mount)return;
+    const original=document.querySelector('#ledgerArchiveBox');
+    if(!original)return;
+    const archives=window.ledgerArchives||[];
+    const groups={};
+    archives.forEach((a,i)=>{
+      const key=String(a.personId||a.personName||'Unknown');
+      if(!groups[key])groups[key]={name:a.personName||'Unknown',items:[]};
+      groups[key].items.push({a,i});
+    });
+    if(!archives.length){
+      mount.innerHTML='<div class="history">📦 এখনো কোনো Settled Ledger Archive নেই।</div>';
+      return;
+    }
+    mount.innerHTML=Object.values(groups).map((g,gi)=>{
+      const items=g.items.map(({a,i})=>`
+        <div class="ui-archive-item">
+          <b>📄 Settlement ${g.items.length-gi*0}</b><br>
+          🗓️ ${a.settledAt||''}<br>
+          💸 Given: ${a.totalGiven||0} ৳ &nbsp; | &nbsp; 💵 Taken: ${a.totalTaken||0} ৳<br>
+          ⚖️ Final Balance: 0 ৳
+          <div style="margin-top:7px">
+            <button class="archive-print-btn" type="button" onclick="printLedgerArchive(${i})">🖨️ 58mm Print</button>
+          </div>
+        </div>`).join('');
+      return `<div class="ui-archive-group">
+        <div class="ui-archive-folder" onclick="this.parentElement.classList.toggle('open')">
+          <span>📁 ${g.name}</span><span class="count">${g.items.length} Archive</span>
+        </div>
+        <div class="ui-archive-items">${items}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Client tabs
+  document.querySelectorAll('.ui-client-tab').forEach(tab=>{
+    tab.addEventListener('click',function(){
+      document.querySelectorAll('.ui-client-tab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.ui-client-list').forEach(x=>x.classList.remove('open'));
+      this.classList.add('active');
+      const target=document.getElementById('ui_'+this.dataset.clientTab);
+      if(target)target.classList.add('open');
+    });
+  });
+
+  function syncSummaries(){
+    const pairs=[
+      ['openingEmoney','ui_openingEmoney'],['openingCash','ui_openingCash'],
+      ['closingEmoney','ui_closingEmoney'],['closingCash','ui_closingCash']
+    ];
+    pairs.forEach(([a,b])=>{
+      const x=document.getElementById(a), y=document.getElementById(b);
+      if(x&&y)y.textContent=x.textContent;
+    });
+  }
+
+  const oldUpdate=window.updateLiveTotals;
+  if(typeof oldUpdate==='function'){
+    window.updateLiveTotals=function(){
+      oldUpdate.apply(this,arguments);
+      syncSummaries();
+      Object.keys(map).forEach(k=>syncOne(k,map[k]));
+    };
+  }
+
+  window.addEventListener('load',function(){
+    organizeDashboard();
+    mountCards();
+    bindNotes();
+    if(typeof updateLiveTotals==='function')updateLiveTotals();
+    if(typeof renderClientView==='function')renderClientView();
+    if(typeof renderGroupedArchives==='function')renderGroupedArchives();
+  });
+
+  // Refresh UI after common data-changing actions without replacing those functions.
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') window.closeClosingReport();
+  });
+
+  setInterval(function(){
+    try{
+      syncSummaries();
+      if(document.getElementById('clientPanel')?.classList.contains('open'))renderClientView();
+      if(document.getElementById('archivePanel')?.classList.contains('open'))renderGroupedArchives();
+    }catch(e){}
+  },1000);
+})();
+</script>
+
+
+<script>
+/* ===== v15 UI CONTROLLER, BUSINESS FUNCTIONS UNCHANGED ===== */
+(function(){
+  const mirror={
+    ui_mfsCapital:'mfsCapital', ui_rechargeCapital:'rechargeCapital',
+    ui_mfsReinvest:'mfsReinvest', ui_rechargeReinvest:'rechargeReinvest',
+    ui_withdrawAmount:'withdrawAmount', ui_withdrawReason:'withdrawReason',
+    ui_withdrawSource:'withdrawSource', ui_withdrawMethod:'withdrawMethod'
+  };
+
+  function mirrorBind(uiId,originalId){
+    const u=document.getElementById(uiId), o=document.getElementById(originalId);
+    if(!u||!o)return;
+    u.value=o.value||'';
+    u.addEventListener('input',()=>{
+      o.value=u.value;
+      o.dispatchEvent(new Event('input',{bubbles:true}));
+      if(typeof updateWorkingCapital==='function')updateWorkingCapital();
+    });
+    o.addEventListener('input',()=>{if(document.activeElement!==u)u.value=o.value||'';});
+  }
+  Object.keys(mirror).forEach(k=>mirrorBind(k,mirror[k]));
+
+  function closeAll(){
+    document.querySelectorAll('.ui-section,.ui-business-panel').forEach(x=>x.classList.remove('open'));
+    document.querySelectorAll('.ui-middle-btn').forEach(x=>x.classList.remove('active'));
+  }
+  function openPanel(id,button){
+    closeAll();
+    const el=document.getElementById(id);
+    if(el)el.classList.add('open');
+    if(button)button.classList.add('active');
+    if(id==='clientPanel'&&typeof renderClientView==='function')renderClientView();
+    if(id==='archivePanel'&&typeof renderGroupedArchives==='function')renderGroupedArchives();
+  }
+
+  document.querySelectorAll('.ui-middle-btn[data-section]').forEach(b=>{
+    b.addEventListener('click',()=>openPanel(b.dataset.section,b));
+  });
+  document.querySelectorAll('.ui-middle-btn[data-business]').forEach(b=>{
+    b.addEventListener('click',()=>openPanel(b.dataset.business,b));
+  });
+  document.querySelectorAll('.ui-close').forEach(b=>{
+    b.addEventListener('click',()=>closeAll());
+  });
+  document.querySelectorAll('.ui-panel-close').forEach(b=>{
+    b.addEventListener('click',()=>closeAll());
+  });
+
+  const more=document.querySelector('[data-extra="extraDashboard"]');
+  if(more)more.addEventListener('click',()=>{
+    const e=document.getElementById('extraDashboard');
+    if(e)e.classList.toggle('open');
+    more.classList.toggle('active');
+  });
+
+  // Existing business functions are called directly, so calculations remain unchanged.
+  const reinvest=document.getElementById('ui_applyReinvestment');
+  if(reinvest)reinvest.addEventListener('click',()=>{
+    if(typeof applyReinvestment==='function')applyReinvestment();
+    Object.keys(mirror).forEach(k=>mirrorBind(k,mirror[k]));
+  });
+  const withdraw=document.getElementById('ui_withdrawCapital');
+  if(withdraw)withdraw.addEventListener('click',()=>{
+    if(typeof withdrawCapital==='function')withdrawCapital();
+    Object.keys(mirror).forEach(k=>mirrorBind(k,mirror[k]));
+  });
+  const backup=document.getElementById('ui_cloudBackup');
+  if(backup)backup.addEventListener('click',()=>{
+    if(typeof manualCloudSync==='function')manualCloudSync();
+  });
+
+  function updateTop(){
+    const pairs=[
+      ['ui_cloudStatus','cloudStatus'],['ui_monthlyWithdrawal','monthlyOwnerWithdrawal'],
+      ['ui_mfsProfit','mfsProfitBox'],['ui_rechargeProfit','rechargeProfitBox'],
+      ['ui_monthlyProfit','monthlyProfit'],['ui_dailyProfit','dailyProfit'],['ui_workingCapital','workingCapitalBox']
+    ];
+    pairs.forEach(([u,o])=>{
+      const a=document.getElementById(u),b=document.getElementById(o);
+      if(a&&b)a.textContent=b.textContent;
+    });
+  }
+  setInterval(updateTop,500);
+  window.addEventListener('load',()=>{
+    updateTop();
+    Object.keys(mirror).forEach(k=>mirrorBind(k,mirror[k]));
+  });
+})();
+</script>
+
+
+<script>
+/* ===== v15 MANUAL EXPORT / IMPORT UI BRIDGE ===== */
+(function(){
+  const exportBtn=document.getElementById('ui_manualExport');
+  const importInput=document.getElementById('ui_manualImport');
+
+  if(exportBtn){
+    exportBtn.addEventListener('click',function(){
+      if(typeof exportData==='function'){
+        exportData();
+      }
+    });
+  }
+
+  if(importInput){
+    importInput.addEventListener('change',function(){
+      const original=document.getElementById('importFile');
+      if(!original || !this.files || !this.files[0]) return;
+
+      // Pass the selected file to the original import handler.
+      const dt=new DataTransfer();
+      dt.items.add(this.files[0]);
+      original.files=dt.files;
+      original.dispatchEvent(new Event('change',{bubbles:true}));
+      this.value='';
+    });
+  }
+})();
 </script>
 
 <!-- Firebase Cloud ERP -->
@@ -1583,6 +2613,102 @@ window.addEventListener('beforeunload',function(e){
    e.returnValue='Cloud Sync pending';
  }
 });
+</script>
+
+<script>
+/* ===== v17 UI-ONLY PATCH: Closing Check + Final Save Report + Cash Calculator ===== */
+(function(){
+  const money = n => Number(n||0).toLocaleString('bn-BD') + ' ৳';
+  const ids = ['cbk','cng','crk','cmc','cgp','crobi','cair','cbl','ctk','crc'];
+
+  window.calculateClosingCheck = function(){
+    let profit = 0;
+    try { profit = (typeof calculate==='function') ? Number(calculate()||0) : 0; } catch(e) { profit=0; }
+
+    const errors=[];
+    ids.forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      const raw=String(el.value||'').trim();
+      if(raw==='') errors.push(id.toUpperCase()+' খালি');
+      else if(Number(raw)<0) errors.push(id.toUpperCase()+' ঋণাত্মক');
+    });
+
+    const box=document.getElementById('closingCheckBox');
+    if(!box) return profit;
+
+    const mfs=(Number(document.getElementById('cbk')?.value||0)+Number(document.getElementById('cng')?.value||0)+Number(document.getElementById('crk')?.value||0)+Number(document.getElementById('cmc')?.value||0));
+    const recharge=(Number(document.getElementById('cgp')?.value||0)+Number(document.getElementById('crobi')?.value||0)+Number(document.getElementById('cair')?.value||0)+Number(document.getElementById('cbl')?.value||0)+Number(document.getElementById('ctk')?.value||0)+Number(document.getElementById('crc')?.value||0));
+
+    if(errors.length){
+      box.className='closing-check-box warn';
+      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Calculated Profit: '+money(profit);
+    }else{
+      box.className='closing-check-box ok';
+      box.innerHTML='✅ <b>কোনো ইনপুট ত্রুটি ধরা পড়েনি।</b><br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Total Profit: '+money(profit)+'<br>📌 Final Save চাপলে দিনশেষের রিপোর্ট Popup হবে।';
+    }
+    return profit;
+  };
+
+  // Final Save remains the original business function. Only the UI report is added after it succeeds.
+  if(typeof window.saveFinal==='function' && !window.__v16SaveWrapped){
+    const originalSaveFinal=window.saveFinal;
+    window.saveFinal=function(){
+      const result=originalSaveFinal.apply(this,arguments);
+      setTimeout(function(){
+        if(typeof window.showClosingReport==='function') window.showClosingReport();
+      },80);
+      return result;
+    };
+    window.__v16SaveWrapped=true;
+  }
+
+  // Keep the original cash-calculation behavior, but make the denomination inputs and buttons reliable.
+  if(typeof window.calcCash==='function' && !window.__v16CashWrapped){
+    const originalCalcCash=window.calcCash;
+    window.calcCash=function(){
+      try{
+        const values={n1000:1000,n500:500,n200:200,n100:100,n50:50,n20:20,n10:10};
+        let total=0;
+        Object.keys(values).forEach(id=>{
+          const el=document.getElementById(id);
+          if(!el) return;
+          const q=Number(String(el.value||'').replace(/,/g,''));
+          if(Number.isFinite(q) && q>0) total += q*values[id];
+        });
+        const out=document.getElementById('cashTotal');
+        if(out) out.textContent=total.toLocaleString('bn-BD');
+        window.__ERP_CASH_TOTAL__=total;
+        return total;
+      }catch(e){
+        return originalCalcCash.apply(this,arguments);
+      }
+    };
+    window.__v16CashWrapped=true;
+  }
+
+  function ensureCashButtons(){
+    const card=Array.from(document.querySelectorAll('.card')).find(c=>{
+      const h=c.querySelector('h2'); return h && h.textContent.trim()==='🧮 Smart Cash Calculator';
+    });
+    if(!card) return;
+    const buttons=card.querySelectorAll('.actions button');
+    if(buttons[0]) buttons[0].onclick=function(e){e.preventDefault();window.calcCash();};
+    if(buttons[1]) buttons[1].onclick=function(e){e.preventDefault();if(typeof window.applyCash==='function')window.applyCash();};
+    if(buttons[2]) buttons[2].onclick=function(e){e.preventDefault();if(typeof window.clearCalc==='function')window.clearCalc();};
+    card.querySelectorAll('.cash-grid input').forEach(el=>{
+      el.type='number';
+      el.min='0';
+      el.step='1';
+      el.addEventListener('input',window.calcCash);
+    });
+  }
+
+  window.addEventListener('load',function(){
+    setTimeout(ensureCashButtons,100);
+    setTimeout(ensureCashButtons,500);
+  });
+})();
 </script>
 </body>
 
