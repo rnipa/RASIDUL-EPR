@@ -577,37 +577,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
   <div class="ui-top-card"><span>💎</span><small>Total Working Capital</small><b id="ui_workingCapital">0 ৳</b></div>
 </div>
 
-<div class="mini"><h3>💸 MFS Profit</h3><h2 id="mfsProfitBox">0 ৳</h2></div><div class="mini"><h3>📱 Recharge Profit</h3><h2 id="rechargeProfitBox">0 ৳</h2></div><div class="mini"><h3>📅 Daily Profit</h3><h2 id="dailyProfit">0 ৳</h2></div>
-<div class="mini"><h3>📈 Monthly Profit</h3><h2 id="monthlyProfit">0 ৳</h2></div>
-<div class="mini"><h3>💎 Total Working Capital</h3><h2 id="workingCapitalBox">0 ৳</h2></div>
-<div class="mini"><h3>🎯 Daily Target</h3><input id="target"></div>
-<div class="mini"><h3>🧠 Smart Insight</h3><p id="insight">Waiting...</p></div>
-<div class="mini"><h3>🏆 Achievement</h3><p id="achieve">Locked 😄</p></div>
-<div class="mini"><h3>☁️ Last Cloud Sync</h3><p id="syncStatus">Waiting...</p></div>
-<div class="mini"><h3>📱 Last Device</h3><p id="lastDeviceBox">Unknown</p></div>
-<div class="mini"><h3>🕒 Last Update</h3><p id="lastUpdateBox">Never</p></div>
-<div class="mini"><h3>💻 Previous Device</h3><p id="previousDeviceBox">Unknown</p></div>
-<div class="mini"><h3>☁️ Cloud Device</h3><p id="cloudDeviceBox">Unknown</p></div>
-<div class="mini"><h3>📦 Last Export</h3><p id="lastExportStatus">Never</p></div>
-<div class="mini"><h3>🔄 Last Restore</h3><p id="lastRestoreStatus">Never</p></div>
-<div class="mini"><h3>🏆 Best Profit Day</h3><p id="bestProfitDay">-</p></div>
-<div class="mini"><h3>📉 Lowest Profit Day</h3><p id="lowestProfitDay">-</p></div>
-<div class="mini"><h3>📈 Avg Daily Profit</h3><p id="avgProfit">0 ৳</p></div>
-<div class="mini"><h3>💰 Lifetime Profit</h3><p id="lifetimeProfit">0 ৳</p></div>
-<div class="mini"><h3>🎯 Target Progress</h3><p id="targetProgress">0%</p></div>
-<div class="mini"><h3>🔔 Due Reminders</h3><p id="ReminderBox">No Alerts</p></div>
-<div class="mini"><h3>👥 Total  Clients</h3><p id="ClientsCount">0</p></div>
-<div class="mini"><h3>💰 Total Receivable</h3><p id="totalReceivable">0 ৳</p></div>
-<div class="mini"><h3>🔴 High Risk Clients</h3><p id="highRiskCount">0</p></div>
 
-<div class="mini"><h3>📥 মোট পাওনা</h3><p id="totalReceivableNew">0 ৳</p></div>
-<div class="mini"><h3>📤 মোট দেনা</h3><p id="totalPayable">0 ৳</p></div>
-<div class="mini"><h3>⚖️ নেট ব্যালেন্স</h3><p id="netPosition">0 ৳</p></div>
-
-
-
-
-</div>
 
 
 
@@ -2200,6 +2170,46 @@ ${tx}
   });
 })();
 </script>
+
+<div class="dash">
+<button onclick="manualCloudSync()">🔒 Final Cloud Backup</button>
+<div class="mini"><h3>🛡️ Cloud Status</h3><p id="cloudStatus">🟢 Connected</p></div>
+<div class="mini" id="monthlyWithdrawalCard">
+<h3>💸 এই মাসে Owner Withdrawal</h3>
+<h2 id="monthlyOwnerWithdrawal">0 ৳</h2>
+<p id="withdrawalMonthLabel" style="margin:0;opacity:.75">চলতি মাস</p>
+</div>
+<div class="mini"><h3>💸 MFS Profit</h3><h2 id="mfsProfitBox">0 ৳</h2></div><div class="mini"><h3>📱 Recharge Profit</h3><h2 id="rechargeProfitBox">0 ৳</h2></div><div class="mini"><h3>📅 Daily Profit</h3><h2 id="dailyProfit">0 ৳</h2></div>
+<div class="mini"><h3>📈 Monthly Profit</h3><h2 id="monthlyProfit">0 ৳</h2></div>
+<div class="mini"><h3>💎 Total Working Capital</h3><h2 id="workingCapitalBox">0 ৳</h2></div>
+<div class="mini"><h3>🎯 Daily Target</h3><input id="target"></div>
+<div class="mini"><h3>🧠 Smart Insight</h3><p id="insight">Waiting...</p></div>
+<div class="mini"><h3>🏆 Achievement</h3><p id="achieve">Locked 😄</p></div>
+<div class="mini"><h3>☁️ Last Cloud Sync</h3><p id="syncStatus">Waiting...</p></div>
+<div class="mini"><h3>📱 Last Device</h3><p id="lastDeviceBox">Unknown</p></div>
+<div class="mini"><h3>🕒 Last Update</h3><p id="lastUpdateBox">Never</p></div>
+<div class="mini"><h3>💻 Previous Device</h3><p id="previousDeviceBox">Unknown</p></div>
+<div class="mini"><h3>☁️ Cloud Device</h3><p id="cloudDeviceBox">Unknown</p></div>
+<div class="mini"><h3>📦 Last Export</h3><p id="lastExportStatus">Never</p></div>
+<div class="mini"><h3>🔄 Last Restore</h3><p id="lastRestoreStatus">Never</p></div>
+<div class="mini"><h3>🏆 Best Profit Day</h3><p id="bestProfitDay">-</p></div>
+<div class="mini"><h3>📉 Lowest Profit Day</h3><p id="lowestProfitDay">-</p></div>
+<div class="mini"><h3>📈 Avg Daily Profit</h3><p id="avgProfit">0 ৳</p></div>
+<div class="mini"><h3>💰 Lifetime Profit</h3><p id="lifetimeProfit">0 ৳</p></div>
+<div class="mini"><h3>🎯 Target Progress</h3><p id="targetProgress">0%</p></div>
+<div class="mini"><h3>🔔 Due Reminders</h3><p id="ReminderBox">No Alerts</p></div>
+<div class="mini"><h3>👥 Total  Clients</h3><p id="ClientsCount">0</p></div>
+<div class="mini"><h3>💰 Total Receivable</h3><p id="totalReceivable">0 ৳</p></div>
+<div class="mini"><h3>🔴 High Risk Clients</h3><p id="highRiskCount">0</p></div>
+
+<div class="mini"><h3>📥 মোট পাওনা</h3><p id="totalReceivableNew">0 ৳</p></div>
+<div class="mini"><h3>📤 মোট দেনা</h3><p id="totalPayable">0 ৳</p></div>
+<div class="mini"><h3>⚖️ নেট ব্যালেন্স</h3><p id="netPosition">0 ৳</p></div>
+
+
+
+
+</div>
 
 
 <script>
