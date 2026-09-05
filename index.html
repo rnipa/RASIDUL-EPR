@@ -1260,10 +1260,16 @@ let reason=document.getElementById('withdrawReason').value||'No Reason';
 let source=document.getElementById('withdrawSource').value;
 let method=document.getElementById('withdrawMethod').value;
 
+/*
+  OWNER WITHDRAWAL FORMULA UNCHANGED:
+  1) Selected Base Capital থেকে Withdrawal amount বাদ হবে.
+  2) যে Method থেকে টাকা নেওয়া হচ্ছে, সেই Opening Balance থেকে একই amount বাদ হবে.
+  3) Withdrawal Profit/Loss নয়, তাই profit = 0 থাকবে.
+*/
 if(source==='mfs'){
-mfsCapital.value=Math.max(0,v('mfsCapital')-amount);
+  mfsCapital.value=Math.max(0,v('mfsCapital')-amount);
 }else{
-rechargeCapital.value=Math.max(0,v('rechargeCapital')-amount);
+  rechargeCapital.value=Math.max(0,v('rechargeCapital')-amount);
 }
 
 if(method==='Bkash') obk.value=Math.max(0,v('obk')-amount);
@@ -1275,8 +1281,8 @@ else if(method==='Airtel') oair.value=Math.max(0,v('oair')-amount);
 else if(method==='Banglalink') obl.value=Math.max(0,v('obl')-amount);
 else if(method==='Tally') otk.value=Math.max(0,v('otk')-amount);
 else{
- if(source==='mfs') omc.value=Math.max(0,v('omc')-amount);
- else orc.value=Math.max(0,v('orc')-amount);
+  if(source==='mfs') omc.value=Math.max(0,v('omc')-amount);
+  else orc.value=Math.max(0,v('orc')-amount);
 }
 
 histories.unshift({
@@ -1292,19 +1298,46 @@ note:'💸 Owner Withdrawal: '+amount+' ৳ | 💳 '+method+' | 📝 '+reason
 });
 
 localStorage.setItem('rasidulHistories',JSON.stringify(histories));
+
+/* Existing calculations/UI refresh only. No accounting formula changed. */
 renderHistory();
 updateMonthly();
 updateWorkingCapital();
 updateLiveTotals();
 autoSave();
 
+/* Make the top Owner Withdrawal card refresh immediately. */
+if(typeof updateMonthlyOwnerWithdrawal==='function'){
+  updateMonthlyOwnerWithdrawal();
+}
+const topWithdrawal=document.getElementById('ui_monthlyWithdrawal');
+if(topWithdrawal && typeof updateMonthlyOwnerWithdrawal==='function'){
+  const now=new Date();
+  const y=now.getFullYear();
+  const m=now.getMonth();
+  let total=0;
+  (window.histories||[]).forEach(h=>{
+    if(h.type!=='ownerWithdrawal') return;
+    const d=new Date(h.date);
+    if(!isNaN(d.getTime()) && d.getFullYear()===y && d.getMonth()===m){
+      total+=Number(h.withdrawalAmount||0);
+    }
+  });
+  topWithdrawal.textContent=total+' ৳';
+}
+
 withdrawAmount.value='0';
 withdrawReason.value='';
+
+/* Keep the visible UI mirror synchronized with the original fields. */
+['mfsCapital','rechargeCapital','obk','ong','ork','omc','ogp','orobi','oair','obl','otk','orc'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.dispatchEvent(new Event('input',{bubbles:true}));
+});
 
 alert('💸 Withdrawal Saved');
 
 }
-
 function newDay(){
 
 obk.value=cbk.value;
