@@ -3497,4 +3497,168 @@ document.addEventListener('input',()=>{
 })();
 </script>
 
+
+<style>
+/* ===== v19 HOTFIX: Base Capital + Smart Cash Calculator visibility ===== */
+#capitalPanel .capital-live-box{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;
+}
+#capitalPanel .capital-live{
+  padding:10px;border-radius:12px;background:rgba(255,255,255,.08);
+  text-align:center;border:1px solid rgba(255,255,255,.10);
+}
+#capitalPanel .capital-live small{display:block;opacity:.75;font-size:11px}
+#capitalPanel .capital-live b{font-size:17px}
+#ui_cash_mount>.card{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#ui_cash_mount>.card .cash-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,1fr)!important;
+  gap:7px!important;
+}
+#ui_cash_mount>.card .cash-grid input{
+  min-width:0!important;padding:10px 7px!important;
+}
+#ui_cash_mount>.card>.actions{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:7px!important;
+  margin-top:9px!important;
+}
+#ui_cash_mount>.card>.actions button{
+  margin:0!important;padding:10px 6px!important;font-size:12px!important;
+}
+@media(max-width:480px){
+  #capitalPanel .capital-live-box{grid-template-columns:1fr 1fr}
+  #ui_cash_mount>.card .cash-grid{grid-template-columns:repeat(2,1fr)!important}
+  #ui_cash_mount>.card>.actions{grid-template-columns:1fr 1fr 1fr!important}
+}
+</style>
+<script>
+/* ===== v19 HOTFIX CONTROLLER ===== */
+(function(){
+  function byId(id){return document.getElementById(id);}
+
+  function syncCapitalUI(){
+    const m=byId('mfsCapital'), r=byId('rechargeCapital');
+    const um=byId('ui_mfsCapital'), ur=byId('ui_rechargeCapital');
+    if(m && um && document.activeElement!==um) um.value=m.value||'0';
+    if(r && ur && document.activeElement!==ur) ur.value=r.value||'0';
+
+    let a=byId('capitalLiveMfs'), b=byId('capitalLiveRecharge');
+    if(a && m) a.textContent=Number(m.value||0).toLocaleString('bn-BD')+' ৳';
+    if(b && r) b.textContent=Number(r.value||0).toLocaleString('bn-BD')+' ৳';
+  }
+
+  function repairCapitalPanel(){
+    const panel=byId('capitalPanel');
+    if(!panel) return;
+
+    if(!byId('capitalLiveMfs')){
+      const live=document.createElement('div');
+      live.className='capital-live-box';
+      live.innerHTML='<div class="capital-live"><small>💸 MFS Current Capital</small><b id="capitalLiveMfs">0 ৳</b></div>'+
+                     '<div class="capital-live"><small>📱 Recharge Current Capital</small><b id="capitalLiveRecharge">0 ৳</b></div>';
+      const grid=panel.querySelector('.grid');
+      if(grid) grid.insertAdjacentElement('afterend',live);
+      else panel.appendChild(live);
+    }
+    syncCapitalUI();
+  }
+
+  function repairCashPanel(){
+    const mount=byId('ui_cash_mount');
+    if(!mount) return;
+
+    /* Find the original Smart Cash Calculator card and move only that card
+       into the visible UI panel. No cash business logic is replaced. */
+    let card=Array.from(document.querySelectorAll('.card')).find(c=>{
+      const h=c.querySelector('h2');
+      return h && h.textContent.trim()==='🧮 Smart Cash Calculator';
+    });
+
+    if(card && card.parentNode!==mount){
+      mount.appendChild(card);
+    }
+
+    if(card){
+      card.style.display='block';
+      card.style.visibility='visible';
+      card.style.opacity='1';
+
+      const title=card.querySelector('h2');
+      if(title) title.textContent='🧮 Smart Cash Calculator';
+
+      const btns=card.querySelectorAll('.actions button');
+      if(btns[0]) btns[0].onclick=function(e){e.preventDefault(); if(typeof window.calcCash==='function') window.calcCash();};
+      if(btns[1]) btns[1].onclick=function(e){e.preventDefault(); if(typeof window.applyCash==='function') window.applyCash();};
+      if(btns[2]) btns[2].onclick=function(e){e.preventDefault(); if(typeof window.clearCalc==='function') window.clearCalc();};
+
+      card.querySelectorAll('.cash-grid input').forEach(inp=>{
+        inp.type='number';
+        inp.min='0';
+        inp.step='1';
+        inp.addEventListener('input',function(){
+          if(typeof window.calcCash==='function') window.calcCash();
+        });
+      });
+    }
+  }
+
+  function ensureButtons(){
+    const cashBtn=document.querySelector('.ui-middle-btn[data-section="cashPanel"]');
+    if(cashBtn){
+      cashBtn.innerHTML='🧮 Smart Cash Calculator';
+      cashBtn.style.display='flex';
+      cashBtn.style.visibility='visible';
+    }
+
+    const capBtn=document.querySelector('.ui-middle-btn[data-business="capitalPanel"]');
+    if(capBtn){
+      capBtn.innerHTML='💎 Base Capital';
+      capBtn.style.display='flex';
+      capBtn.style.visibility='visible';
+    }
+  }
+
+  function repair(){
+    ensureButtons();
+    repairCapitalPanel();
+    repairCashPanel();
+    syncCapitalUI();
+  }
+
+  document.addEventListener('input',function(e){
+    if(e.target && ['mfsCapital','rechargeCapital','ui_mfsCapital','ui_rechargeCapital'].includes(e.target.id)){
+      setTimeout(syncCapitalUI,0);
+    }
+  });
+
+  window.addEventListener('load',function(){
+    repair();
+    setTimeout(repair,250);
+    setTimeout(repair,1000);
+  });
+
+  document.addEventListener('click',function(e){
+    const cash=e.target.closest && e.target.closest('.ui-middle-btn[data-section="cashPanel"]');
+    if(cash){
+      setTimeout(repairCashPanel,20);
+    }
+    const cap=e.target.closest && e.target.closest('.ui-middle-btn[data-business="capitalPanel"]');
+    if(cap){
+      setTimeout(repairCapitalPanel,20);
+    }
+  });
+
+  setInterval(syncCapitalUI,1000);
+})();
+</script>
 </html>
