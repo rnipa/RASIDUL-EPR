@@ -3661,4 +3661,103 @@ document.addEventListener('input',()=>{
   setInterval(syncCapitalUI,1000);
 })();
 </script>
+
+<style>
+/* ===== Smart Cash Calculator BUTTON FIX ===== */
+#ui_cash_mount .smart-cash-actions{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:10px 0 0;
+}
+#ui_cash_mount .smart-cash-actions button{
+  width:100%;
+  margin:0!important;
+  padding:11px 6px!important;
+  border-radius:12px!important;
+  font-size:13px!important;
+}
+#ui_cash_mount .smart-cash-total{
+  margin-top:10px;
+  padding:11px 12px;
+  border-radius:13px;
+  background:rgba(255,255,255,.08);
+  text-align:center;
+  font-weight:bold;
+}
+@media(max-width:480px){
+  #ui_cash_mount .smart-cash-actions{grid-template-columns:repeat(3,1fr);gap:6px}
+  #ui_cash_mount .smart-cash-actions button{font-size:11px!important;padding:10px 4px!important}
+}
+</style>
+<script>
+/* ===== Smart Cash Calculator BUTTON RESTORE =====
+   Uses the original calcCash(), applyCash(), clearCalc() functions.
+   No accounting/business logic is changed. */
+(function(){
+  function installSmartCashButtons(){
+    const mount=document.getElementById('ui_cash_mount');
+    if(!mount) return;
+    if(!mount.querySelector('.smart-cash-actions')){
+      const actions=document.createElement('div');
+      actions.className='smart-cash-actions';
+      actions.innerHTML=
+        '<button type="button" id="ui_cash_calculate">🧮 Calculate</button>'+
+        '<button type="button" id="ui_cash_apply">✅ Apply</button>'+
+        '<button type="button" id="ui_cash_clear">🧹 Clear</button>';
+      mount.appendChild(actions);
+
+      const total=document.createElement('div');
+      total.className='smart-cash-total';
+      total.innerHTML='💰 Total Cash: <span id="ui_cash_total">0</span> ৳';
+      mount.appendChild(total);
+
+      document.getElementById('ui_cash_calculate').onclick=function(){
+        if(typeof window.calcCash==='function'){
+          const result=window.calcCash();
+          const out=document.getElementById('ui_cash_total');
+          if(out) out.textContent=Number(result||0).toLocaleString('bn-BD');
+        }
+      };
+      document.getElementById('ui_cash_apply').onclick=function(){
+        if(typeof window.applyCash==='function') window.applyCash();
+        const out=document.getElementById('ui_cash_total');
+        const legacy=document.getElementById('cashTotal');
+        if(out && legacy) out.textContent=legacy.textContent||'0';
+      };
+      document.getElementById('ui_cash_clear').onclick=function(){
+        if(typeof window.clearCalc==='function') window.clearCalc();
+        const out=document.getElementById('ui_cash_total');
+        if(out) out.textContent='0';
+      };
+    }
+
+    mount.querySelectorAll('.cash-grid input').forEach(inp=>{
+      if(!inp.dataset.smartCashBound){
+        inp.dataset.smartCashBound='1';
+        inp.addEventListener('input',function(){
+          if(typeof window.calcCash==='function'){
+            const result=window.calcCash();
+            const out=document.getElementById('ui_cash_total');
+            if(out) out.textContent=Number(result||0).toLocaleString('bn-BD');
+          }
+        });
+      }
+    });
+  }
+
+  window.addEventListener('load',function(){
+    installSmartCashButtons();
+    setTimeout(installSmartCashButtons,200);
+    setTimeout(installSmartCashButtons,700);
+    setTimeout(installSmartCashButtons,1500);
+  });
+
+  document.addEventListener('click',function(e){
+    if(e.target.closest && e.target.closest('[data-section="cashPanel"]')){
+      setTimeout(installSmartCashButtons,30);
+    }
+  });
+})();
+</script>
 </html>
