@@ -1777,18 +1777,40 @@ ${tx}
     return profit;
   };
 
-  // Final Save remains the original business function. Only the UI report is added after it succeeds.
-  if(typeof window.saveFinal==='function' && !window.__v16SaveWrapped){
+  // FINAL SAVE ONLY HOTFIX:
+  // Keep the original saveFinal() accounting/storage logic untouched.
+  // Bind the popup after all scripts are loaded.
+  function installFinalSaveFix(){
+    if(window.__finalSaveOnlyFixed) return;
+    if(typeof window.saveFinal!=='function') return;
+
     const originalSaveFinal=window.saveFinal;
     window.saveFinal=function(){
       const result=originalSaveFinal.apply(this,arguments);
+
+      // Refresh the existing Daily History after the original save.
+      try{
+        if(typeof window.renderHistory==='function') window.renderHistory();
+        if(typeof window.updateMonthly==='function') window.updateMonthly();
+      }catch(e){}
+
+      // Show the existing Closing Report popup.
       setTimeout(function(){
         if(typeof window.showClosingReport==='function') window.showClosingReport();
-      },80);
+      },100);
+
       return result;
     };
-    window.__v16SaveWrapped=true;
+
+    window.__finalSaveOnlyFixed=true;
   }
+
+  window.addEventListener('load',function(){
+    installFinalSaveFix();
+    setTimeout(installFinalSaveFix,100);
+    setTimeout(installFinalSaveFix,500);
+    setTimeout(installFinalSaveFix,1000);
+  });
 
   // Keep the original cash-calculation behavior, but make the denomination inputs and buttons reliable.
   if(typeof window.calcCash==='function' && !window.__v16CashWrapped){
