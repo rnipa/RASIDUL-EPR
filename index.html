@@ -575,6 +575,11 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
   <div class="ui-top-card"><span>📱</span><small>Recharge Profit</small><b id="ui_rechargeProfit">0 ৳</b></div>
   <div class="ui-top-card"><span>📈</span><small>এই মাসের মোট Profit</small><b id="ui_monthlyProfit">0 ৳</b></div>
   <div class="ui-top-card"><span>💎</span><small>Total Working Capital</small><b id="ui_workingCapital">0 ৳</b></div>
+
+<label>💰 MFS Base Capital</label>
+<input id="mfsCapital" value="50000">
+<label style="margin-top:05px">📱 Recharge Base Capital</label>
+<input id="rechargeCapital" value="30000">
 </div>
 
 
@@ -3816,3 +3821,35 @@ document.addEventListener('input',()=>{
 })();
 </script>
 </html>
+
+<style>
+/* REQUESTED-ONLY FIX: Base Capital visible, not button */
+#capitalPanel{display:block!important;visibility:visible!important;}
+.ui-middle-btn[data-business="capitalPanel"]{display:none!important;}
+</style>
+<script>
+/* REQUESTED-ONLY FIX: Final Save -> Daily History + Closing Report + Monthly Profit */
+(function(){
+  function install(){
+    if(window.__requestedOnlyFinalSaveFix) return;
+    if(typeof window.saveFinal!=='function') return;
+    const original=window.saveFinal;
+    window.saveFinal=function(){
+      const result=original.apply(this,arguments);
+      try{
+        if(typeof window.renderHistory==='function') window.renderHistory();
+        if(typeof window.updateMonthly==='function') window.updateMonthly();
+        if(typeof window.updateAnalytics==='function') window.updateAnalytics();
+      }catch(e){}
+      setTimeout(function(){
+        if(typeof window.showClosingReport==='function') window.showClosingReport();
+      },100);
+      return result;
+    };
+    window.__requestedOnlyFinalSaveFix=true;
+  }
+  window.addEventListener('load',function(){
+    install(); setTimeout(install,100); setTimeout(install,500); setTimeout(install,1000);
+  });
+})();
+</script>
