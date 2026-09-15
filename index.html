@@ -3848,3 +3848,35 @@ document.addEventListener('input',()=>{
   });
 })();
 </script>
+
+<!-- FINAL SAVE ONLY: force the visible Closing Balance button to execute the existing saveFinal once -->
+<script>
+(function(){
+  function bindFinalSaveOnly(){
+    if(window.__dailyHistoryFinalSaveBound) return;
+    var btn=document.querySelector('#closingPanel button[onclick="saveFinal()"]');
+    if(!btn || typeof window.saveFinal!=='function') return;
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      var pairs=[
+        ['ui_cbk','cbk'],['ui_cng','cng'],['ui_crk','crk'],['ui_cmc','cmc'],
+        ['ui_cgp','cgp'],['ui_crobi','crobi'],['ui_cair','cair'],['ui_cbl','cbl'],
+        ['ui_ctk','ctk'],['ui_crc','crc'],['ui_closingNote','note']
+      ];
+      pairs.forEach(function(pair){
+        var ui=document.getElementById(pair[0]), legacy=document.getElementById(pair[1]);
+        if(ui && legacy) legacy.value=ui.value;
+      });
+      window.saveFinal();
+    },true);
+    window.__dailyHistoryFinalSaveBound=true;
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bindFinalSaveOnly);
+  else bindFinalSaveOnly();
+  window.addEventListener('load',bindFinalSaveOnly);
+  setTimeout(bindFinalSaveOnly,300);
+  setTimeout(bindFinalSaveOnly,1000);
+})();
+</script>
