@@ -3880,3 +3880,31 @@ document.addEventListener('input',()=>{
   setTimeout(bindFinalSaveOnly,1000);
 })();
 </script>
+
+<script>
+/* FINAL SAVE ONLY: ensure legacy saveFinal receives the visible closing values and note */
+(function(){
+  function fix(){
+    var b=document.querySelector('#closingPanel button');
+    var buttons=document.querySelectorAll('#closingPanel button');
+    for(var i=0;i<buttons.length;i++){
+      if((buttons[i].textContent||'').indexOf('Final Save')>-1){ b=buttons[i]; break; }
+    }
+    if(!b || b.__finalSaveV2) return;
+    b.__finalSaveV2=true;
+    b.removeAttribute('onclick');
+    b.addEventListener('click',function(ev){
+      ev.preventDefault(); ev.stopImmediatePropagation();
+      var map={ui_cbk:'cbk',ui_cng:'cng',ui_crk:'crk',ui_cmc:'cmc',ui_cgp:'cgp',ui_crobi:'crobi',ui_cair:'cair',ui_cbl:'cbl',ui_ctk:'ctk',ui_crc:'crc'};
+      Object.keys(map).forEach(function(a){var x=document.getElementById(a),y=document.getElementById(map[a]);if(x&&y)y.value=x.value;});
+      var n=document.getElementById('note');
+      if(!n){n=document.createElement('textarea');n.id='note';n.style.display='none';document.body.appendChild(n);}
+      var un=document.getElementById('ui_closingNote'); if(un)n.value=un.value;
+      try{ window.saveFinal(); }catch(err){ console.error('Final Save error:',err); alert('Final Save ব্যর্থ হয়েছে। Browser Console-এ ত্রুটি দেখুন।'); }
+    },true);
+  }
+  document.addEventListener('DOMContentLoaded',fix);
+  window.addEventListener('load',fix);
+  setTimeout(fix,300);setTimeout(fix,1000);setTimeout(fix,2000);
+})();
+</script>
