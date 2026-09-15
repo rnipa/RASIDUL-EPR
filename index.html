@@ -844,13 +844,13 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="balance-item"><label>Bkash</label><input id="obk"></div>
 <div class="balance-item"><label>Nagad</label><input id="ong"></div>
 <div class="balance-item"><label>Rocket</label><input id="ork"></div>
+<div class="balance-item"><label>Tally Khata</label><input id="otk"></div>
 <div class="balance-item"><label>MFS Cash</label><input id="omc"></div>
 
 <div class="balance-item"><label>GP</label><input id="ogp"></div>
 <div class="balance-item"><label>Robi</label><input id="orobi"></div>
 <div class="balance-item"><label>Airtel</label><input id="oair"></div>
 <div class="balance-item"><label>Banglalink</label><input id="obl"></div>
-<div class="balance-item"><label>Tally Khata</label><input id="otk"></div>
 <div class="balance-item"><label>Recharge Cash</label><input id="orc"></div>
 
 
@@ -867,13 +867,13 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 <div class="balance-item"><label>Bkash</label><input id="cbk"></div>
 <div class="balance-item"><label>Nagad</label><input id="cng"></div>
 <div class="balance-item"><label>Rocket</label><input id="crk"></div>
+<div class="balance-item"><label>Tally Khata</label><input id="ctk"></div>
 <div class="balance-item"><label>MFS Cash</label><input id="cmc"></div>
 
 <div class="balance-item"><label>GP</label><input id="cgp"></div>
 <div class="balance-item"><label>Robi</label><input id="crobi"></div>
 <div class="balance-item"><label>Airtel</label><input id="cair"></div>
 <div class="balance-item"><label>Banglalink</label><input id="cbl"></div>
-<div class="balance-item"><label>Tally Khata</label><input id="ctk"></div>
 <div class="balance-item"><label>Recharge Cash</label><input id="crc"></div>
 
 
@@ -1025,11 +1025,11 @@ function saveFinal(){
 let p=calculate();
 
 let item={
-date:new Date().toLocaleString(),
-mfs:mfsProfit,
-recharge:rechargeProfit,
-profit:p,
-note:note.value
+ date:new Date().toLocaleString(),
+ mfs:Number(window.mfsProfit||0),
+ recharge:Number(window.rechargeProfit||0),
+ profit:Number(p||0),
+ note:(document.getElementById('ui_closingNote')?.value || document.getElementById('note')?.value || '')
 };
 
 if(editIndex!==null){
@@ -1039,17 +1039,17 @@ if(editIndex!==null){
  histories.unshift(item);
 }
 
+window.histories=histories;
 localStorage.setItem('rasidulHistories',JSON.stringify(histories));
 
-renderHistory();
-updateMonthly();
+if(typeof renderHistory==='function') renderHistory();
+if(typeof updateMonthly==='function') updateMonthly();
 
 if(window.erpCloudSave){
-erpCloudSave();
+ erpCloudSave();
 }
 
 }
-
 function renderHistory(){
 
 historyBox.innerHTML='';
@@ -1170,11 +1170,26 @@ function updateMonthlyOwnerWithdrawal(){
 
 function updateMonthly(){
 
+// শুধুমাত্র চলতি মাস ও বছরের Final Save করা হিসাব যোগ হবে।
+// আগের মাসের হিসাব Monthly Profit-এ আর যোগ হবে না।
+const now=new Date();
+const currentMonth=now.getMonth();
+const currentYear=now.getFullYear();
 let total=0;
 
-histories.forEach(h=> total+=Number(h.profit));
+(histories||[]).forEach(h=>{
+  const d=new Date(h.date);
+  if(!isNaN(d.getTime()) && d.getMonth()===currentMonth && d.getFullYear()===currentYear){
+    total+=Number(h.profit||0);
+  }
+});
 
-monthlyProfit.innerHTML=total+' ৳';
+const text=total+' ৳';
+const legacy=document.getElementById('monthlyProfit');
+const modern=document.getElementById('ui_monthlyProfit');
+if(legacy) legacy.innerHTML=text;
+if(modern) modern.textContent=text;
+
 updateMonthlyOwnerWithdrawal();
 updateAnalytics();
 
@@ -3906,5 +3921,84 @@ document.addEventListener('input',()=>{
   document.addEventListener('DOMContentLoaded',fix);
   window.addEventListener('load',fix);
   setTimeout(fix,300);setTimeout(fix,1000);setTimeout(fix,2000);
+})();
+</script>
+
+<script>
+(function(){
+  function setupFinalSaveOnly(){
+    var all=document.querySelectorAll('button');
+    for(var i=0;i<all.length;i++){
+      var b=all[i], t=(b.textContent||'').replace(/\s+/g,' ').trim();
+      if(t.indexOf('Final Save')!==-1){
+        if(b.closest && b.closest('#closingPanel')) {
+          b.removeAttribute('onclick');
+          b.type='button';
+          b.style.display='';
+        } else {
+          b.removeAttribute('onclick');
+          b.style.display='none';
+          b.disabled=true;
+        }
+      }
+    }
+    var cb=document.querySelector('#closingPanel button');
+    if(!cb)return;
+    var buttons=document.querySelectorAll('#closingPanel button');
+    for(var j=0;j<buttons.length;j++){
+      if((buttons[j].textContent||'').indexOf('Final Save')!==-1){
+        cb=buttons[j]; break;
+      }
+    }
+    if(cb.__onlyClosingSave)return;
+    cb.__onlyClosingSave=true;
+    cb.addEventListener('click',function(e){
+      e.preventDefault(); e.stopImmediatePropagation();
+      var map=[['ui_cbk','cbk'],['ui_cng','cng'],['ui_crk','crk'],['ui_cmc','cmc'],['ui_cgp','cgp'],['ui_crobi','crobi'],['ui_cair','cair'],['ui_cbl','cbl'],['ui_ctk','ctk'],['ui_crc','crc']];
+      map.forEach(function(x){var a=document.getElementById(x[0]),b=document.getElementById(x[1]);if(a&&b)b.value=a.value;});
+      var u=document.getElementById('ui_closingNote'), n=document.getElementById('note');
+      if(!n){n=document.createElement('textarea');n.id='note';n.style.display='none';document.body.appendChild(n);}
+      if(u)n.value=u.value;
+      if(typeof window.saveFinal==='function') window.saveFinal();
+    },true);
+  }
+  document.addEventListener('DOMContentLoaded',setupFinalSaveOnly);
+  window.addEventListener('load',setupFinalSaveOnly);
+  setTimeout(setupFinalSaveOnly,500);
+  setTimeout(setupFinalSaveOnly,1500);
+})();
+</script>
+<script>
+/* Tally Khata is now fully included in MFS accounting. Other business logic remains unchanged. */
+(function(){
+  function num(id){ return Number(document.getElementById(id)?.value || 0); }
+  window.calculate=function(){
+    const openMFS=num('obk')+num('ong')+num('ork')+num('omc')+num('otk');
+    const closeMFS=num('cbk')+num('cng')+num('crk')+num('cmc')+num('ctk');
+    const openRecharge=num('ogp')+num('orobi')+num('oair')+num('obl')+num('orc');
+    const closeRecharge=num('cgp')+num('crobi')+num('cair')+num('cbl')+num('crc');
+    window.mfsProfit=closeMFS-openMFS;
+    window.rechargeProfit=closeRecharge-openRecharge;
+    window.profit=window.mfsProfit+window.rechargeProfit;
+    ['mfsProfitBox','rechargeProfitBox','dailyProfit'].forEach((id,i)=>{
+      const el=document.getElementById(id); if(el) el.innerHTML=(i===0?window.mfsProfit:i===1?window.rechargeProfit:window.profit)+' ৳';
+    });
+    const finalBox=document.getElementById('finalBox'); if(finalBox) finalBox.innerHTML=window.profit+' ৳';
+    return window.profit;
+  };
+  window.updateLiveTotals=function(){
+    const openEmoney=num('obk')+num('ong')+num('ork')+num('ogp')+num('orobi')+num('oair')+num('obl')+num('otk');
+    const closeEmoney=num('cbk')+num('cng')+num('crk')+num('cgp')+num('crobi')+num('cair')+num('cbl')+num('ctk');
+    const openCash=num('omc')+num('orc'), closeCash=num('cmc')+num('crc');
+    [['openingEmoney',openEmoney],['openingCash',openCash],['closingEmoney',closeEmoney],['closingCash',closeCash]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.innerHTML=v+' ৳';});
+  };
+  window.newDay=function(){
+    ['obk','ong','ork','omc','ogp','orobi','oair','obl','otk','orc'].forEach((id,i)=>{const pairs=['cbk','cng','crk','cmc','cgp','crobi','cair','cbl','ctk','crc']; const el=document.getElementById(id), src=document.getElementById(pairs[i]); if(el&&src)el.value=src.value;});
+    const mc=document.getElementById('mfsCapital'), rc=document.getElementById('rechargeCapital');
+    if(mc)mc.value=num('cbk')+num('cng')+num('crk')+num('cmc')+num('ctk');
+    if(rc)rc.value=num('cgp')+num('crobi')+num('cair')+num('cbl')+num('crc');
+    if(typeof autoSave==='function')autoSave(); if(typeof updateLiveTotals==='function')updateLiveTotals(); if(typeof renderLedger==='function')renderLedger(); if(typeof updateMonthly==='function')updateMonthly();
+    alert('🆕 New Day Started + Capital Updated');
+  };
 })();
 </script>
