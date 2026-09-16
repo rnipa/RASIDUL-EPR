@@ -3924,7 +3924,7 @@ document.addEventListener('input',()=>{
 })();
 </script>
 
-<script>
+
 (function(){
   function setupFinalSaveOnly(){
     var all=document.querySelectorAll('button');
@@ -3966,39 +3966,5 @@ document.addEventListener('input',()=>{
   window.addEventListener('load',setupFinalSaveOnly);
   setTimeout(setupFinalSaveOnly,500);
   setTimeout(setupFinalSaveOnly,1500);
-})();
-</script>
-<script>
-/* Tally Khata is now fully included in MFS accounting. Other business logic remains unchanged. */
-(function(){
-  function num(id){ return Number(document.getElementById(id)?.value || 0); }
-  window.calculate=function(){
-    const openMFS=num('obk')+num('ong')+num('ork')+num('omc')+num('otk');
-    const closeMFS=num('cbk')+num('cng')+num('crk')+num('cmc')+num('ctk');
-    const openRecharge=num('ogp')+num('orobi')+num('oair')+num('obl')+num('orc');
-    const closeRecharge=num('cgp')+num('crobi')+num('cair')+num('cbl')+num('crc');
-    window.mfsProfit=closeMFS-openMFS;
-    window.rechargeProfit=closeRecharge-openRecharge;
-    window.profit=window.mfsProfit+window.rechargeProfit;
-    ['mfsProfitBox','rechargeProfitBox','dailyProfit'].forEach((id,i)=>{
-      const el=document.getElementById(id); if(el) el.innerHTML=(i===0?window.mfsProfit:i===1?window.rechargeProfit:window.profit)+' ৳';
-    });
-    const finalBox=document.getElementById('finalBox'); if(finalBox) finalBox.innerHTML=window.profit+' ৳';
-    return window.profit;
-  };
-  window.updateLiveTotals=function(){
-    const openEmoney=num('obk')+num('ong')+num('ork')+num('ogp')+num('orobi')+num('oair')+num('obl')+num('otk');
-    const closeEmoney=num('cbk')+num('cng')+num('crk')+num('cgp')+num('crobi')+num('cair')+num('cbl')+num('ctk');
-    const openCash=num('omc')+num('orc'), closeCash=num('cmc')+num('crc');
-    [['openingEmoney',openEmoney],['openingCash',openCash],['closingEmoney',closeEmoney],['closingCash',closeCash]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.innerHTML=v+' ৳';});
-  };
-  window.newDay=function(){
-    ['obk','ong','ork','omc','ogp','orobi','oair','obl','otk','orc'].forEach((id,i)=>{const pairs=['cbk','cng','crk','cmc','cgp','crobi','cair','cbl','ctk','crc']; const el=document.getElementById(id), src=document.getElementById(pairs[i]); if(el&&src)el.value=src.value;});
-    const mc=document.getElementById('mfsCapital'), rc=document.getElementById('rechargeCapital');
-    if(mc)mc.value=num('cbk')+num('cng')+num('crk')+num('cmc')+num('ctk');
-    if(rc)rc.value=num('cgp')+num('crobi')+num('cair')+num('cbl')+num('crc');
-    if(typeof autoSave==='function')autoSave(); if(typeof updateLiveTotals==='function')updateLiveTotals(); if(typeof renderLedger==='function')renderLedger(); if(typeof updateMonthly==='function')updateMonthly();
-    alert('🆕 New Day Started + Capital Updated');
-  };
 })();
 </script>
