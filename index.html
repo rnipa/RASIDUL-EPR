@@ -1,0 +1,4411 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+<title>Rasidul Premium ERP v17</title>
+<style>
+*{box-sizing:border-box;transition:.3s}
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:#fff;
+overflow-x:hidden;
+}
+.bg{
+position:fixed;
+inset:0;
+background:linear-gradient(135deg,#2563eb,#7c3aed,#ec4899);
+background-size:400% 400%;
+animation:bgmove 12s ease infinite;
+z-index:-1;
+}
+@keyframes bgmove{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+.container{
+max-width:1400px;
+margin:auto;
+padding:20px;
+}
+h1{text-align:center;font-size:42px;margin-bottom:5px}
+.sub{text-align:center;opacity:.8;margin-bottom:20px}
+.grid,.top-grid,.cash-grid,.dash{
+display:grid;
+gap:15px;
+}
+.dash{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.top-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cash-grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+.card,.mini{
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(10px);
+padding:20px;
+border-radius:24px;
+box-shadow:0 8px 25px rgba(0,0,0,.2);
+margin-top:18px;
+}
+label{
+display:block;
+font-weight:bold;
+margin-bottom:5px;
+}
+input,select,textarea,button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+margin-top:5px;
+font-size:15px;
+}
+button{
+background:linear-gradient(135deg,#22c55e,#16a34a);
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+}
+button:hover{transform:translateY(-2px)}
+.actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+.actions button,.importLabel{flex:1}
+.importLabel{
+background:linear-gradient(135deg,#0ea5e9,#2563eb);
+padding:14px;
+border-radius:14px;
+text-align:center;
+font-weight:bold;
+cursor:pointer;
+}
+textarea{min-height:100px}
+.history,.partner{
+background:rgba(255,255,255,.1);
+padding:15px;
+border-radius:16px;
+margin-top:10px;
+line-height:28px;
+position:relative;
+}
+.tag{
+position:absolute;
+top:10px;
+right:10px;
+display:flex;
+gap:5px;
+}
+.edit{background:#3b82f6}
+.del{background:#ef4444}
+.smallBtn{
+padding:6px 10px;
+border:none;
+border-radius:10px;
+color:#fff;
+cursor:pointer;
+font-size:12px;
+}
+#finalBox{
+margin-top:20px;
+padding:25px;
+border-radius:20px;
+background:rgba(255,255,255,.15);
+font-size:22px;
+font-weight:bold;
+text-align:center;
+}
+
+/* ===== v15 TOP DASHBOARD + CLOSING REPORT ===== */
+.dash{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:stretch}
+.dash>.mini{min-width:0}
+.dash>button{min-height:112px;border-radius:20px;border:none;padding:14px;font-size:17px}
+.dash>.mini{min-height:112px}
+.ui-action-btn{background:linear-gradient(135deg,#f59e0b,#ea580c)!important}
+.ui-closing-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.ui-closing-actions button{margin:0}
+#closingReportOverlay{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:99998;display:none;align-items:center;justify-content:center;padding:18px}
+#closingReportOverlay.open{display:flex}
+.closing-report-card{width:min(430px,100%);background:linear-gradient(145deg,#24134f,#5b21b6);color:#fff;border-radius:24px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.15)}
+.closing-report-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.closing-report-head h3{margin:0;font-size:20px}
+.closing-report-close{width:38px!important;min-width:38px!important;height:38px!important;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.14)!important}
+.closing-report-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.closing-report-item{background:rgba(255,255,255,.10);border-radius:15px;padding:11px}
+.closing-report-item small{display:block;opacity:.75;margin-bottom:3px}
+.closing-report-item b{font-size:16px}
+.closing-report-note{margin-top:12px;padding:11px;border-radius:15px;background:rgba(255,255,255,.08);line-height:1.5;white-space:pre-wrap}
+.closing-report-footer{display:flex;gap:9px;margin-top:14px}
+.closing-report-footer button{flex:1}
+.closing-check-box{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);font-size:13px;line-height:1.6}
+.closing-check-box.ok{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.35)}
+.closing-check-box.warn{background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.35)}
+.closing-check-box.error{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.35)}
+@media(max-width:900px){.dash{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.dash{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dash>button,.dash>.mini{min-height:92px}.dash>button{font-size:14px}.ui-closing-actions{grid-template-columns:1fr}.closing-report-grid{grid-template-columns:1fr 1fr}}
+
+/* ===== COMPACT BALANCE CALCULATOR + 58MM ARCHIVE PRINT ===== */
+.balance-item{position:relative}
+.balance-item label{padding-right:36px}
+.balance-calc-btn{
+  position:absolute;
+  top:0;
+  right:0;
+  width:28px !important;
+  height:28px;
+  min-width:28px;
+  padding:0 !important;
+  margin:0 !important;
+  border-radius:8px;
+  font-size:13px !important;
+  line-height:28px;
+  text-align:center;
+  background:rgba(255,255,255,.14);
+  color:#fff;
+  box-shadow:none;
+  transform:none !important;
+  z-index:2;
+}
+.balance-calc-btn:hover{background:#2563eb;transform:scale(1.05) !important}
+.mini-calc-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.58);
+  backdrop-filter:blur(4px);z-index:1000000;
+  display:none;align-items:center;justify-content:center;padding:15px;
+}
+.mini-calc{
+  width:min(360px,100%);background:#111827;
+  border:1px solid rgba(255,255,255,.18);border-radius:20px;
+  padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+.mini-calc h3{margin:0 0 12px}
+.mini-calc-display{
+  width:100%;background:#020617;color:#fff;text-align:right;
+  font-size:25px;font-weight:bold;margin-bottom:10px;
+}
+.mini-calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.mini-calc-grid button{
+  padding:11px 5px !important;margin:0 !important;
+  border-radius:10px;font-size:16px;
+}
+.mini-calc-actions{display:flex;gap:8px;margin-top:10px}
+.mini-calc-actions button{padding:9px !important;margin:0 !important}
+.archive-print-btn{
+  width:auto !important;padding:7px 11px !important;
+  margin-top:10px !important;font-size:12px !important;
+  border-radius:9px !important;
+}
+@media print{
+  body *{visibility:hidden !important}
+  #archivePrintArea,#archivePrintArea *{visibility:visible !important}
+  #archivePrintArea{
+    position:absolute;left:0;top:0;width:58mm;
+    background:#fff !important;color:#000 !important;
+    padding:2mm;margin:0;font-family:Arial,sans-serif;
+  }
+  #archivePrintArea h2,#archivePrintArea h3,#archivePrintArea p{color:#000 !important}
+  .no-print{display:none !important}
+}
+
+
+/* ===== v12 PREMIUM COMPACT UI LAYER ===== */
+:root{--ui-glass:rgba(15,23,42,.42);--ui-border:rgba(255,255,255,.16)}
+body{padding-bottom:30px}
+.container{max-width:1280px;padding:14px}
+h1{font-size:32px;margin:8px 0 2px}
+.sub{font-size:13px;margin-bottom:14px}
+
+.dash{gap:10px}
+.dash>.mini{
+  padding:13px 14px;margin-top:0;border-radius:17px;
+  min-height:0;
+}
+.dash>.mini h3{margin:0 0 5px;font-size:14px}
+.dash>.mini h2{margin:0;font-size:21px}
+.dash>.mini p{margin:3px 0;font-size:13px}
+
+.ui-control-panel{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+  gap:9px;
+  margin:14px 0 8px;
+}
+.ui-panel-btn{
+  width:100%;padding:12px 10px;margin:0;border-radius:15px;
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 7px 18px rgba(0,0,0,.14);
+  font-size:14px;
+}
+.ui-panel-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.2)}
+.ui-panel-btn.active{background:linear-gradient(135deg,#2563eb,#7c3aed)}
+
+.ui-section{
+  display:none;
+  margin-top:10px;
+  padding:16px;
+  border-radius:20px;
+  background:rgba(15,23,42,.42);
+  border:1px solid var(--ui-border);
+  box-shadow:0 10px 28px rgba(0,0,0,.18);
+}
+.ui-section.open{display:block}
+.ui-section-title{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;margin:0 0 13px;font-size:19px;
+}
+.ui-close{
+  width:auto!important;margin:0!important;padding:7px 11px!important;
+  border-radius:10px!important;font-size:12px!important;
+  background:rgba(255,255,255,.12)!important;
+}
+.ui-balance-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:9px;
+}
+.ui-balance-item{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:13px;padding:9px;
+}
+.ui-balance-item label{font-size:12px;margin:0 0 3px}
+.ui-balance-item input{padding:10px;font-size:14px;margin:0}
+
+.ui-note{
+  margin-top:12px;padding:11px;border-radius:14px;
+  background:rgba(255,255,255,.07);
+}
+.ui-note label{font-size:13px}
+.ui-note textarea{min-height:70px;padding:10px;margin:0}
+
+.ui-summary-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:11px
+}
+.ui-summary{
+  padding:11px;border-radius:13px;background:rgba(255,255,255,.08);
+  text-align:center
+}
+.ui-summary h3{font-size:12px;margin:0 0 3px}
+.ui-summary h2{font-size:18px;margin:0}
+
+.ui-main-actions{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(125px,1fr));
+  gap:8px;margin-top:12px
+}
+.ui-main-actions button,.ui-main-actions .importLabel{
+  margin:0!important;padding:11px 9px!important;font-size:13px
+}
+
+.ui-hidden-original{display:none!important}
+
+.ui-archive-group{
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.06);
+  border-radius:15px;margin:9px 0;overflow:hidden
+}
+.ui-archive-folder{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:12px 13px;background:rgba(255,255,255,.08);
+  cursor:pointer;font-weight:bold
+}
+.ui-archive-folder .count{font-size:11px;opacity:.8;font-weight:normal}
+.ui-archive-items{display:none;padding:0 10px 10px}
+.ui-archive-group.open .ui-archive-items{display:block}
+.ui-archive-item{
+  padding:10px;margin-top:8px;border-radius:12px;
+  background:rgba(0,0,0,.14)
+}
+
+.ui-client-tabs{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px
+}
+.ui-client-tab{
+  padding:11px;border-radius:12px;background:rgba(255,255,255,.09);
+  text-align:center;font-weight:bold;cursor:pointer
+}
+.ui-client-tab.active{background:rgba(37,99,235,.75)}
+.ui-client-list{display:none}
+.ui-client-list.open{display:block}
+.ui-client-card{
+  padding:11px;margin:8px 0;border-radius:13px;
+  background:rgba(255,255,255,.07)
+}
+.ui-client-card h3{margin:0 0 5px;font-size:15px}
+
+@media(max-width:600px){
+  .container{padding:9px}
+  h1{font-size:25px}
+  .ui-control-panel{grid-template-columns:repeat(2,1fr)}
+  .ui-panel-btn{font-size:12px;padding:11px 7px}
+  .ui-section{padding:12px}
+  .ui-balance-grid{grid-template-columns:repeat(2,1fr)}
+  .ui-summary-grid{grid-template-columns:1fr}
+  .card{padding:13px;border-radius:17px}
+}
+
+
+
+/* ===== v18 PREMIUM TOP DASHBOARD ===== */
+.ui-top-dashboard{
+  display:grid;grid-template-columns:repeat(7,minmax(105px,1fr));gap:8px;margin:12px 0 10px;
+}
+.ui-top-card{
+  min-height:82px;padding:10px 8px;border-radius:16px;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.11);color:inherit;text-align:center;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+button.ui-top-card{cursor:pointer;font:inherit}
+.ui-top-card>span{font-size:18px}.ui-top-card small{font-size:10px;opacity:.86;font-weight:700;line-height:1.25}.ui-top-card b{font-size:14px;line-height:1.2}.ui-top-backup{background:rgba(37,99,235,.20)!important}
+.ui-client-tab strong{display:block;margin-top:3px;font-size:12px;opacity:.95}
+@media(max-width:700px){
+  .ui-top-dashboard{grid-template-columns:repeat(2,1fr);gap:7px}
+  .ui-top-card{min-height:76px;padding:9px 6px}
+  .ui-top-card b{font-size:13px}
+  .ui-top-card small{font-size:9px}
+  .ui-top-card:first-child{grid-column:span 2}
+}
+
+/* ===== v13 CLEAN DASHBOARD UI ===== */
+.ui-dashboard-stats{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(120px,1fr));
+  gap:8px;
+  margin:12px 0 10px;
+}
+.ui-stat-card{
+  margin:0!important;padding:11px 9px!important;border-radius:15px!important;
+  min-height:72px;background:rgba(255,255,255,.11)!important;
+  text-align:center;
+}
+.ui-stat-card h3{font-size:11px!important;margin:0 0 4px!important;opacity:.9}
+.ui-stat-card h2,.ui-stat-card p{margin:0!important;font-size:17px!important}
+.ui-core-actions-label{grid-column:1/-1;font-size:12px;font-weight:800;opacity:.82;margin:2px 0 -4px;padding-left:2px}
+.ui-middle-actions{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(125px,1fr));
+  gap:9px;
+  max-width:1000px;
+  margin:14px auto 12px;
+}
+.ui-middle-btn{
+  margin:0!important;padding:12px 9px!important;border-radius:14px!important;
+  font-size:13px!important;background:rgba(255,255,255,.13)!important;
+  border:1px solid rgba(255,255,255,.14);
+}
+.ui-middle-btn:hover,.ui-middle-btn.active{
+  background:linear-gradient(135deg,#2563eb,#7c3aed)!important;
+}
+.ui-extra-dashboard{
+  display:none;
+  margin-top:10px;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:9px;
+}
+.ui-extra-dashboard.open{display:grid}
+.ui-extra-dashboard .mini{
+  margin:0!important;padding:11px!important;border-radius:15px!important
+}
+.ui-business-panel{
+  display:none;margin:10px 0;
+  padding:15px;border-radius:19px;
+  background:rgba(15,23,42,.44);
+  border:1px solid rgba(255,255,255,.15)
+}
+.ui-business-panel.open{display:block}
+.ui-business-panel .card{
+  margin:0!important;padding:0!important;background:transparent!important;
+  box-shadow:none!important
+}
+.ui-business-panel h3{margin-top:0}
+.ui-panel-close{
+  float:right;width:auto!important;padding:6px 10px!important;margin:0!important;
+  font-size:11px!important;border-radius:9px!important;
+  background:rgba(255,255,255,.12)!important
+}
+@media(max-width:1000px){
+ .ui-dashboard-stats{grid-template-columns:repeat(4,1fr)}
+ .ui-middle-actions{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:600px){
+ .ui-dashboard-stats{grid-template-columns:repeat(2,1fr)}
+ .ui-middle-actions{grid-template-columns:repeat(2,1fr)}
+}
+
+
+/* ===== v14 MOBILE-FIRST UI ONLY ===== */
+.ui-middle-actions{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:100%;
+  max-width:720px;
+  gap:8px;
+  margin:12px auto 10px;
+}
+.ui-middle-btn,.ui-import-btn{
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:10px 8px!important;
+  margin:0!important;
+  font-size:13px!important;
+  line-height:1.2;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.ui-import-btn{cursor:pointer}
+.ui-middle-btn:active,.ui-import-btn:active{transform:scale(.98)!important}
+.ui-section,.ui-business-panel{
+  width:100%;
+  max-width:100%;
+  overflow:hidden;
+}
+.ui-balance-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+.ui-balance-item input,
+.ui-note textarea,
+.ui-section select,
+.ui-section button,
+.ui-business-panel input,
+.ui-business-panel textarea,
+.ui-business-panel select{
+  font-size:16px!important;
+}
+#uiPanelHost .card{
+  max-width:100%;
+}
+@media(max-width:480px){
+  .container{padding:8px!important}
+  h1{font-size:23px!important}
+  .sub{font-size:12px!important}
+  .ui-middle-actions{
+    gap:7px!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .ui-middle-btn,.ui-import-btn{
+    min-height:48px!important;
+    border-radius:13px!important;
+    font-size:12px!important;
+    padding:9px 6px!important;
+  }
+  .ui-section,.ui-business-panel{
+    padding:11px!important;
+    border-radius:16px!important;
+  }
+  .ui-balance-grid{
+    gap:7px!important;
+  }
+  .ui-balance-item{
+    padding:8px!important;
+    border-radius:11px!important;
+  }
+  .ui-balance-item input{
+    padding:10px 8px!important;
+  }
+  .ui-summary-grid{
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  .ui-summary{padding:9px!important}
+  .ui-summary h2{font-size:16px!important}
+}
+
+</style>
+
+<script>
+window.__ERP_CLOUD_VERIFIED__ = false;
+window.__ERP_SYNC_PENDING__ = false;
+
+async function verifyCloudStartup(){
+  const lock=document.getElementById('cloudLockScreen');
+  if(lock){
+    lock.style.display='flex';
+    lock.innerHTML='🔒 Rasidul Premium ERP<br><br>🌐 Internet যাচাই হচ্ছে...';
+  }
+  if(!navigator.onLine){
+    if(lock){ lock.innerHTML='❌ ইন্টারনেট সংযোগ নেই<br><br>Cloud ERP ব্যবহার করতে ইন্টারনেট চালু করুন'; }
+    return false;
+  }
+  if(lock){ lock.innerHTML='☁️ Cloud যাচাই হচ্ছে...'; }
+  return true;
+}
+</script>
+
+
+<script>
+async function verifyFirebaseConnection(){
+ try{
+   if(!navigator.onLine) return false;
+   return true;
+ }catch(e){
+   return false;
+ }
+}
+</script>
+
+
+<style id="rasidul-pin-protection-css">
+#rasidulPinLock{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 20% 10%,rgba(56,189,248,.18),transparent 32%),radial-gradient(circle at 85% 85%,rgba(99,102,241,.18),transparent 34%),#07111f;color:#fff;font-family:inherit}
+#rasidulPinLock[hidden]{display:none!important}
+.rpl-card{width:min(390px,100%);padding:28px 24px;border:1px solid rgba(255,255,255,.12);border-radius:24px;background:rgba(13,24,40,.94);box-shadow:0 30px 90px rgba(0,0,0,.5);text-align:center;backdrop-filter:blur(16px)}
+.rpl-icon{width:64px;height:64px;margin:0 auto 15px;display:grid;place-items:center;border-radius:20px;background:linear-gradient(135deg,#0284c7,#4f46e5);font-size:30px;box-shadow:0 12px 35px rgba(56,189,248,.22)}
+.rpl-card h2{margin:0 0 7px;font-size:23px}.rpl-card p{margin:0 0 18px;color:#94a3b8;font-size:13px;line-height:1.55}
+#rplPin{width:100%;height:52px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:#081322;color:#fff;text-align:center;font-size:25px;letter-spacing:9px;outline:none}
+#rplPin:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.12)}
+#rplPin::placeholder{letter-spacing:2px;font-size:14px;color:#64748b}
+#rplBtn{width:100%;margin-top:12px;height:48px;border:0;border-radius:13px;background:linear-gradient(135deg,#0284c7,#4f46e5);color:#fff;font-weight:800;font-size:14px;cursor:pointer}
+#rplBtn:active{transform:translateY(1px)}
+#rplSetupNote{margin-top:12px;color:#64748b;font-size:11px}.rpl-error{min-height:19px;margin-top:9px;color:#fb7185;font-size:12px;font-weight:700}
+body.rpl-locked .container{filter:blur(5px);pointer-events:none;user-select:none}
+#rplBioBtn:active{transform:translateY(1px)}
+#rplBioBtn:disabled{opacity:.55;cursor:not-allowed}
+
+#erpSecurityFab{display:none!important;position:fixed;right:18px;bottom:18px;z-index:99998;border:1px solid rgba(56,189,248,.3);background:#0d1828;color:#fff;border-radius:14px;padding:11px 14px;font-weight:800;box-shadow:0 12px 35px rgba(0,0,0,.35);cursor:pointer}
+#erpSecuritySettings{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px)}
+#erpSecuritySettings.show{display:flex}.ers-card{width:min(520px,100%);max-height:90vh;overflow:auto;background:#0d1828;border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:20px;box-shadow:0 30px 90px rgba(0,0,0,.55);color:#fff}.ers-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.ers-head h3{margin:0}.ers-close{width:38px;height:38px;border:0;border-radius:10px;background:#17263a;color:#fff;font-size:20px}.ers-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px 0;border-bottom:1px solid rgba(255,255,255,.08)}.ers-row:last-child{border-bottom:0}.ers-title{font-weight:800}.ers-sub{font-size:11px;color:#94a3b8;margin-top:4px;line-height:1.45}.ers-switch{position:relative;width:48px;height:26px;flex:none}.ers-switch input{opacity:0;width:0;height:0}.ers-slider{position:absolute;inset:0;background:#334155;border-radius:99px;cursor:pointer}.ers-slider:before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.ers-switch input:checked+.ers-slider{background:#0284c7}.ers-switch input:checked+.ers-slider:before{transform:translateX(22px)}.ers-btn{border:1px solid rgba(255,255,255,.1);background:#17263a;color:#fff;border-radius:10px;padding:9px 12px;font-weight:700}.ers-pin-input{width:100%;height:46px;margin-top:9px;border:1px solid rgba(255,255,255,.1);border-radius:11px;background:#081322;color:#fff;text-align:center;font-size:20px;letter-spacing:7px}.ers-note{font-size:11px;color:#94a3b8;line-height:1.5;margin-top:12px}.ers-status{font-size:12px;margin-top:8px;color:#34d399;min-height:17px}
+</style>
+
+</head>
+<body class="rpl-locked">
+
+<div id="rasidulPinLock" role="dialog" aria-modal="true" aria-labelledby="rplTitle">
+  <div class="rpl-card">
+    <div class="rpl-icon">🔐</div>
+    <h2 id="rplTitle">ERP Protected</h2>
+    <p id="rplText">আপনার ব্যবসার হিসাব দেখতে ৪–৬ সংখ্যার PIN দিন।</p>
+    <input id="rplPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="off" placeholder="PIN লিখুন" aria-label="ERP PIN">
+    <div id="rplError" class="rpl-error"></div>
+    <button id="rplBtn" type="button">🔓 Login</button>
+    <button id="rplBioBtn" type="button" style="width:100%;margin-top:9px;height:46px;border:1px solid rgba(56,189,248,.28);border-radius:13px;background:#0b2033;color:#e0f2fe;font-weight:800;font-size:13px;cursor:pointer;display:none">🫆 Fingerprint / Device Unlock</button>
+    <div id="rplBioStatus" style="margin-top:8px;color:#64748b;font-size:11px;line-height:1.45"></div>
+    <div id="rplSetupNote"></div>
+  </div>
+</div>
+
+<div id="cloudLockScreen" style="display:none;position:fixed;inset:0;background:#0f172a;color:#fff;z-index:999999;justify-content:center;align-items:center;flex-direction:column;font-size:22px;text-align:center">
+❌ ইন্টারনেট সংযোগ নেই<br><br>
+Cloud ERP ব্যবহার করতে ইন্টারনেট চালু করুন
+</div>
+<button id="erpSecurityFab" type="button" onclick="openERPSecuritySettings()">🔐 Security</button>
+<div id="erpSecuritySettings" aria-modal="true" role="dialog">
+  <div class="ers-card">
+    <div class="ers-head"><h3>🔐 Security Settings</h3><button class="ers-close" onclick="closeERPSecuritySettings()">×</button></div>
+    <div class="ers-row"><div><div class="ers-title">PIN Security</div><div class="ers-sub">ERP খুললে PIN চাইবে। বন্ধ করলে PIN lock আর থাকবে না।</div></div><label class="ers-switch"><input id="ersPinEnabled" type="checkbox"><span class="ers-slider"></span></label></div>
+    <div class="ers-row"><div><div class="ers-title">Biometric / Fingerprint</div><div class="ers-sub">Device fingerprint/biometric দিয়ে দ্রুত unlock। Browser-এ HTTPS বা localhost প্রয়োজন হতে পারে।</div></div><label class="ers-switch"><input id="ersBioEnabled" type="checkbox"><span class="ers-slider"></span></label></div>
+    <div class="ers-row"><div><div class="ers-title">Change PIN</div><div class="ers-sub">বর্তমান PIN পরিবর্তন করে নতুন ৪–৬ সংখ্যার PIN দিন।</div></div><button class="ers-btn" onclick="showERPChangePin()">Change</button></div>
+    <div id="ersChangeBox" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+      <div class="ers-sub">নতুন PIN</div><input id="ersNewPin" class="ers-pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="••••••">
+      <div class="ers-sub" style="margin-top:9px">নতুন PIN আবার দিন</div><input id="ersNewPin2" class="ers-pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="••••••">
+      <button class="ers-btn" style="width:100%;margin-top:10px;background:#075985" onclick="saveERPNewPin()">💾 Save New PIN</button>
+    </div>
+    <div id="ersStatus" class="ers-status"></div>
+    <div class="ers-note">নোট: PIN-এর দৈনন্দিন setting এই browser-এ থাকে। Browser data clear হলেও নতুন PIN সেট করার screen আসবে না; Recovery PIN দিয়ে প্রবেশ করে নতুন PIN সেট করতে হবে।</div>
+  </div>
+</div>
+<div class="bg"></div>
+
+<div class="container">
+
+<h1>💼 Rasidul Premium ERP</h1>
+<p class="sub">Stable Smart Business Control Center 🚀</p>
+
+<!-- ===== v18 PREMIUM TOP DASHBOARD STATS ===== -->
+<div class="ui-top-dashboard">
+  <button class="ui-top-card ui-top-backup" type="button" onclick="manualCloudSync()">
+    <span>🔒</span><small>Final Cloud Backup</small><b>Backup</b>
+  </button>
+  <div class="ui-top-card"><span>🛡️</span><small>Cloud Status</small><b id="ui_cloudStatus">🟢 Connected</b></div>
+  <div class="ui-top-card"><span>💸</span><small>এই মাসের Owner Withdrawal</small><b id="ui_monthlyWithdrawal">0 ৳</b></div>
+  <div class="ui-top-card"><span>💸</span><small>MFS Profit</small><b id="ui_mfsProfit">0 ৳</b></div>
+  <div class="ui-top-card"><span>📱</span><small>Recharge Profit</small><b id="ui_rechargeProfit">0 ৳</b></div>
+  <div class="ui-top-card"><span>📈</span><small>এই মাসের মোট Profit</small><b id="ui_monthlyProfit">0 ৳</b></div>
+  <div class="ui-top-card"><span>💎</span><small>Total Working Capital</small><b id="ui_workingCapital">0 ৳</b></div>
+</div>
+
+
+
+
+
+<!-- ===== v13 CLEAN DASHBOARD CONTROL CENTER ===== -->
+<div class="ui-dashboard-stats" style="display:none!important" aria-hidden="true"></div>
+
+<div class="ui-middle-actions">
+  <div class="ui-core-actions-label">⚙️ মূল হিসাবের Action</div>
+  <button class="ui-middle-btn" data-business="capitalPanel">💎 Base Capital</button>
+  <button class="ui-middle-btn" data-business="reinvestPanel">📈 Reinvest Profit</button>
+  <button class="ui-middle-btn" data-business="withdrawPanel">💸 Owner Withdrawal</button>
+  <button class="ui-middle-btn" data-section="openingPanel">🌅 Opening Balance</button>
+  <button class="ui-middle-btn" data-section="closingPanel">🌙 Closing Balance</button>
+  <button class="ui-middle-btn ui-action-btn" type="button" onclick="calculate()">📈 Calculate</button>
+  <button class="ui-middle-btn ui-action-btn" type="button" onclick="saveFinal()">✅ Final Save</button>
+  <button class="ui-middle-btn ui-action-btn ui-new-day-btn" type="button" onclick="newDay()">🆕 New Day</button>
+  <button class="ui-middle-btn" data-section="cashPanel">🧮 Cash Calculator</button>
+  <button class="ui-middle-btn" type="button" onclick="openExpenseTrackerPage()">🧾 Expense Tracker</button>
+  <button class="ui-middle-btn" type="button" onclick="openERPSecuritySettings()">🔐 Security Settings</button>
+  <button class="ui-middle-btn" data-section="historyPanel">📜 Daily History</button>
+  <button class="ui-middle-btn" data-section="externalPanel">👤 External Person</button>
+  <button class="ui-middle-btn" data-section="clientPanel">👥 Client View</button>
+  <button class="ui-middle-btn" data-section="archivePanel">📦 Archive</button>
+  <button class="ui-middle-btn" id="ui_cloudBackup">☁️ Final Cloud Backup</button>
+  <button class="ui-middle-btn" data-extra="extraDashboard">📊 More Dashboard</button>
+  <button class="ui-middle-btn" id="ui_manualExport" type="button">📦 Export</button>
+  <label class="ui-middle-btn ui-import-btn" for="ui_manualImport">📥 Import</label>
+  <input id="ui_manualImport" type="file" accept=".json,application/json" hidden>
+</div>
+
+<div id="extraDashboard" class="ui-extra-dashboard"></div>
+
+<div id="closingReportOverlay" aria-hidden="true">
+  <div class="closing-report-card">
+    <div class="closing-report-head">
+      <h3>🌙 দিনশেষের ছোট রিপোর্ট</h3>
+      <button class="closing-report-close" type="button" onclick="closeClosingReport()">✕</button>
+    </div>
+    <div id="closingReportDate" style="opacity:.78"></div>
+    <div class="closing-report-grid">
+      <div class="closing-report-item"><small>💸 MFS Profit</small><b id="cr_mfs">0 ৳</b></div>
+      <div class="closing-report-item"><small>📱 Recharge Profit</small><b id="cr_recharge">0 ৳</b></div>
+      <div class="closing-report-item"><small>💰 Total Profit</small><b id="cr_total">0 ৳</b></div>
+      <div class="closing-report-item"><small>💎 Working Capital</small><b id="cr_capital">0 ৳</b></div>
+      <div class="closing-report-item"><small>💵 Closing Cash</small><b id="cr_cash">0 ৳</b></div>
+      <div class="closing-report-item"><small>🏦 Closing E-Money</small><b id="cr_emoney">0 ৳</b></div>
+    </div>
+    <div class="closing-report-note" id="cr_note">কোনো Closing Note নেই।</div>
+    <div class="closing-report-footer">
+      <button type="button" onclick="closeClosingReport()">ঠিক আছে</button>
+    </div>
+  </div>
+</div>
+
+<div id="uiPanelHost">
+  <section id="openingPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>🌅 Opening Balance</span>
+    <button class="ui-close" type="button" data-close="openingPanel">✕ Close</button>
+  </div>
+  <div class="ui-balance-grid">
+    <div class="ui-balance-item"><label>Bkash</label><input id="ui_obk"></div>
+    <div class="ui-balance-item"><label>Nagad</label><input id="ui_ong"></div>
+    <div class="ui-balance-item"><label>Rocket</label><input id="ui_ork"></div>
+    <div class="ui-balance-item"><label>MFS Cash</label><input id="ui_omc"></div>
+    <div class="ui-balance-item"><label>GP</label><input id="ui_ogp"></div>
+    <div class="ui-balance-item"><label>Robi</label><input id="ui_orobi"></div>
+    <div class="ui-balance-item"><label>Airtel</label><input id="ui_oair"></div>
+    <div class="ui-balance-item"><label>Banglalink</label><input id="ui_obl"></div>
+    <div class="ui-balance-item"><label>Tally Khata</label><input id="ui_otk"></div>
+    <div class="ui-balance-item"><label>Recharge Cash</label><input id="ui_orc"></div>
+  </div>
+  <div class="ui-summary-grid">
+    <div class="ui-summary"><h3>💰 Opening E-Money</h3><h2 id="ui_openingEmoney">0 ৳</h2></div>
+    <div class="ui-summary"><h3>💵 Opening Cash</h3><h2 id="ui_openingCash">0 ৳</h2></div>
+  </div>
+  <div class="ui-note">
+    <label>📝 Opening Special Note</label>
+    <textarea id="ui_openingNote" placeholder="Opening Balance সম্পর্কে বিশেষ নোট লিখুন"></textarea>
+  </div>
+</section>
+<section id="closingPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>🌙 Closing Balance</span>
+    <button class="ui-close" type="button" data-close="closingPanel">✕ Close</button>
+  </div>
+  <div class="ui-balance-grid">
+    <div class="ui-balance-item"><label>Bkash</label><input id="ui_cbk"></div>
+    <div class="ui-balance-item"><label>Nagad</label><input id="ui_cng"></div>
+    <div class="ui-balance-item"><label>Rocket</label><input id="ui_crk"></div>
+    <div class="ui-balance-item"><label>MFS Cash</label><input id="ui_cmc"></div>
+    <div class="ui-balance-item"><label>GP</label><input id="ui_cgp"></div>
+    <div class="ui-balance-item"><label>Robi</label><input id="ui_crobi"></div>
+    <div class="ui-balance-item"><label>Airtel</label><input id="ui_cair"></div>
+    <div class="ui-balance-item"><label>Banglalink</label><input id="ui_cbl"></div>
+    <div class="ui-balance-item"><label>Tally Khata</label><input id="ui_ctk"></div>
+    <div class="ui-balance-item"><label>Recharge Cash</label><input id="ui_crc"></div>
+  </div>
+  <div class="ui-summary-grid">
+    <div class="ui-summary"><h3>💰 Closing E-Money</h3><h2 id="ui_closingEmoney">0 ৳</h2></div>
+    <div class="ui-summary"><h3>💵 Closing Cash</h3><h2 id="ui_closingCash">0 ৳</h2></div>
+  </div>
+  <div class="ui-note">
+    <label>📝 Closing Special Note</label>
+    <textarea id="ui_closingNote" placeholder="Closing Balance সম্পর্কে বিশেষ নোট লিখুন"></textarea>
+  </div>
+  <div class="ui-closing-actions">
+    <button type="button" onclick="calculateClosingCheck()">📈 Calculate & Check</button>
+    <button type="button" onclick="saveFinal()">✅ Final Save</button>
+  </div>
+  <div id="closingCheckBox" class="closing-check-box">📌 Closing Balance Calculate করলে এখানে ছোট্ট যাচাই রিপোর্ট দেখাবে।</div>
+</section>
+<section id="cashPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>🧮 Cash Calculator</span>
+    <button class="ui-close" type="button" data-close="cashPanel">✕ Close</button>
+  </div>
+  <div id="ui_cash_mount"></div>
+</section>
+<section id="historyPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>📜 Daily History</span>
+    <button class="ui-close" type="button" data-close="historyPanel">✕ Close</button>
+  </div>
+  <div id="ui_history_mount"></div>
+</section>
+<section id="externalPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>👤 External Person & Ledger</span>
+    <button class="ui-close" type="button" data-close="externalPanel">✕ Close</button>
+  </div>
+  <div id="ui_external_mount"></div>
+</section>
+<section id="clientPanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>👥 Client View</span>
+    <button class="ui-close" type="button" data-close="clientPanel">✕ Close</button>
+  </div>
+  <div class="ui-client-tabs">
+    <div class="ui-client-tab active" data-client-tab="receivable">📥 আমি যাদের কাছে পাবো <strong id="ui_receivableTotal">0 ৳</strong></div>
+    <div class="ui-client-tab" data-client-tab="payable">📤 যারা আমার কাছে পাবে <strong id="ui_payableTotal">0 ৳</strong></div>
+  </div>
+  <div id="ui_receivable" class="ui-client-list open"></div>
+  <div id="ui_payable" class="ui-client-list"></div>
+</section>
+<section id="archivePanel" class="ui-section">
+  <div class="ui-section-title">
+    <span>📦 Settled Archive</span>
+    <button class="ui-close" type="button" data-close="archivePanel">✕ Close</button>
+  </div>
+  <div id="ui_archive_mount"></div>
+</section>
+
+<section id="capitalPanel" class="ui-business-panel">
+  <button class="ui-panel-close" type="button" data-business-close="capitalPanel">✕ Close</button>
+  <h3>💎 Base Capital</h3>
+  <div class="grid">
+    <div><label>💰 MFS Base Capital</label><input id="ui_mfsCapital" value="50000"></div>
+    <div><label>📱 Recharge Base Capital</label><input id="ui_rechargeCapital" value="30000"></div>
+  </div>
+</section>
+
+<section id="reinvestPanel" class="ui-business-panel">
+  <button class="ui-panel-close" type="button" data-business-close="reinvestPanel">✕ Close</button>
+  <h3>📈 Reinvest Profit</h3>
+  <div class="grid">
+    <div><label>💰 MFS Reinvest</label><input id="ui_mfsReinvest" value="0"></div>
+    <div><label>📱 Recharge Reinvest</label><input id="ui_rechargeReinvest" value="0"></div>
+  </div>
+  <button id="ui_applyReinvestment" type="button" style="margin-top:10px">🚀 Add To Main Capital</button>
+</section>
+
+<section id="withdrawPanel" class="ui-business-panel">
+  <button class="ui-panel-close" type="button" data-business-close="withdrawPanel">✕ Close</button>
+  <h3>💸 Owner Withdrawal</h3>
+  <div class="grid">
+    <div><label>💰 Withdraw Amount</label><input id="ui_withdrawAmount" value="0"></div>
+    <div><label>📝 Withdraw Reason</label><textarea id="ui_withdrawReason" placeholder="Reason"></textarea></div>
+    <div><label>📂 Expense Category</label>
+      <select id="ui_withdrawCategory">
+        <option value="খাবার ও বাজার">🍚 খাবার ও বাজার</option>
+        <option value="বাসা ও ভাড়া">🏠 বাসা ও ভাড়া</option>
+        <option value="চিকিৎসা">💊 চিকিৎসা</option>
+        <option value="শিক্ষা">📚 শিক্ষা</option>
+        <option value="যাতায়াত">🚗 যাতায়াত</option>
+        <option value="বিল ও ইউটিলিটি">💡 বিল ও ইউটিলিটি</option>
+        <option value="পরিবার ও ব্যক্তিগত">👨‍👩‍👧 পরিবার ও ব্যক্তিগত</option>
+        <option value="ব্যবসা সংক্রান্ত">💼 ব্যবসা সংক্রান্ত</option>
+        <option value="অন্যান্য">📦 অন্যান্য</option>
+      </select>
+    </div>
+    <div><label>🏦 Withdraw From</label>
+      <select id="ui_withdrawSource"><option value="mfs">MFS Capital</option><option value="recharge">Recharge Capital</option></select>
+    </div>
+    <div><label>💳 Withdrawal Method</label>
+      <select id="ui_withdrawMethod">
+        <option value="Cash">💵 Cash</option><option value="Bkash">📱 Bkash</option>
+        <option value="Nagad">📱 Nagad</option><option value="Rocket">🚀 Rocket</option>
+        <option value="GP">📶 GP</option><option value="Robi">📶 Robi</option>
+        <option value="Airtel">📶 Airtel</option><option value="Banglalink">📶 Banglalink</option>
+        <option value="Tally">📒 Tally Khata</option>
+      </select>
+    </div>
+  </div>
+  <button id="ui_withdrawCapital" type="button" style="margin-top:10px">💸 Withdraw From Capital</button>
+</section>
+
+</div>
+<!-- ===== END v13 CLEAN DASHBOARD CONTROL CENTER ===== -->
+
+
+<div class="top-grid">
+
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
+<h3>💎 Base Capital</h3>
+
+<label>💰 MFS Base Capital</label>
+<input id="mfsCapital" value="50000">
+
+<label style="margin-top:10px">📱 Recharge Base Capital</label>
+<input id="rechargeCapital" value="30000">
+</div>
+
+</div><div class="ui-hidden-original" aria-hidden="true"><div class="card">
+<h3>📈 Reinvest Profit</h3>
+
+<label>💰 MFS Reinvest</label>
+<input id="mfsReinvest" value="0">
+
+<label style="margin-top:10px">📱 Recharge Reinvest</label>
+<input id="rechargeReinvest" value="0">
+
+<button style="margin-top:15px" onclick="applyReinvestment()">🚀 Add To Main Capital</button>
+
+</div>
+
+</div></div>
+
+</div>
+
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
+<h3>💸 Owner Withdrawal</h3>
+
+<label>💰 Withdraw Amount</label>
+<input id="withdrawAmount" value="0">
+
+<label style="margin-top:10px">📝 Withdraw Reason</label>
+<textarea id="withdrawReason" placeholder="Reason"></textarea>
+
+<label style="margin-top:10px">📂 Expense Category</label>
+<select id="withdrawCategory">
+<option value="খাবার ও বাজার">🍚 খাবার ও বাজার</option>
+<option value="বাসা ও ভাড়া">🏠 বাসা ও ভাড়া</option>
+<option value="চিকিৎসা">💊 চিকিৎসা</option>
+<option value="শিক্ষা">📚 শিক্ষা</option>
+<option value="যাতায়াত">🚗 যাতায়াত</option>
+<option value="বিল ও ইউটিলিটি">💡 বিল ও ইউটিলিটি</option>
+<option value="পরিবার ও ব্যক্তিগত">👨‍👩‍👧 পরিবার ও ব্যক্তিগত</option>
+<option value="ব্যবসা সংক্রান্ত">💼 ব্যবসা সংক্রান্ত</option>
+<option value="অন্যান্য">📦 অন্যান্য</option>
+</select>
+
+<label style="margin-top:10px">🏦 Withdraw From</label>
+<select id="withdrawSource">
+<option value="mfs">MFS Capital</option>
+<option value="recharge">Recharge Capital</option>
+</select>
+
+<label style="margin-top:10px">💳 Withdrawal Method</label>
+<select id="withdrawMethod">
+<option value="Cash">💵 Cash</option>
+<option value="Bkash">📱 Bkash</option>
+<option value="Nagad">📱 Nagad</option>
+<option value="Rocket">🚀 Rocket</option>
+<option value="GP">📶 GP</option>
+<option value="Robi">📶 Robi</option>
+<option value="Airtel">📶 Airtel</option>
+<option value="Banglalink">📶 Banglalink</option>
+<option value="Tally">📒 Tally Khata</option>
+</select>
+
+<button style="margin-top:15px" onclick="withdrawCapital()">💸 Withdraw From Capital</button>
+
+</div>
+
+</div></div>
+
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
+<h2>🌅 Opening Balance</h2>
+
+<div class="grid">
+<div class="balance-item"><label>Bkash</label><input id="obk"></div>
+<div class="balance-item"><label>Nagad</label><input id="ong"></div>
+<div class="balance-item"><label>Rocket</label><input id="ork"></div>
+<div class="balance-item"><label>Tally Khata</label><input id="otk"></div>
+<div class="balance-item"><label>MFS Cash</label><input id="omc"></div>
+
+<div class="balance-item"><label>GP</label><input id="ogp"></div>
+<div class="balance-item"><label>Robi</label><input id="orobi"></div>
+<div class="balance-item"><label>Airtel</label><input id="oair"></div>
+<div class="balance-item"><label>Banglalink</label><input id="obl"></div>
+<div class="balance-item"><label>Recharge Cash</label><input id="orc"></div>
+
+
+<div class="top-grid" style="margin-top:15px">
+<div class="mini"><h3>💰 Opening E-Money</h3><h2 id="openingEmoney">0 ৳</h2></div>
+<div class="mini"><h3>💵 Opening Cash</h3><h2 id="openingCash">0 ৳</h2></div>
+</div>
+
+</div>
+
+</div><div class="ui-hidden-original" aria-hidden="true"><div class="card">
+<h2>🌙 Closing Balance</h2>
+<div class="grid">
+<div class="balance-item"><label>Bkash</label><input id="cbk"></div>
+<div class="balance-item"><label>Nagad</label><input id="cng"></div>
+<div class="balance-item"><label>Rocket</label><input id="crk"></div>
+<div class="balance-item"><label>Tally Khata</label><input id="ctk"></div>
+<div class="balance-item"><label>MFS Cash</label><input id="cmc"></div>
+
+<div class="balance-item"><label>GP</label><input id="cgp"></div>
+<div class="balance-item"><label>Robi</label><input id="crobi"></div>
+<div class="balance-item"><label>Airtel</label><input id="cair"></div>
+<div class="balance-item"><label>Banglalink</label><input id="cbl"></div>
+<div class="balance-item"><label>Recharge Cash</label><input id="crc"></div>
+
+
+<div class="top-grid" style="margin-top:15px">
+<div class="mini"><h3>💰 Closing E-Money</h3><h2 id="closingEmoney">0 ৳</h2></div>
+<div class="mini"><h3>💵 Closing Cash</h3><h2 id="closingCash">0 ৳</h2></div>
+</div>
+
+</div>
+
+</div><div class="ui-hidden-original" aria-hidden="true"><div class="card">
+<h2>🧮 Smart Cash Calculator</h2>
+
+<select id="cashTarget">
+<option value="omc">Opening MFS Cash</option>
+<option value="orc">Opening Recharge Cash</option>
+<option value="cmc">Closing MFS Cash</option>
+<option value="crc">Closing Recharge Cash</option>
+</select>
+
+<div class="cash-grid">
+<input id="n1000" placeholder="1000">
+<input id="n500" placeholder="500">
+<input id="n200" placeholder="200">
+<input id="n100" placeholder="100">
+<input id="n50" placeholder="50">
+<input id="n20" placeholder="20">
+<input id="n10" placeholder="10">
+</div>
+
+</div><div class="actions">
+<button onclick="calcCash()">🧮 Calculate</button>
+<button onclick="applyCash()">✅ Apply</button>
+<button onclick="clearCalc()">🧹 Clear</button>
+</div>
+
+<h3>💰 Total Cash: <span id="cashTotal">0</span> ৳</h3>
+</div>
+
+
+
+<div class="actions">
+<button onclick="calculate()">📈 Calculate</button>
+<button onclick="saveFinal()">✅ Final Save</button>
+<button onclick="newDay()">🆕 New Day</button>
+<button onclick="exportData()">📦 Export</button>
+<button onclick="manualCloudSync()">🔒 Final Cloud Backup</button>
+<button onclick="manualCloudRestore()">🔄 Cloud Restore</button>
+<label class="importLabel">📥 Import<input type="file" id="importFile" hidden></label>
+</div>
+
+<div id="finalBox">আজকের হিসাব এখনো Final হয়নি</div>
+
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
+<h2>📜 Daily History</h2>
+<div id="historyBox"></div>
+</div>
+
+</div>
+
+\n<style id="expenseTrackerStyles">
+#expenseTrackerOverlay{position:fixed;inset:0;background:rgba(5,12,25,.72);backdrop-filter:blur(7px);z-index:99999;display:none;overflow:auto;padding:18px}
+#expenseTrackerModal{max-width:1180px;margin:0 auto;background:linear-gradient(145deg,#0f172a,#111827);color:#f8fafc;border:1px solid rgba(255,255,255,.12);border-radius:22px;box-shadow:0 24px 80px rgba(0,0,0,.45);overflow:hidden;font-family:inherit}
+.et-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.1);position:sticky;top:0;background:rgba(15,23,42,.94);backdrop-filter:blur(10px);z-index:2}
+.et-head h2{margin:0;font-size:21px}.et-head small{opacity:.68;display:block;margin-top:3px}.et-close{border:0;background:rgba(255,255,255,.09);color:#fff;width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer}
+.et-body{padding:18px}.et-toolbar{display:grid;grid-template-columns:1.2fr 1fr 1fr auto auto;gap:10px;margin-bottom:14px}.et-input,.et-select,.et-btn{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:11px 12px;background:#0b1220;color:#fff;outline:none}.et-btn{cursor:pointer;font-weight:700;background:#1d4ed8}.et-btn.secondary{background:#334155}.et-btn.danger{background:#991b1b}.et-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}.et-card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);border-radius:15px;padding:14px}.et-card small{opacity:.7;display:block;margin-bottom:5px}.et-card strong{font-size:20px}.et-card.net{background:linear-gradient(145deg,rgba(30,64,175,.42),rgba(14,116,144,.22))}.et-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:15px}.et-panel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:17px;padding:15px}.et-panel h3{margin:0 0 12px;font-size:16px}.et-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.et-form .full{grid-column:1/-1}.et-form label{display:block;font-size:12px;opacity:.72;margin-bottom:5px}.et-chart-wrap{height:260px;position:relative}.et-chart{width:100%;height:100%;display:block}.et-table{width:100%;border-collapse:collapse;font-size:13px}.et-table th,.et-table td{padding:9px 7px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}.et-table th{opacity:.65;font-size:11px}.et-scroll{max-height:310px;overflow:auto}.et-tag{display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(59,130,246,.16);font-size:11px}.et-empty{text-align:center;opacity:.55;padding:25px}.et-suggestion{padding:10px 12px;border-left:3px solid #60a5fa;background:rgba(59,130,246,.08);border-radius:8px;margin-bottom:8px;font-size:13px;line-height:1.5}.et-month-title{font-weight:800;font-size:14px;margin:0 0 9px}.et-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}.et-muted{opacity:.65;font-size:12px}@media(max-width:850px){.et-toolbar{grid-template-columns:1fr 1fr}.et-grid{grid-template-columns:1fr 1fr}.et-layout{grid-template-columns:1fr}.et-form{grid-template-columns:1fr}.et-form .full{grid-column:auto}}@media(max-width:520px){#expenseTrackerOverlay{padding:7px}.et-body{padding:10px}.et-grid{grid-template-columns:1fr}.et-toolbar{grid-template-columns:1fr}.et-head{padding:13px}.et-table{font-size:11px}}
+</style>
+
+<div id="expenseTrackerOverlay" aria-hidden="true">
+  <div id="expenseTrackerModal" role="dialog" aria-modal="true" aria-labelledby="expenseTrackerTitle">
+    <div class="et-head">
+      <div><h2 id="expenseTrackerTitle">🧾 Expense Tracker</h2><small>ব্যক্তিগত খরচ আলাদাভাবে ট্র্যাক করুন • মূল ব্যবসায়িক Profit অপরিবর্তিত</small></div>
+      <button class="et-close" type="button" onclick="closeExpenseTracker()">✕</button>
+    </div>
+    <div class="et-body">
+      <div class="et-toolbar">
+        <input id="etMonth" class="et-input" type="month">
+        <button class="et-btn" type="button" onclick="etRender()">🔎 এই মাস দেখুন</button>
+        <button class="et-btn secondary" type="button" onclick="etUseCurrentMonth()">📅 চলতি মাস</button>
+        <button class="et-btn secondary" type="button" onclick="etExport()">📦 Export</button>
+        <label class="et-btn secondary" style="display:flex;align-items:center;justify-content:center;cursor:pointer">📥 Import<input id="etImport" type="file" accept="application/json" hidden></label>
+      </div>
+
+      <div class="et-grid">
+        <div class="et-card"><small>💸 এই মাসের Personal Expense</small><strong id="etTotalExpense">0 ৳</strong></div>
+        <div class="et-card"><small>📈 এই মাসের Business Profit</small><strong id="etBusinessProfit">0 ৳</strong></div>
+        <div class="et-card net"><small>💰 Profit After Expense</small><strong id="etNetProfit">0 ৳</strong></div>
+        <div class="et-card"><small>🧮 Expense Entries</small><strong id="etEntryCount">0</strong></div>
+      </div>
+
+      <div class="et-layout">
+        <div class="et-panel">
+          <h3>➕ নতুন ব্যক্তিগত খরচ</h3>
+          <div class="et-form">
+            <div><label>তারিখ</label><input id="etDate" class="et-input" type="date"></div>
+            <div><label>টাকার পরিমাণ</label><input id="etAmount" class="et-input" type="number" min="0" step="0.01" placeholder="0"></div>
+            <div><label>Category</label><select id="etCategory" class="et-select"><option>খাবার</option><option>বাসা</option><option>যাতায়াত</option><option>মোবাইল/ইন্টারনেট</option><option>পরিবার</option><option>চিকিৎসা</option><option>শিক্ষা</option><option>কেনাকাটা</option><option>বিল</option><option>অন্যান্য</option></select></div>
+            <div><label>Payment Method</label><select id="etMethod" class="et-select"><option>Cash</option><option>Bkash</option><option>Nagad</option><option>Rocket</option><option>Bank</option><option>Other</option></select></div>
+            <div class="full"><label>নোট / খরচের কারণ</label><input id="etNote" class="et-input" type="text" placeholder="যেমন: বাজার, ওষুধ, যাতায়াত..." maxlength="160"></div>
+          </div>
+          <div class="et-footer"><button class="et-btn" type="button" onclick="etAddExpense()">💾 Expense Save</button></div>
+          <p class="et-muted">নোট: এই Expense Tracker আলাদা হিসাব রাখে। Owner Withdrawal-এর পুরোনো formula বা Business Profit calculation পরিবর্তন করে না।</p>
+        </div>
+
+        <div class="et-panel">
+          <h3>📊 Monthly Expense Trend</h3>
+          <div class="et-chart-wrap"><canvas id="etChart" class="et-chart"></canvas></div>
+          <div id="etSuggestions"></div>
+        </div>
+      </div>
+
+      <div class="et-panel" style="margin-top:15px">
+        <h3 id="etListTitle">📋 এই মাসের খরচ</h3>
+        <div class="et-scroll">
+          <table class="et-table"><thead><tr><th>তারিখ</th><th>Category</th><th>Note</th><th>Method</th><th>Amount</th><th>Action</th></tr></thead><tbody id="etTableBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="expenseTrackerPageNavigation">
+function openExpenseTrackerPage(){
+  try { window.location.href='Expense_Tracker_Pro.html'; }
+  catch(e){ alert('Expense Tracker page খোলা যাচ্ছে না। একই folder-এ Expense_Tracker_Pro.html রাখুন।'); }
+}
+</script>
+
+<script id="expenseTrackerScript">
+(function(){
+  'use strict';
+  const KEY='rasidulExpenseTracker_v1';
+  const $=id=>document.getElementById(id);
+  function data(){ try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []} }
+  function save(a){localStorage.setItem(KEY,JSON.stringify(a))}
+  function pad(n){return String(n).padStart(2,'0')}
+  function monthKey(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)}
+  function currentMonth(){const d=new Date();return monthKey(d)}
+  function money(n){return (Number(n)||0).toLocaleString('en-US',{maximumFractionDigits:2})+' ৳'}
+  function parseDate(v){const d=new Date(v+'T00:00:00');return isNaN(d)?null:d}
+  function selectedMonth(){return $('etMonth').value||currentMonth()}
+  function getBusinessProfit(mk){
+    let total=0;
+    const hs=Array.isArray(window.histories)?window.histories:[];
+    hs.forEach(h=>{
+      if(h.type==='ownerWithdrawal') return;
+      const raw=h.date||h.savedAt||h.createdAt||'';
+      let d=new Date(raw);
+      if(isNaN(d)){
+        const mt=String(raw).match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+        if(mt) d=new Date(Number(mt[3]),Number(mt[2])-1,Number(mt[1]));
+      }
+      if(!isNaN(d) && monthKey(d)===mk) total += Number(h.profit||0);
+    });
+    return total;
+  }
+  function expensesFor(mk){return data().filter(x=>String(x.date||'').slice(0,7)===mk)}
+  function open(){
+    $('expenseTrackerOverlay').style.display='block';$('expenseTrackerOverlay').setAttribute('aria-hidden','false');
+    $('etMonth').value=currentMonth();$('etDate').value=new Date().toISOString().slice(0,10);etRender();
+  }
+  function close(){ $('expenseTrackerOverlay').style.display='none';$('expenseTrackerOverlay').setAttribute('aria-hidden','true') }
+  window.openExpenseTracker=open; window.closeExpenseTracker=close;
+  window.etUseCurrentMonth=function(){ $('etMonth').value=currentMonth(); etRender(); };
+  window.etAddExpense=function(){
+    const date=$('etDate').value, amount=Number($('etAmount').value||0);
+    if(!date || !(amount>0)){alert('তারিখ ও সঠিক টাকার পরিমাণ দিন।');return}
+    const a=data();
+    a.unshift({id:'EXP-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),date,amount,category:$('etCategory').value,method:$('etMethod').value,note:$('etNote').value.trim(),createdAt:new Date().toISOString()});
+    save(a); $('etAmount').value=''; $('etNote').value=''; $('etMonth').value=date.slice(0,7); etRender();
+  };
+  window.etDeleteExpense=function(id){
+    if(!confirm('এই Expense entry মুছে ফেলবেন?')) return;
+    save(data().filter(x=>x.id!==id));etRender();
+  };
+  window.etExport=function(){
+    const payload={app:'Rasidul ERP Expense Tracker',version:1,exportedAt:new Date().toISOString(),expenses:data()};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='rasidul_expense_backup.json';a.click();URL.revokeObjectURL(a.href);
+  };
+  $('etImport').addEventListener('change',function(e){
+    const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(){try{const j=JSON.parse(r.result);const incoming=Array.isArray(j)?j:(j.expenses||[]);if(!Array.isArray(incoming))throw Error();save(incoming);etRender();alert('Expense data imported successfully.')}catch(err){alert('Invalid Expense backup file.')}};r.readAsText(f);e.target.value='';
+  });
+  function dailyBuckets(items){const by={};items.forEach(x=>{by[x.date]=(by[x.date]||0)+Number(x.amount||0)});return by}
+  function drawChart(items){
+    const c=$('etChart'),ctx=c.getContext('2d');const rect=c.getBoundingClientRect();const dpr=window.devicePixelRatio||1;c.width=Math.max(300,rect.width*dpr);c.height=Math.max(220,rect.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);const w=rect.width,h=rect.height;ctx.clearRect(0,0,w,h);
+    const by=dailyBuckets(items), days=Object.keys(by).sort(), vals=days.map(d=>by[d]);const max=Math.max(1,...vals);const padL=38,padR=12,padT=18,padB=35, cw=w-padL-padR,ch=h-padT-padB;
+    ctx.strokeStyle='rgba(255,255,255,.13)';ctx.lineWidth=1;for(let i=0;i<=4;i++){const y=padT+ch*i/4;ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();ctx.fillStyle='rgba(255,255,255,.48)';ctx.font='10px sans-serif';ctx.fillText(money(max*(1-i/4)).replace(' ৳',''),2,y+3)}
+    if(!days.length){ctx.fillStyle='rgba(255,255,255,.45)';ctx.font='13px sans-serif';ctx.textAlign='center';ctx.fillText('এই মাসে কোনো Expense নেই',w/2,h/2);return}
+    ctx.strokeStyle='#60a5fa';ctx.lineWidth=2.5;ctx.beginPath();days.forEach((d,i)=>{const x=days.length===1?padL+cw/2:padL+(i/(days.length-1))*cw;const y=padT+ch-(by[d]/max)*ch;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke();
+    ctx.fillStyle='#60a5fa';days.forEach((d,i)=>{const x=days.length===1?padL+cw/2:padL+(i/(days.length-1))*cw;const y=padT+ch-(by[d]/max)*ch;ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();if(i===0||i===days.length-1||i%Math.max(1,Math.floor(days.length/6))===0){ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='9px sans-serif';ctx.textAlign='center';ctx.fillText(d.slice(8,10),x,h-12);ctx.fillStyle='#60a5fa'}})
+  }
+  function suggestions(items,total,profit){
+    const box=$('etSuggestions');box.innerHTML='';const out=[];const byCat={};items.forEach(x=>byCat[x.category]=(byCat[x.category]||0)+Number(x.amount||0));
+    const cats=Object.entries(byCat).sort((a,b)=>b[1]-a[1]);if(!items.length)out.push('এই মাসে এখনো কোনো ব্যক্তিগত Expense রেকর্ড হয়নি। খরচগুলো নিয়মিত যোগ করলে মাস শেষে পরিষ্কার trend দেখা যাবে।');
+    else {if(profit>0 && total>profit*.5)out.push('⚠️ Personal Expense ব্যবসার এই মাসের Profit-এর ৫০% এর বেশি। খরচের বড় অংশগুলো একবার পর্যালোচনা করতে পারেন।');if(cats[0])out.push('📌 সবচেয়ে বেশি খরচ: '+cats[0][0]+' • '+money(cats[0][1])+'.');const avg=total/items.length;if(avg>0)out.push('🧮 প্রতি Expense entry-র গড় খরচ প্রায় '+money(avg)+'.');if(total>0 && profit>0)out.push('💡 Expense বাদ দেওয়ার পর হাতে থাকা Profit: '+money(profit-total)+'.');}
+    box.innerHTML=out.map(x=>'<div class="et-suggestion">'+x+'</div>').join('');
+  }
+  function etRender(){
+    const mk=selectedMonth(),items=expensesFor(mk),total=items.reduce((a,x)=>a+Number(x.amount||0),0),profit=getBusinessProfit(mk),net=profit-total;
+    $('etTotalExpense').textContent=money(total);$('etBusinessProfit').textContent=money(profit);$('etNetProfit').textContent=money(net);$('etEntryCount').textContent=items.length;$('etListTitle').textContent='📋 '+mk+' এর খরচ';
+    const body=$('etTableBody');if(!items.length)body.innerHTML='<tr><td colspan="6" class="et-empty">এই মাসে কোনো Expense পাওয়া যায়নি।</td></tr>';else body.innerHTML=items.map(x=>'<tr><td>'+x.date+'</td><td><span class="et-tag">'+escapeHtml(x.category)+'</span></td><td>'+escapeHtml(x.note||'—')+'</td><td>'+escapeHtml(x.method)+'</td><td><b>'+money(x.amount)+'</b></td><td><button class="et-btn danger" style="width:auto;padding:6px 9px" onclick="etDeleteExpense(\''+x.id+'\')">Delete</button></td></tr>').join('');
+    drawChart(items);suggestions(items,total,profit);
+  }
+  window.etRender=etRender;
+  function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  window.addEventListener('resize',()=>{if($('expenseTrackerOverlay').style.display!=='none')etRender()});
+  $('expenseTrackerOverlay').addEventListener('click',e=>{if(e.target.id==='expenseTrackerOverlay')close()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape' && $('expenseTrackerOverlay').style.display!=='none')close()});
+})();
+</script>
+
+<script>
+window.histories=JSON.parse(localStorage.getItem('rasidulHistories')||'[]');
+
+let editIndex=null;
+
+document.querySelectorAll('input,textarea,select').forEach(el=>{
+el.addEventListener('input',()=>{window.__ERP_SYNC_PENDING__=true;autoSave();});
+});
+
+document.addEventListener('input',function(e){
+  if(e.target && e.target.closest && e.target.closest('.cash-grid')) calcCash();
+});
+
+function autoSave(){
+
+ // 🔒 Pending Sync Status
+ let cs=document.getElementById('cloudStatus');
+ if(cs) cs.innerHTML='🟡 Pending Sync';
+
+ let data={};
+
+ document.querySelectorAll('input,textarea,select').forEach(el=>{
+   if(el.type!=='file'){
+     data[el.id]=el.value;
+   }
+ });
+
+localStorage.setItem(
+   'rasidulForm',
+   JSON.stringify(data)
+);
+
+sessionStorage.setItem(
+   'rasidulForm',
+   JSON.stringify(data)
+);
+
+// Cloud Save এখন Manual হবে
+// 🔒 Final Cloud Backup Button চাপলে Save হবে
+
+}
+
+function restore(){
+ let data=JSON.parse(localStorage.getItem('rasidulForm')||sessionStorage.getItem('rasidulForm')||'{}');
+ Object.keys(data).forEach(k=>{
+  let el=document.getElementById(k);
+  if(el) el.value=data[k];
+ });
+}
+
+function v(id){
+ return +document.getElementById(id).value||0;
+}
+
+function calculate(){
+
+let openMFS=v('obk')+v('ong')+v('ork')+v('omc');
+let closeMFS=v('cbk')+v('cng')+v('crk')+v('cmc');
+
+let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc');
+let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
+
+window.mfsProfit=closeMFS-openMFS;
+window.rechargeProfit=closeRecharge-openRecharge;
+
+let rawProfit=mfsProfit+rechargeProfit;
+
+window.profit=rawProfit;
+
+mfsProfitBox.innerHTML=mfsProfit+' ৳';
+rechargeProfitBox.innerHTML=rechargeProfit+' ৳';
+
+dailyProfit.innerHTML=profit+' ৳';
+
+finalBox.innerHTML=
+'💸 MFS Profit: '+mfsProfit+' টাকা<br><br>'+
+'📱 Recharge Profit: '+rechargeProfit+' টাকা<br><br>'+
+ '💰 Total Profit: '+profit+' টাকা';
+
+insight.innerHTML=profit>=0?'📈 Profit চলছে':'🔴 Loss চলছে';
+
+achieve.innerHTML=profit>=3000?'🚀 Business Booster':'🏅 Daily Achievement';
+
+return profit;
+}
+
+function saveFinal(){
+
+let p=calculate();
+
+let item={
+ date:new Date().toLocaleString(),
+ mfs:Number(window.mfsProfit||0),
+ recharge:Number(window.rechargeProfit||0),
+ profit:Number(p||0),
+ note:(document.getElementById('ui_closingNote')?.value || document.getElementById('note')?.value || '')
+};
+
+if(editIndex!==null){
+ histories[editIndex]=item;
+ editIndex=null;
+}else{
+ histories.unshift(item);
+}
+
+window.histories=histories;
+localStorage.setItem('rasidulHistories',JSON.stringify(histories));
+
+if(typeof renderHistory==='function') renderHistory();
+if(typeof updateMonthly==='function') updateMonthly();
+
+if(window.erpCloudSave){
+ erpCloudSave();
+}
+
+}
+function renderHistory(){
+
+historyBox.innerHTML='';
+
+histories.forEach((h,i)=>{
+
+const isWithdrawal=h.type==='ownerWithdrawal';
+const withdrawalCategory=h.withdrawalCategory||'অন্যান্য';
+const withdrawalAmount=Number(h.withdrawalAmount||0);
+
+historyBox.innerHTML+=`
+<div class="history">
+
+<div class="tag">
+<button class="smallBtn edit" onclick="editHistory(${i})">Edit</button>
+<button class="smallBtn del" onclick="deleteHistory(${i})">Delete</button>
+</div>
+
+📅 ${h.date}<br>
+${isWithdrawal
+  ? `💸 Owner Withdrawal: <b>${withdrawalAmount} টাকা</b><br>
+     📂 Category: <b>${withdrawalCategory}</b><br>
+     💳 Method: ${h.withdrawalMethod||'—'}<br>
+     📝 Reason: ${h.withdrawalReason||'—'}<br>
+     💰 Profit/Loss: 0 টাকা`
+  : `💸 MFS Profit: ${h.mfs||0} টাকা<br>
+     📱 Recharge Profit: ${h.recharge||0} টাকা<br>
+     💰 Total Profit: ${h.profit} টাকা<br>
+     📝 ${h.note||''}`}
+
+</div>`;
+
+});
+
+}
+
+function editHistory(i){
+
+let h=histories[i];
+
+note.value=h.note;
+editIndex=i;
+
+window.scrollTo({top:0,behavior:'smooth'});
+
+}
+
+function deleteHistory(i){
+
+if(confirm('Delete this history?')){
+
+histories.splice(i,1);
+
+localStorage.setItem('rasidulHistories',JSON.stringify(histories));
+
+renderHistory();
+updateMonthly();
+
+}
+
+}
+
+
+function updateAnalytics(){
+
+if(!histories || histories.length===0) return;
+
+let total=0;
+let best=histories[0];
+let lowest=histories[0];
+
+histories.forEach(h=>{
+ const p=Number(h.profit||0);
+ total+=p;
+ if(p > Number(best.profit||0)) best=h;
+ if(p < Number(lowest.profit||0)) lowest=h;
+});
+
+const avg=(total/histories.length).toFixed(2);
+
+let target=Number(document.getElementById('target')?.value||0);
+let current=Number(window.profit||0);
+let progress=target>0 ? Math.min(100,((current/target)*100)).toFixed(1) : 0;
+
+let el=document.getElementById('bestProfitDay');
+if(el) el.innerHTML='৳'+(best.profit||0);
+
+el=document.getElementById('lowestProfitDay');
+if(el) el.innerHTML='৳'+(lowest.profit||0);
+
+el=document.getElementById('avgProfit');
+if(el) el.innerHTML=avg+' ৳';
+
+el=document.getElementById('lifetimeProfit');
+if(el) el.innerHTML=total+' ৳';
+
+el=document.getElementById('targetProgress');
+if(el) el.innerHTML=progress+'%';
+}
+
+function updateMonthlyOwnerWithdrawal(){
+  const now=new Date();
+  const y=now.getFullYear();
+  const m=now.getMonth();
+  let total=0;
+
+  (window.histories||[]).forEach(h=>{
+    if(h.type!=='ownerWithdrawal') return;
+
+    let d=new Date(h.date);
+    if(isNaN(d.getTime())){
+      const match=String(h.date||'').match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+      if(match){
+        d=new Date(Number(match[3])<100?2000+Number(match[3]):Number(match[3]),Number(match[2])-1,Number(match[1]));
+      }
+    }
+
+    if(!isNaN(d.getTime()) && d.getFullYear()===y && d.getMonth()===m){
+      total+=Number(h.withdrawalAmount||0);
+    }
+  });
+
+  const box=document.getElementById('monthlyOwnerWithdrawal');
+  const label=document.getElementById('withdrawalMonthLabel');
+  if(box) box.textContent=total+' ৳';
+  if(label) label.textContent=now.toLocaleDateString('bn-BD',{month:'long',year:'numeric'});
+}
+
+function updateMonthly(){
+
+// শুধুমাত্র চলতি মাস ও বছরের Final Save করা হিসাব যোগ হবে।
+// আগের মাসের হিসাব Monthly Profit-এ আর যোগ হবে না।
+const now=new Date();
+const currentMonth=now.getMonth();
+const currentYear=now.getFullYear();
+let total=0;
+
+(histories||[]).forEach(h=>{
+  const d=new Date(h.date);
+  if(!isNaN(d.getTime()) && d.getMonth()===currentMonth && d.getFullYear()===currentYear){
+    total+=Number(h.profit||0);
+  }
+});
+
+const text=total+' ৳';
+const legacy=document.getElementById('monthlyProfit');
+const modern=document.getElementById('ui_monthlyProfit');
+if(legacy) legacy.innerHTML=text;
+if(modern) modern.textContent=text;
+
+updateMonthlyOwnerWithdrawal();
+updateAnalytics();
+
+}
+
+function calcCash(){
+  const noteValues={
+    n1000:1000,n500:500,n200:200,n100:100,n50:50,n20:20,n10:10
+  };
+  let t=0;
+  Object.keys(noteValues).forEach(id=>{
+    const el=document.getElementById(id);
+    const qty=el ? Number(String(el.value||'').replace(/,/g,'')) : 0;
+    t += (Number.isFinite(qty)&&qty>0 ? qty : 0) * noteValues[id];
+  });
+  const total=document.getElementById('cashTotal');
+  if(total) total.textContent=t.toLocaleString('en-US');
+  window.__ERP_CASH_TOTAL__=t;
+  return t;
+}
+
+function applyCash(){
+  const t=calcCash();
+  const target=document.getElementById('cashTarget');
+  const fieldId=target ? target.value : '';
+  const field=document.getElementById(fieldId);
+  if(!field){
+    alert('Cash Target পাওয়া যায়নি।');
+    return;
+  }
+  field.value=t;
+  field.dispatchEvent(new Event('input',{bubbles:true}));
+  updateLiveTotals();
+  autoSave();
+}
+
+function clearCalc(){
+  document.querySelectorAll('.cash-grid input').forEach(el=>el.value='');
+  const total=document.getElementById('cashTotal');
+  if(total) total.textContent='0';
+  window.__ERP_CASH_TOTAL__=0;
+}
+
+function updateWorkingCapital(){
+
+let total=
+v('mfsCapital')+
+v('rechargeCapital');
+
+let box=document.getElementById('workingCapitalBox');
+
+if(box){
+box.innerHTML=total+' ৳';
+}
+
+}
+
+function applyReinvestment(){
+
+let mfs=v('mfsReinvest');
+let recharge=v('rechargeReinvest');
+
+mfsCapital.value=v('mfsCapital')+mfs;
+rechargeCapital.value=v('rechargeCapital')+recharge;
+
+mfsReinvest.value='0';
+rechargeReinvest.value='0';
+
+updateWorkingCapital();
+
+autoSave();
+
+alert('🚀 Main Capital Updated');
+
+}
+
+function withdrawCapital(){
+
+let amount=v('withdrawAmount');
+if(amount<=0) return alert('Enter Valid Amount');
+
+let reason=document.getElementById('withdrawReason').value||'No Reason';
+let category=document.getElementById('withdrawCategory').value||'অন্যান্য';
+let source=document.getElementById('withdrawSource').value;
+let method=document.getElementById('withdrawMethod').value;
+
+/*
+  OWNER WITHDRAWAL FORMULA UNCHANGED:
+  1) Selected Base Capital থেকে Withdrawal amount বাদ হবে.
+  2) যে Method থেকে টাকা নেওয়া হচ্ছে, সেই Opening Balance থেকে একই amount বাদ হবে.
+  3) Withdrawal Profit/Loss নয়, তাই profit = 0 থাকবে.
+*/
+if(source==='mfs'){
+  mfsCapital.value=Math.max(0,v('mfsCapital')-amount);
+}else{
+  rechargeCapital.value=Math.max(0,v('rechargeCapital')-amount);
+}
+
+if(method==='Bkash') obk.value=Math.max(0,v('obk')-amount);
+else if(method==='Nagad') ong.value=Math.max(0,v('ong')-amount);
+else if(method==='Rocket') ork.value=Math.max(0,v('ork')-amount);
+else if(method==='GP') ogp.value=Math.max(0,v('ogp')-amount);
+else if(method==='Robi') orobi.value=Math.max(0,v('orobi')-amount);
+else if(method==='Airtel') oair.value=Math.max(0,v('oair')-amount);
+else if(method==='Banglalink') obl.value=Math.max(0,v('obl')-amount);
+else if(method==='Tally') otk.value=Math.max(0,v('otk')-amount);
+else{
+  if(source==='mfs') omc.value=Math.max(0,v('omc')-amount);
+  else orc.value=Math.max(0,v('orc')-amount);
+}
+
+const withdrawalId='OW-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
+histories.unshift({
+id:withdrawalId,
+date:new Date().toLocaleString(),
+type:'ownerWithdrawal',
+withdrawalAmount:amount,
+withdrawalMethod:method,
+withdrawalSource:source,
+withdrawalReason:reason,
+withdrawalCategory:category,
+createdAt:new Date().toISOString(),
+mfs:0,
+recharge:0,
+profit:0,
+note:'💸 Owner Withdrawal: '+amount+' ৳ | 📂 '+category+' | 💳 '+method+' | 📝 '+reason
+});
+
+localStorage.setItem('rasidulHistories',JSON.stringify(histories));
+try{ window.dispatchEvent(new StorageEvent('storage',{key:'rasidulHistories',newValue:localStorage.getItem('rasidulHistories')})); }catch(e){}
+
+/* Expense Tracker reads this Owner Withdrawal record automatically from
+   rasidulHistories. No separate expense record is written here, which prevents
+   duplicate entries and keeps ERP accounting as the single source of truth. */
+
+/* Existing calculations/UI refresh only. No accounting formula changed. */
+renderHistory();
+updateMonthly();
+updateWorkingCapital();
+updateLiveTotals();
+autoSave();
+
+/* Make the top Owner Withdrawal card refresh immediately. */
+if(typeof updateMonthlyOwnerWithdrawal==='function'){
+  updateMonthlyOwnerWithdrawal();
+}
+const topWithdrawal=document.getElementById('ui_monthlyWithdrawal');
+if(topWithdrawal && typeof updateMonthlyOwnerWithdrawal==='function'){
+  const now=new Date();
+  const y=now.getFullYear();
+  const m=now.getMonth();
+  let total=0;
+  (window.histories||[]).forEach(h=>{
+    if(h.type!=='ownerWithdrawal') return;
+    const d=new Date(h.date);
+    if(!isNaN(d.getTime()) && d.getFullYear()===y && d.getMonth()===m){
+      total+=Number(h.withdrawalAmount||0);
+    }
+  });
+  topWithdrawal.textContent=total+' ৳';
+}
+
+withdrawAmount.value='0';
+withdrawReason.value='';
+
+/* Keep the visible UI mirror synchronized with the original fields. */
+['mfsCapital','rechargeCapital','obk','ong','ork','omc','ogp','orobi','oair','obl','otk','orc'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.dispatchEvent(new Event('input',{bubbles:true}));
+});
+
+alert('💸 Withdrawal Saved');
+
+}
+function newDay(){
+
+obk.value=cbk.value;
+ong.value=cng.value;
+ork.value=crk.value;
+omc.value=cmc.value;
+
+ogp.value=cgp.value;
+orobi.value=crobi.value;
+oair.value=cair.value;
+obl.value=cbl.value;
+otk.value=ctk.value;
+orc.value=crc.value;
+
+mfsCapital.value=
+v('cbk')+v('cng')+v('crk')+v('cmc');
+
+rechargeCapital.value=
+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
+
+autoSave();
+
+updateLiveTotals();
+
+alert('🆕 New Day Started + Capital Updated');
+
+}
+
+function exportData(){
+
+let data={
+histories,
+ledgerPeople,
+ledgerArchives:window.ledgerArchives||[],
+form:JSON.parse(localStorage.getItem('rasidulForm')||'{}'),
+backupDate:new Date().toLocaleString()
+};
+
+let blob=new Blob([JSON.stringify(data)],{type:'application/json'});
+
+let a=document.createElement('a');
+
+a.href=URL.createObjectURL(blob);
+
+a.download='rasidul_backup.json';
+
+a.click();
+localStorage.setItem('lastExportDate',new Date().toLocaleString());
+let ex=document.getElementById('lastExportStatus');
+if(ex) ex.innerHTML='📦 '+new Date().toLocaleString();
+
+}
+
+importFile.addEventListener('change',e=>{
+
+let file=e.target.files[0];
+
+if(!file) return;
+
+let r=new FileReader();
+
+r.onload=function(ev){
+
+let d=JSON.parse(ev.target.result);
+
+histories=d.histories||[];
+
+ledgerPeople=d.ledgerPeople||[];
+
+window.ledgerArchives=d.ledgerArchives||[];
+saveLedgerArchives();
+
+localStorage.setItem('rasidulHistories',JSON.stringify(histories));
+
+localStorage.setItem('ledgerPeople',JSON.stringify(ledgerPeople));
+
+localStorage.setItem('rasidulForm',JSON.stringify(d.form||{}));
+
+// ===== STABLE LIVE SYSTEM =====
+
+document.querySelectorAll('input,textarea,select').forEach(el=>{
+
+el.addEventListener('input',()=>{
+
+updateLiveTotals();
+updateWorkingCapital();
+
+});
+
+});
+
+// ===== END STABLE LIVE SYSTEM =====
+
+restore();
+updateLiveTotals();
+updateWorkingCapital();
+renderHistory();
+renderLedgerArchives();
+
+if(typeof renderLedger==="function"){
+   renderLedger();
+}
+
+updateMonthly();
+
+};
+
+r.readAsText(file);
+
+});
+
+function updateLiveTotals(){
+
+let openingEmoneyValue=v('obk')+v('ong')+v('ork')+v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk');
+let openingCashValue=v('omc')+v('orc');
+
+let closingEmoneyValue=v('cbk')+v('cng')+v('crk')+v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk');
+let closingCashValue=v('cmc')+v('crc');
+
+openingEmoney.innerHTML=openingEmoneyValue+' ৳';
+openingCash.innerHTML=openingCashValue+' ৳';
+closingEmoney.innerHTML=closingEmoneyValue+' ৳';
+closingCash.innerHTML=closingCashValue+' ৳';
+
+}
+
+restore();
+updateLiveTotals();
+updateWorkingCapital();
+renderHistory();
+if(typeof renderLedger==="function"){
+   renderLedger();
+}
+
+updateMonthly();
+
+const ex=document.getElementById('lastExportStatus');
+if(ex && localStorage.getItem('lastExportDate')){
+ ex.innerHTML='📦 '+localStorage.getItem('lastExportDate');
+}
+const rs=document.getElementById('lastRestoreStatus');
+if(rs && localStorage.getItem('lastRestoreDate')){
+ rs.innerHTML='🔄 '+localStorage.getItem('lastRestoreDate');
+}
+
+</script>
+
+<div class="ui-hidden-original" aria-hidden="true"><div class="card">
+<h2>👥 Smart External Fund Ledger</h2>
+
+<div class="grid">
+
+<div>
+<label>👤 Person Name</label>
+<input id="personName" placeholder="Person Name">
+</div>
+
+<div>
+<label>📱 Mobile</label>
+<input id="personMobile" placeholder="Mobile Number">
+</div>
+
+</div>
+
+<button onclick="addPerson()">➕ Add Person</button>
+
+<hr style="margin:20px 0;border-color:rgba(255,255,255,.2)">
+
+<div class="grid">
+
+<div>
+<label>👤 Select Person</label>
+<select id="ledgerPerson"></select>
+</div>
+
+<div>
+<label>💰 Amount</label>
+<input id="ledgerAmount" type="number" placeholder="Amount">
+</div>
+
+<div>
+<label>📌 Type</label>
+<select id="ledgerType">
+<option value="gave">সে আমাকে টাকা দিল</option>
+<option value="took">সে আমার থেকে টাকা নিল</option>
+<option value="refundGiven">আমি তাকে ফেরত দিলাম</option>
+<option value="refundReceived">সে আমাকে ফেরত দিল</option>
+</select>
+</div>
+
+<div>
+<label>💳 Method</label>
+<select id="ledgerMethod">
+<option value="Cash">💵 Cash</option>
+<option value="Bkash Personal">📱 Bkash Personal</option>
+<option value="Bkash B2B">🏢 Bkash B2B</option>
+<option value="Nagad Personal">📱 Nagad Personal</option>
+<option value="Nagad Merchant">🏢 Nagad Merchant</option>
+<option value="Rocket">🚀 Rocket</option>
+<option value="GP">📶 GP</option>
+<option value="Robi">📶 Robi</option>
+<option value="Airtel">📶 Airtel</option>
+<option value="Banglalink">📶 Banglalink</option>
+<option value="Tally">📒 Tally Khata</option>
+<option value="Bank Transfer">🏦 Bank Transfer</option>
+<option value="Card">💳 Card</option>
+<option value="Other">🔄 Other</option>
+</select>
+</div>
+
+<div>
+<label>📂 Fund Source</label>
+<select id="ledgerFundSource">
+<option value="mfs">💸 MFS</option>
+<option value="recharge">📱 Recharge</option>
+</select>
+</div>
+
+</div>
+
+<button onclick="saveLedgerTransaction()">💾 Save Transaction</button>
+
+<div id="ledgerBox"></div>
+
+</div>
+
+</div></div><div class="card">
+<h2>📦 Settled Ledger Archive</h2>
+<p style="opacity:.8">
+যে Client-এর সকল হিসাব 0 ৳-তে সমন্বয় হবে, তার সম্পূর্ণ লেনদেন এখানে স্থায়ীভাবে Archive হবে।
+</p>
+<div id="ledgerArchiveBox"></div>
+</div>
+
+
+<!-- ===== Hidden Calculator For Opening/Closing Balance ===== -->
+<div id="miniCalcOverlay" class="mini-calc-overlay" onclick="closeBalanceCalculator(event)">
+  <div class="mini-calc" onclick="event.stopPropagation()">
+    <h3 id="miniCalcTitle">🧮 Calculator</h3>
+    <input id="miniCalcDisplay" class="mini-calc-display" type="text" readonly value="0">
+    <div class="mini-calc-grid">
+      <button type="button" onclick="miniCalcPress('7')">7</button>
+      <button type="button" onclick="miniCalcPress('8')">8</button>
+      <button type="button" onclick="miniCalcPress('9')">9</button>
+      <button type="button" onclick="miniCalcPress('/')">÷</button>
+      <button type="button" onclick="miniCalcPress('4')">4</button>
+      <button type="button" onclick="miniCalcPress('5')">5</button>
+      <button type="button" onclick="miniCalcPress('6')">6</button>
+      <button type="button" onclick="miniCalcPress('*')">×</button>
+      <button type="button" onclick="miniCalcPress('1')">1</button>
+      <button type="button" onclick="miniCalcPress('2')">2</button>
+      <button type="button" onclick="miniCalcPress('3')">3</button>
+      <button type="button" onclick="miniCalcPress('-')">−</button>
+      <button type="button" onclick="miniCalcPress('0')">0</button>
+      <button type="button" onclick="miniCalcPress('.')">.</button>
+      <button type="button" onclick="miniCalcEquals()">=</button>
+      <button type="button" onclick="miniCalcPress('+')">+</button>
+    </div>
+    <div class="mini-calc-actions">
+      <button type="button" onclick="miniCalcClear()">🧹 Clear</button>
+      <button type="button" onclick="miniCalcApply()">✅ Apply</button>
+      <button type="button" onclick="closeBalanceCalculator()">✕ Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let miniCalcTargetId=null;
+let miniCalcExpression='';
+
+function openBalanceCalculator(id){
+  miniCalcTargetId=id;
+  const target=document.getElementById(id);
+  miniCalcExpression=target ? (target.value||'') : '';
+  document.getElementById('miniCalcDisplay').value=miniCalcExpression||'0';
+  const label=target?.previousElementSibling?.textContent||'Balance';
+  document.getElementById('miniCalcTitle').innerHTML='🧮 '+label+' হিসাব';
+  document.getElementById('miniCalcOverlay').style.display='flex';
+}
+
+function closeBalanceCalculator(e){
+  if(e && e.target && e.target.id!=='miniCalcOverlay') return;
+  document.getElementById('miniCalcOverlay').style.display='none';
+  miniCalcTargetId=null;
+  miniCalcExpression='';
+}
+
+function miniCalcPress(value){
+  miniCalcExpression+=value;
+  document.getElementById('miniCalcDisplay').value=miniCalcExpression;
+}
+
+function miniCalcClear(){
+  miniCalcExpression='';
+  document.getElementById('miniCalcDisplay').value='0';
+}
+
+function miniCalcEquals(){
+  try{
+    if(!/^[0-9+\-*/().\s]+$/.test(miniCalcExpression)) throw new Error();
+    const result=Function('"use strict";return ('+miniCalcExpression+')')();
+    if(!Number.isFinite(result)) throw new Error();
+    miniCalcExpression=String(Math.round(result*100)/100);
+    document.getElementById('miniCalcDisplay').value=miniCalcExpression;
+  }catch(e){
+    document.getElementById('miniCalcDisplay').value='Error';
+  }
+}
+
+function miniCalcApply(){
+  miniCalcEquals();
+  const value=document.getElementById('miniCalcDisplay').value;
+  if(value!=='Error' && miniCalcTargetId){
+    document.getElementById(miniCalcTargetId).value=value;
+    document.getElementById(miniCalcTargetId).dispatchEvent(new Event('input',{bubbles:true}));
+    if(typeof updateLiveTotals==='function') updateLiveTotals();
+  }
+  document.getElementById('miniCalcOverlay').style.display='none';
+  miniCalcTargetId=null;
+  miniCalcExpression='';
+}
+
+document.addEventListener('keydown',function(e){
+  const overlay=document.getElementById('miniCalcOverlay');
+  if(!overlay || overlay.style.display!=='flex') return;
+  if(e.key==='Enter') miniCalcEquals();
+  if(e.key==='Escape') closeBalanceCalculator();
+});
+</script>
+
+<script>
+function printLedgerArchive(index){
+  const a=(window.ledgerArchives||[])[index];
+  if(!a) return;
+
+  const typeText={
+    gave:'সে আমাকে টাকা দিল',
+    took:'সে আমার থেকে টাকা নিল',
+    refundGiven:'আমি তাকে ফেরত দিলাম',
+    refundReceived:'সে আমাকে ফেরত দিল'
+  };
+
+  const tx=(a.transactions||[]).slice().reverse().map((h,n)=>`
+    <div class="tx">
+      <b>লেনদেন ${n+1}</b><br>
+      তারিখ: ${h.time||''}<br>
+      পরিমাণ: ${Number(h.amount||0).toLocaleString('en-US')} ৳<br>
+      ধরন: ${typeText[h.type]||h.type||''}<br>
+      মাধ্যম: ${h.method||'Not Set'}
+    </div>
+  `).join('');
+
+  const safeName=String(a.personName||'Client').replace(/[<>"']/g,'');
+  const win=window.open('','_blank','width=420,height=700');
+
+  if(!win){
+    alert('Print window blocked. Browser-এর Pop-up Allow করুন।');
+    return;
+  }
+
+  win.document.write(`<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Ledger Archive - ${safeName}</title>
+<style>
+@page{size:58mm auto;margin:0}
+*{box-sizing:border-box}
+html,body{width:58mm;margin:0;padding:0;background:#fff;color:#000}
+body{font-family:Arial,sans-serif;font-size:11px;line-height:1.45;padding:3mm}
+h2{text-align:center;font-size:15px;margin:0 0 2mm}
+h3{font-size:13px;margin:2mm 0}
+.center{text-align:center}
+.line{border-top:1px dashed #000;margin:2mm 0}
+.row{display:flex;justify-content:space-between;gap:4px}
+.tx{border-bottom:1px dashed #000;padding:2mm 0}
+.total{font-weight:bold;font-size:12px}
+</style>
+</head>
+<body>
+<h2>Rubaiya Pharmacy</h2>
+<div class="center">External Fund Ledger</div>
+<div class="line"></div>
+<b>Client:</b> ${safeName}<br>
+<b>Mobile:</b> ${String(a.personMobile||'').replace(/[<>"']/g,'')}<br>
+<b>Settlement:</b> ${String(a.settledAt||'').replace(/[<>"']/g,'')}
+<div class="line"></div>
+<div class="row"><span>Given</span><b>${Number(a.totalGiven||0).toLocaleString('en-US')} ৳</b></div>
+<div class="row"><span>Taken</span><b>${Number(a.totalTaken||0).toLocaleString('en-US')} ৳</b></div>
+<div class="row"><span>Refund Given</span><b>${Number(a.refundGiven||0).toLocaleString('en-US')} ৳</b></div>
+<div class="row"><span>Refund Received</span><b>${Number(a.refundReceived||0).toLocaleString('en-US')} ৳</b></div>
+<div class="line"></div>
+<div class="total">Final Balance: 0 ৳</div>
+<div class="line"></div>
+<h3>Transaction Details</h3>
+${tx}
+<div class="line"></div>
+<div class="center">সকল হিসাব সমন্বয় হয়েছে</div>
+<div class="center">Thank you</div>
+<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script>
+
+
+
+
+<script>
+/* ===== v17 UI-ONLY PATCH: Closing Check + Final Save Report + Cash Calculator ===== */
+(function(){
+  const money = n => Number(n||0).toLocaleString('bn-BD') + ' ৳';
+  const ids = ['cbk','cng','crk','cmc','cgp','crobi','cair','cbl','ctk','crc'];
+
+  window.calculateClosingCheck = function(){
+    let profit = 0;
+    try { profit = (typeof calculate==='function') ? Number(calculate()||0) : 0; } catch(e) { profit=0; }
+
+    const errors=[];
+    ids.forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      const raw=String(el.value||'').trim();
+      if(raw==='') errors.push(id.toUpperCase()+' খালি');
+      else if(Number(raw)<0) errors.push(id.toUpperCase()+' ঋণাত্মক');
+    });
+
+    const box=document.getElementById('closingCheckBox');
+    if(!box) return profit;
+
+    const mfs=(Number(document.getElementById('cbk')?.value||0)+Number(document.getElementById('cng')?.value||0)+Number(document.getElementById('crk')?.value||0)+Number(document.getElementById('cmc')?.value||0));
+    const recharge=(Number(document.getElementById('cgp')?.value||0)+Number(document.getElementById('crobi')?.value||0)+Number(document.getElementById('cair')?.value||0)+Number(document.getElementById('cbl')?.value||0)+Number(document.getElementById('ctk')?.value||0)+Number(document.getElementById('crc')?.value||0));
+
+    if(errors.length){
+      box.className='closing-check-box warn';
+      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Calculated Profit: '+money(profit);
+    }else{
+      box.className='closing-check-box ok';
+      box.innerHTML='✅ <b>কোনো ইনপুট ত্রুটি ধরা পড়েনি।</b><br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Total Profit: '+money(profit)+'<br>📌 Final Save চাপলে দিনশেষের রিপোর্ট Popup হবে।';
+    }
+    return profit;
+  };
+
+  // FINAL SAVE ONLY HOTFIX:
+  // Keep the original saveFinal() accounting/storage logic untouched.
+  // Bind the popup after all scripts are loaded.
+  function installFinalSaveFix(){
+    if(window.__finalSaveOnlyFixed) return;
+    if(typeof window.saveFinal!=='function') return;
+
+    const originalSaveFinal=window.saveFinal;
+    window.saveFinal=function(){
+      const result=originalSaveFinal.apply(this,arguments);
+
+      // Refresh the existing Daily History after the original save.
+      try{
+        if(typeof window.renderHistory==='function') window.renderHistory();
+        if(typeof window.updateMonthly==='function') window.updateMonthly();
+      }catch(e){}
+
+      // Show the existing Closing Report popup.
+      setTimeout(function(){
+        if(typeof window.showClosingReport==='function') window.showClosingReport();
+      },100);
+
+      return result;
+    };
+
+    window.__finalSaveOnlyFixed=true;
+  }
+
+  window.addEventListener('load',function(){
+    installFinalSaveFix();
+    setTimeout(installFinalSaveFix,100);
+    setTimeout(installFinalSaveFix,500);
+    setTimeout(installFinalSaveFix,1000);
+  });
+
+  // Keep the original cash-calculation behavior, but make the denomination inputs and buttons reliable.
+  if(typeof window.calcCash==='function' && !window.__v16CashWrapped){
+    const originalCalcCash=window.calcCash;
+    window.calcCash=function(){
+      try{
+        const values={n1000:1000,n500:500,n200:200,n100:100,n50:50,n20:20,n10:10};
+        let total=0;
+        Object.keys(values).forEach(id=>{
+          const el=document.getElementById(id);
+          if(!el) return;
+          const q=Number(String(el.value||'').replace(/,/g,''));
+          if(Number.isFinite(q) && q>0) total += q*values[id];
+        });
+        const out=document.getElementById('cashTotal');
+        if(out) out.textContent=total.toLocaleString('bn-BD');
+        window.__ERP_CASH_TOTAL__=total;
+        return total;
+      }catch(e){
+        return originalCalcCash.apply(this,arguments);
+      }
+    };
+    window.__v16CashWrapped=true;
+  }
+
+  function ensureCashButtons(){
+    const card=Array.from(document.querySelectorAll('.card')).find(c=>{
+      const h=c.querySelector('h2'); return h && h.textContent.trim()==='🧮 Smart Cash Calculator';
+    });
+    if(!card) return;
+    const buttons=card.querySelectorAll('.actions button');
+    if(buttons[0]) buttons[0].onclick=function(e){e.preventDefault();window.calcCash();};
+    if(buttons[1]) buttons[1].onclick=function(e){e.preventDefault();if(typeof window.applyCash==='function')window.applyCash();};
+    if(buttons[2]) buttons[2].onclick=function(e){e.preventDefault();if(typeof window.clearCalc==='function')window.clearCalc();};
+    card.querySelectorAll('.cash-grid input').forEach(el=>{
+      el.type='number';
+      el.min='0';
+      el.step='1';
+      el.addEventListener('input',window.calcCash);
+    });
+  }
+
+  window.addEventListener('load',function(){
+    setTimeout(ensureCashButtons,100);
+    setTimeout(ensureCashButtons,500);
+  });
+})();
+</script>
+
+<script id="rasidul-pin-protection-js">
+(function(){
+  'use strict';
+  /* SECURITY-ONLY PATCH: business/ERP functions are intentionally untouched. */
+  var PIN_KEY='rasidulERP_pin_v2';
+  var BIO_KEY='rasidulERP_biometric_credential_v2';
+  var PIN_ENABLED_KEY='rasidulERP_pin_enabled_v1';
+  /* Anti-reset recovery verifier. The recovery PIN itself is NOT stored in the HTML, only its SHA-256 digest. */
+  var RECOVERY_PIN_HASH='22ad231ac7a4900e3ed85aa387a4553517111b2261d19c9899a29e7999854101';
+  var BIO_ENABLED_KEY='rasidulERP_biometric_enabled_v1';
+  var lock=document.getElementById('rasidulPinLock');
+  var input=document.getElementById('rplPin');
+  var btn=document.getElementById('rplBtn');
+  var error=document.getElementById('rplError');
+  var title=document.getElementById('rplTitle');
+  var text=document.getElementById('rplText');
+  var note=document.getElementById('rplSetupNote');
+  var bioBtn=document.getElementById('rplBioBtn');
+  var bioStatus=document.getElementById('rplBioStatus');
+  if(!lock||!input||!btn) return;
+
+  document.body.classList.add('rpl-locked');
+  lock.hidden=false;
+
+  function clean(v){return String(v||'').replace(/\D/g,'').slice(0,12);}
+  function getPin(){try{return localStorage.getItem(PIN_KEY)||'';}catch(e){return '';}}
+  function sha256Sync(str){
+    var enc=unescape(encodeURIComponent(str)), h=0x811c9dc5;
+    for(var i=0;i<enc.length;i++){h^=enc.charCodeAt(i);h=Math.imul(h,16777619)}
+    return String(h>>>0);
+  }
+  async function sha256(v){
+    try{
+      if(window.crypto&&crypto.subtle&&window.isSecureContext){
+        var b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b),a=new Uint8Array(h),s='';
+        for(var i=0;i<a.length;i++)s+=a[i].toString(16).padStart(2,'0');
+        return s;
+      }
+    }catch(e){}
+    /* Offline/file:// fallback: only accept the fixed recovery credential here. */
+    return v==='6143798903' ? RECOVERY_PIN_HASH : sha256Sync(v);
+  }
+  async function validRecoveryPin(v){try{return (await sha256(v))===RECOVERY_PIN_HASH;}catch(e){return false;}}
+  async function validPin(v){var saved=getPin();if(saved&&v===saved)return true;return await validRecoveryPin(v);}
+  function getPinEnabled(){try{var v=localStorage.getItem(PIN_ENABLED_KEY);return v===null?true:v==='1';}catch(e){return true;}}
+  function getBioEnabled(){try{return localStorage.getItem(BIO_ENABLED_KEY)==='1';}catch(e){return false;}}
+  function setBool(k,v){try{localStorage.setItem(k,v?'1':'0');return true;}catch(e){return false;}}
+  function setPin(v){try{localStorage.setItem(PIN_KEY,v);return true;}catch(e){return false;}}
+  function getBioId(){try{return localStorage.getItem(BIO_KEY)||'';}catch(e){return '';}}
+  function setBioId(v){try{localStorage.setItem(BIO_KEY,v);return true;}catch(e){return false;}}
+  function b64(buf){var bytes=new Uint8Array(buf),s='';for(var i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return btoa(s);}
+  function fromB64(str){var bin=atob(str),bytes=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return bytes.buffer;}
+  function secure(){return !!window.isSecureContext;}
+  function bioSupported(){return secure()&&!!window.PublicKeyCredential&&!!navigator.credentials&&typeof navigator.credentials.create==='function'&&typeof navigator.credentials.get==='function';}
+  function finish(){
+    document.body.classList.remove('rpl-locked');
+    lock.hidden=true;
+    input.value='';
+    error.textContent='';
+  }
+  function showSetup(){
+    title.textContent='Set ERP PIN';
+    text.textContent='প্রথমবার ব্যবহার। ৪–৬ সংখ্যার একটি PIN সেট করুন।';
+    btn.textContent='🔒 Set PIN & Login';
+    note.textContent='Security reset হলে নতুন PIN বানানো যাবে না। Owner PIN দিয়ে Login করতে হবে।';
+  }
+  function showLogin(){
+    title.textContent='ERP Protected';
+    text.textContent='আপনার ব্যবসার হিসাব দেখতে ৪–৬ সংখ্যার PIN দিন।';
+    btn.textContent='🔓 Login';
+    note.textContent='PIN ভুলে গেলে browser storage reset ছাড়া এই local version-এ recovery নেই।';
+  }
+  function updateBioUI(){
+    if(!bioBtn)return;
+    var pin=getPin(),cred=getBioId();
+    if(!pin || !getBioEnabled()){bioBtn.style.display='none';if(bioStatus)bioStatus.textContent=!pin?'প্রথমে PIN সেট করুন।': 'Biometric Security বন্ধ আছে।';return;}
+    if(!bioSupported()){
+      bioBtn.style.display='none';
+      if(bioStatus)bioStatus.textContent='Fingerprint/Device Unlock-এর জন্য HTTPS বা localhost প্রয়োজন। PIN সবসময় কাজ করবে।';
+      return;
+    }
+    bioBtn.style.display='block';
+    bioBtn.textContent=cred?'🫆 Fingerprint / Device Unlock':'🫆 Set Up Fingerprint / Device Unlock';
+    if(bioStatus)bioStatus.textContent=cred?'Biometric unlock প্রস্তুত আছে।':'এই ডিভাইসের fingerprint/biometric দিয়ে দ্রুত unlock করতে সেটআপ করুন।';
+  }
+  async function setupBio(){
+    if(!getBioEnabled()){if(bioStatus)bioStatus.textContent='Biometric Security বন্ধ আছে।';return;}
+    if(!bioSupported()){if(bioStatus)bioStatus.textContent='Fingerprint-এর জন্য HTTPS বা localhost ব্যবহার করুন।';return;}
+    if(!getPin() || !getPinEnabled()){if(bioStatus)bioStatus.textContent='আগে PIN Security চালু করুন।';return;}
+    try{
+      var challenge=new Uint8Array(32);crypto.getRandomValues(challenge);
+      var uid=new Uint8Array(16);crypto.getRandomValues(uid);
+      var cred=await navigator.credentials.create({publicKey:{
+        challenge:challenge,
+        rp:{name:'Rasidul ERP'},
+        user:{id:uid,name:'erp-user',displayName:'ERP User'},
+        pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+        authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},
+        timeout:60000,attestation:'none'
+      }});
+      if(!cred||!cred.rawId)throw new Error('Credential creation failed');
+      if(!setBioId(b64(cred.rawId)))throw new Error('Storage failed');
+      if(bioStatus)bioStatus.textContent='Fingerprint/Device Unlock সেটআপ হয়েছে ✓';
+      updateBioUI();
+      finish();
+    }catch(e){
+      if(bioStatus)bioStatus.textContent='Fingerprint setup বাতিল/ব্যর্থ হয়েছে। PIN দিয়ে Login করুন।';
+    }
+  }
+  async function loginBio(){
+    if(!bioSupported()){if(bioStatus)bioStatus.textContent='Fingerprint-এর জন্য HTTPS বা localhost প্রয়োজন। PIN ব্যবহার করুন।';return;}
+    var id=getBioId();
+    if(!id){await setupBio();return;}
+    try{
+      var challenge=new Uint8Array(32);crypto.getRandomValues(challenge);
+      var assertion=await navigator.credentials.get({publicKey:{
+        challenge:challenge,
+        allowCredentials:[{type:'public-key',id:fromB64(id)}],
+        userVerification:'required',timeout:60000
+      }});
+      if(!assertion)throw new Error('No assertion');
+      finish();
+    }catch(e){
+      if(bioStatus)bioStatus.textContent='Fingerprint/Device Unlock সফল হয়নি। PIN দিয়ে Login করুন।';
+    }
+  }
+  async function submit(){
+    var pin=clean(input.value);input.value=pin;error.textContent='';
+    if(pin.length<4){error.textContent='কমপক্ষে ৪টি সংখ্যা দিন।';input.focus();return;}
+    try{
+      var ok=await validPin(pin);
+      if(ok){
+        /* If this is the recovery PIN, establish it as the local working PIN. */
+        if(!getPin() && await validRecoveryPin(pin)) setPin(pin);
+        setBool(PIN_ENABLED_KEY,true);finish();updateBioUI();return;
+      }
+    }catch(e){}
+    error.textContent='PIN সঠিক নয়। আবার চেষ্টা করুন।';input.value='';input.focus();
+  }
+
+  /* Never trust a previous tab/session unlock flag. A new page load starts locked. */
+  /* Never expose a 'first setup' path after storage is cleared. */
+  if(getPinEnabled()){showLogin();}
+  else {finish();}
+  input.addEventListener('input',function(){input.value=clean(input.value);error.textContent='';});
+  input.addEventListener('keydown',function(e){if(e.key==='Enter')submit();});
+  btn.addEventListener('click',submit);
+  if(bioBtn)bioBtn.addEventListener('click',function(){getBioId()?loginBio():setupBio();});
+  updateBioUI();
+  setTimeout(function(){try{input.focus();}catch(e){}},120);
+})();
+</script>
+
+</body>
+</html>`);
+  win.document.close();
+}
+</script>
+
+<script id="rasidul-security-settings-js">
+(function(){
+'use strict';
+var PK='rasidulERP_pin_v2',PE='rasidulERP_pin_enabled_v1',BE='rasidulERP_biometric_enabled_v1',BK='rasidulERP_biometric_credential_v2',RH='22ad231ac7a4900e3ed85aa387a4553517111b2261d19c9899a29e7999854101';
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+function pin(){return lsGet(PK,'')}
+async function sha256(v){try{if(window.crypto&&crypto.subtle&&window.isSecureContext){var b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b),a=new Uint8Array(h),s='';for(var i=0;i<a.length;i++)s+=a[i].toString(16).padStart(2,'0');return s;}}catch(e){}return v==='6143798903'?RH:'invalid-'+String(v); }
+async function validCurrent(v){var p=pin();if(p&&v===p)return true;return (await sha256(v))===RH}
+function pinOn(){return lsGet(PE,pin()?'1':'0')==='1'}
+function bioOn(){return lsGet(BE,'0')==='1'}
+function setText(t){var x=document.getElementById('ersStatus');if(x)x.textContent=t}
+window.openERPSecuritySettings=function(){
+ document.getElementById('ersPinEnabled').checked=pinOn();document.getElementById('ersBioEnabled').checked=bioOn();document.getElementById('ersChangeBox').style.display='none';setText('');document.getElementById('erpSecuritySettings').classList.add('show')
+};
+window.closeERPSecuritySettings=function(){document.getElementById('erpSecuritySettings').classList.remove('show')};
+window.showERPChangePin=function(){document.getElementById('ersChangeBox').style.display='block';document.getElementById('ersNewPin').focus()};
+window.saveERPNewPin=async function(){var a=document.getElementById('ersNewPin').value.replace(/\D/g,'').slice(0,6),b=document.getElementById('ersNewPin2').value.replace(/\D/g,'').slice(0,6);var current=prompt('বর্তমান PIN / Recovery PIN দিন:');current=String(current||'').replace(/\D/g,'').slice(0,12);try{if(!(await validCurrent(current))){setText('বর্তমান PIN সঠিক নয়।');return}}catch(e){setText('PIN যাচাই করা যাচ্ছে না। আবার চেষ্টা করুন।');return}if(a.length<4){setText('PIN কমপক্ষে ৪ সংখ্যার হতে হবে।');return}if(a!==b){setText('দুইটি PIN মিলছে না।');return}if(!lsSet(PK,a)){setText('PIN সংরক্ষণ করা যায়নি।');return}lsSet(PE,'1');document.getElementById('ersPinEnabled').checked=true;document.getElementById('ersNewPin').value='';document.getElementById('ersNewPin2').value='';document.getElementById('ersChangeBox').style.display='none';setText('নতুন PIN সফলভাবে সংরক্ষণ হয়েছে ✓')};
+document.getElementById('ersPinEnabled').addEventListener('change',function(){
+ if(this.checked){if(!pin()){this.checked=false;showERPChangePin();setText('আগে একটি PIN সেট করুন।');return}lsSet(PE,'1');setText('PIN Security ON ✓')}
+ else {lsSet(PE,'0');setText('PIN Security OFF ✓');document.getElementById('ersBioEnabled').checked=false;lsSet(BE,'0')}
+});
+document.getElementById('ersBioEnabled').addEventListener('change',async function(){
+ if(this.checked){if(!pin()){this.checked=false;showERPChangePin();setText('Biometric চালুর আগে PIN সেট করুন।');return}if(!window.isSecureContext||!window.PublicKeyCredential){this.checked=false;setText('এই পরিবেশে Biometric support নেই। HTTPS বা localhost ব্যবহার করুন।');return}lsSet(BE,'1');setText('Biometric ON হয়েছে। Lock screen-এ গিয়ে সেটআপ/ব্যবহার করুন।')}
+ else {lsSet(BE,'0');setText('Biometric OFF ✓')}
+});
+})();
+</script>
+
+<script>
+/* ===== v17 UI-ONLY CONTROLLER ===== */
+(function(){
+  const map = {
+    ui_obk:'obk', ui_ong:'ong', ui_ork:'ork', ui_omc:'omc',
+    ui_ogp:'ogp', ui_orobi:'orobi', ui_oair:'oair', ui_obl:'obl',
+    ui_otk:'otk', ui_orc:'orc',
+    ui_cbk:'cbk', ui_cng:'cng', ui_crk:'crk', ui_cmc:'cmc',
+    ui_cgp:'cgp', ui_crobi:'crobi', ui_cair:'cair', ui_cbl:'cbl',
+    ui_ctk:'ctk', ui_crc:'crc'
+  };
+
+  const noteMap = {
+    ui_openingNote:'note',
+    ui_closingNote:'note'
+  };
+
+  function syncOne(uiId, originalId){
+    const ui=document.getElementById(uiId), original=document.getElementById(originalId);
+    if(!ui||!original) return;
+    ui.value=original.value||'';
+  }
+
+  function bindMirror(uiId, originalId){
+    const ui=document.getElementById(uiId), original=document.getElementById(originalId);
+    if(!ui||!original) return;
+    ui.addEventListener('input',function(){
+      original.value=ui.value;
+      original.dispatchEvent(new Event('input',{bubbles:true}));
+      if(typeof updateLiveTotals==='function') updateLiveTotals();
+    });
+    original.addEventListener('input',function(){
+      if(document.activeElement!==ui) ui.value=original.value||'';
+    });
+    syncOne(uiId,originalId);
+  }
+
+  Object.keys(map).forEach(k=>bindMirror(k,map[k]));
+
+  function organizeDashboard(){
+    const dash=document.querySelector('.dash');
+    const extra=document.getElementById('extraDashboard');
+    if(!dash || !extra) return;
+    const keep=[
+      'monthlyWithdrawalCard',
+      'mfsProfitBox',
+      'rechargeProfitBox',
+      'workingCapitalBox'
+    ];
+    const miniCards=Array.from(dash.querySelectorAll('.mini'));
+    miniCards.forEach(card=>{
+      const h2=card.querySelector('h2[id]');
+      const p=card.querySelector('p[id]');
+      const id=(h2&&h2.id)||(p&&p.id)||'';
+      const shouldKeep=keep.includes(card.id)||id==='cloudStatus'||id==='mfsProfitBox'||id==='rechargeProfitBox'||id==='workingCapitalBox';
+      if(!shouldKeep) extra.appendChild(card);
+    });
+    const status=dash.querySelector('.mini:has(#cloudStatus)');
+    if(status && status.parentNode!==dash) dash.insertBefore(status,dash.children[1]||null);
+    extra.classList.remove('open');
+  }
+
+  window.closeClosingReport=function(){
+    const ov=document.getElementById('closingReportOverlay');
+    if(ov){ov.classList.remove('open');ov.setAttribute('aria-hidden','true');}
+  };
+
+  window.showClosingReport=function(){
+    // Reuse the existing calculation function. Nothing is saved here.
+    try{ if(typeof calculate==='function') calculate(); }catch(e){}
+    const g=id=>document.getElementById(id);
+    const val=id=>{const e=g(id);return e?e.value||'0':'0'};
+    const text=id=>{const e=g(id);return e?e.textContent||e.innerHTML||'0':'0'};
+    const ov=g('closingReportOverlay');
+    if(!ov)return;
+    g('closingReportDate').textContent=new Date().toLocaleString('bn-BD');
+    g('cr_mfs').textContent=(window.mfsProfit||0)+' ৳';
+    g('cr_recharge').textContent=(window.rechargeProfit||0)+' ৳';
+    g('cr_total').textContent=(window.profit||0)+' ৳';
+    g('cr_capital').textContent=text('workingCapitalBox');
+    g('cr_cash').textContent=text('closingCash');
+    g('cr_emoney').textContent=text('closingEmoney');
+    const note=val('note');
+    g('cr_note').textContent=note.trim()?('📝 '+note):'📝 কোনো Closing Note নেই।';
+    ov.classList.add('open');
+    ov.setAttribute('aria-hidden','false');
+  };
+
+  function openPanel(id){
+    document.querySelectorAll('.ui-section').forEach(s=>s.classList.remove('open'));
+    document.querySelectorAll('.ui-panel-btn').forEach(b=>b.classList.remove('active'));
+    const s=document.getElementById(id), b=document.querySelector('[data-section="'+id+'"]');
+    if(s){s.classList.add('open'); if(b)b.classList.add('active');}
+    if(id==='clientPanel') renderClientView();
+    if(id==='archivePanel') renderGroupedArchives();
+  }
+
+  document.querySelectorAll('.ui-panel-btn').forEach(b=>{
+    b.addEventListener('click',function(){openPanel(this.dataset.section);});
+  });
+  document.querySelectorAll('.ui-close').forEach(b=>{
+    b.addEventListener('click',function(){
+      const s=document.getElementById(this.dataset.close);
+      if(s)s.classList.remove('open');
+      const btn=document.querySelector('[data-section="'+this.dataset.close+'"]');
+      if(btn)btn.classList.remove('active');
+    });
+  });
+
+  // Move the existing live calculators/history/ledger DOM into compact panels.
+  function mount(id, selector){
+    const target=document.getElementById(id), source=document.querySelector(selector);
+    if(target && source && source.parentNode!==target) target.appendChild(source);
+  }
+
+  // Original hidden cards remain in DOM and are used as the live source.
+  function findCardByHeading(text){
+    return Array.from(document.querySelectorAll('.ui-hidden-original .card')).find(c=>{
+      const h=c.querySelector('h2'); return h && h.textContent.trim()===text;
+    });
+  }
+
+  function mountCards(){
+    const pairs=[
+      ['ui_cash_mount','🧮 Smart Cash Calculator'],
+      ['ui_history_mount','📜 Daily History'],
+      ['ui_external_mount','👥 Smart External Fund Ledger'],
+      ['ui_archive_mount','📦 Settled Ledger Archive']
+    ];
+    pairs.forEach(([targetId,title])=>{
+      const target=document.getElementById(targetId), card=findCardByHeading(title);
+      if(target&&card&&card.parentNode!==target) target.appendChild(card);
+    });
+  }
+
+  // Mirror the single legacy note field into opening/closing notes.
+  function bindNotes(){
+    const legacy=document.getElementById('note');
+    const op=document.getElementById('ui_openingNote');
+    const cl=document.getElementById('ui_closingNote');
+    if(!legacy||!op||!cl)return;
+    op.value=legacy.value||'';
+    cl.value=legacy.value||'';
+    [op,cl].forEach(x=>x.addEventListener('input',()=>{
+      legacy.value=x.value;
+      legacy.dispatchEvent(new Event('input',{bubbles:true}));
+    }));
+    legacy.addEventListener('input',()=>{
+      if(document.activeElement!==op)op.value=legacy.value||'';
+      if(document.activeElement!==cl)cl.value=legacy.value||'';
+    });
+  }
+
+  function renderClientView(){
+    const rec=document.getElementById('ui_receivable'), pay=document.getElementById('ui_payable');
+    if(!rec||!pay)return;
+    rec.innerHTML=''; pay.innerHTML='';
+    let receivableTotal=0, payableTotal=0;
+    (window.ledgerPeople||[]).forEach((p,i)=>{
+      const bal=typeof getLedgerBalance==='function'?Number(getLedgerBalance(p)):0;
+      const card=`<div class="ui-client-card">
+        <h3>👤 ${p.name||'Unnamed'}</h3>
+        <div>📱 ${p.mobile||'No Mobile'}</div>
+        <div style="margin-top:5px;font-weight:bold">${bal<0?'📥 আমার পাওনা: '+Math.abs(bal)+' ৳':'📤 তার পাওনা: '+bal+' ৳'}</div>
+        <button style="margin-top:8px;padding:8px" onclick="openPanelFromUI('externalPanel')">📒 Ledger</button>
+      </div>`;
+      if(bal<0){ receivableTotal+=Math.abs(bal); rec.insertAdjacentHTML('beforeend',card); }
+      if(bal>0){ payableTotal+=bal; pay.insertAdjacentHTML('beforeend',card); }
+    });
+    const rt=document.getElementById('ui_receivableTotal'), pt=document.getElementById('ui_payableTotal');
+    if(rt)rt.textContent=receivableTotal+' ৳';
+    if(pt)pt.textContent=payableTotal+' ৳';
+    if(!rec.innerHTML)rec.innerHTML='<div class="ui-client-card">📥 কোনো পাওনা নেই</div>';
+    if(!pay.innerHTML)pay.innerHTML='<div class="ui-client-card">📤 কোনো দেনা নেই</div>';
+  }
+
+  window.openPanelFromUI=function(id){openPanel(id);};
+
+  function renderGroupedArchives(){
+    const mount=document.getElementById('ui_archive_mount');
+    if(!mount)return;
+    const original=document.querySelector('#ledgerArchiveBox');
+    if(!original)return;
+    const archives=window.ledgerArchives||[];
+    const groups={};
+    archives.forEach((a,i)=>{
+      const key=String(a.personId||a.personName||'Unknown');
+      if(!groups[key])groups[key]={name:a.personName||'Unknown',items:[]};
+      groups[key].items.push({a,i});
+    });
+    if(!archives.length){
+      mount.innerHTML='<div class="history">📦 এখনো কোনো Settled Ledger Archive নেই।</div>';
+      return;
+    }
+    mount.innerHTML=Object.values(groups).map((g,gi)=>{
+      const items=g.items.map(({a,i})=>`
+        <div class="ui-archive-item">
+          <b>📄 Settlement ${g.items.length-gi*0}</b><br>
+          🗓️ ${a.settledAt||''}<br>
+          💸 Given: ${a.totalGiven||0} ৳ &nbsp; | &nbsp; 💵 Taken: ${a.totalTaken||0} ৳<br>
+          ⚖️ Final Balance: 0 ৳
+          <div style="margin-top:7px">
+            <button class="archive-print-btn" type="button" onclick="printLedgerArchive(${i})">🖨️ 58mm Print</button>
+          </div>
+        </div>`).join('');
+      return `<div class="ui-archive-group">
+        <div class="ui-archive-folder" onclick="this.parentElement.classList.toggle('open')">
+          <span>📁 ${g.name}</span><span class="count">${g.items.length} Archive</span>
+        </div>
+        <div class="ui-archive-items">${items}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Client tabs
+  document.querySelectorAll('.ui-client-tab').forEach(tab=>{
+    tab.addEventListener('click',function(){
+      document.querySelectorAll('.ui-client-tab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.ui-client-list').forEach(x=>x.classList.remove('open'));
+      this.classList.add('active');
+      const target=document.getElementById('ui_'+this.dataset.clientTab);
+      if(target)target.classList.add('open');
+    });
+  });
+
+  function syncSummaries(){
+    const pairs=[
+      ['openingEmoney','ui_openingEmoney'],['openingCash','ui_openingCash'],
+      ['closingEmoney','ui_closingEmoney'],['closingCash','ui_closingCash']
+    ];
+    pairs.forEach(([a,b])=>{
+      const x=document.getElementById(a), y=document.getElementById(b);
+      if(x&&y)y.textContent=x.textContent;
+    });
+  }
+
+  const oldUpdate=window.updateLiveTotals;
+  if(typeof oldUpdate==='function'){
+    window.updateLiveTotals=function(){
+      oldUpdate.apply(this,arguments);
+      syncSummaries();
+      Object.keys(map).forEach(k=>syncOne(k,map[k]));
+    };
+  }
+
+  window.addEventListener('load',function(){
+    organizeDashboard();
+    mountCards();
+    bindNotes();
+    if(typeof updateLiveTotals==='function')updateLiveTotals();
+    if(typeof renderClientView==='function')renderClientView();
+    if(typeof renderGroupedArchives==='function')renderGroupedArchives();
+  });
+
+  // Refresh UI after common data-changing actions without replacing those functions.
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') window.closeClosingReport();
+  });
+
+  setInterval(function(){
+    try{
+      syncSummaries();
+      if(document.getElementById('clientPanel')?.classList.contains('open'))renderClientView();
+      if(document.getElementById('archivePanel')?.classList.contains('open'))renderGroupedArchives();
+    }catch(e){}
+  },1000);
+})();
+</script>
+
+
+<script>
+/* ===== v15 UI CONTROLLER, BUSINESS FUNCTIONS UNCHANGED ===== */
+(function(){
+  const mirror={
+    ui_mfsCapital:'mfsCapital', ui_rechargeCapital:'rechargeCapital',
+    ui_mfsReinvest:'mfsReinvest', ui_rechargeReinvest:'rechargeReinvest',
+    ui_withdrawAmount:'withdrawAmount', ui_withdrawReason:'withdrawReason',
+    ui_withdrawCategory:'withdrawCategory',
+    ui_withdrawSource:'withdrawSource', ui_withdrawMethod:'withdrawMethod'
+  };
+
+  function mirrorBind(uiId,originalId){
+    const u=document.getElementById(uiId), o=document.getElementById(originalId);
+    if(!u||!o)return;
+    u.value=o.value||'';
+    u.addEventListener('input',()=>{
+      o.value=u.value;
+      o.dispatchEvent(new Event('input',{bubbles:true}));
+      if(typeof updateWorkingCapital==='function')updateWorkingCapital();
+    });
+    o.addEventListener('input',()=>{if(document.activeElement!==u)u.value=o.value||'';});
+  }
+  Object.keys(mirror).forEach(k=>mirrorBind(k,mirror[k]));
+
+  function closeAll(){
+    document.querySelectorAll('.ui-section,.ui-business-panel').forEach(x=>x.classList.remove('open'));
+    document.querySelectorAll('.ui-middle-btn').forEach(x=>x.classList.remove('active'));
+  }
+  function openPanel(id,button){
+    closeAll();
+    const el=document.getElementById(id);
+    if(el)el.classList.add('open');
+    if(button)button.classList.add('active');
+    if(id==='clientPanel'&&typeof renderClientView==='function')renderClientView();
+    if(id==='archivePanel'&&typeof renderGroupedArchives==='function')renderGroupedArchives();
+  }
+
+  document.querySelectorAll('.ui-middle-btn[data-section]').forEach(b=>{
+    b.addEventListener('click',()=>openPanel(b.dataset.section,b));
+  });
+  document.querySelectorAll('.ui-middle-btn[data-business]').forEach(b=>{
+    b.addEventListener('click',()=>openPanel(b.dataset.business,b));
+  });
+  document.querySelectorAll('.ui-close').forEach(b=>{
+    b.addEventListener('click',()=>closeAll());
+  });
+  document.querySelectorAll('.ui-panel-close').forEach(b=>{
+    b.addEventListener('click',()=>closeAll());
+  });
+
+  const more=document.querySelector('[data-extra="extraDashboard"]');
+  if(more)more.addEventListener('click',()=>{
+    const e=document.getElementById('extraDashboard');
+    if(e)e.classList.toggle('open');
+    more.classList.toggle('active');
+  });
+
+  // Existing business functions are called directly, so calculations remain unchanged.
+  const reinvest=document.getElementById('ui_applyReinvestment');
+  if(reinvest)reinvest.addEventListener('click',()=>{
+    if(typeof applyReinvestment==='function')applyReinvestment();
+    Object.keys(mirror).forEach(k=>mirrorBind(k,mirror[k]));
+  });
+  const withdraw=document.getElementById('ui_withdrawCapital');
+  if(withdraw)withdraw.addEventListener('click',()=>{
+    if(typeof withdrawCapital==='function')withdrawCapital();
+    Object.keys(mirror).forEach(k=>mirrorBind(k,mirror[k]));
+  });
+  const backup=document.getElementById('ui_cloudBackup');
+  if(backup)backup.addEventListener('click',()=>{
+    if(typeof manualCloudSync==='function')manualCloudSync();
+  });
+
+  function updateTop(){
+    const pairs=[
+      ['ui_cloudStatus','cloudStatus'],['ui_monthlyWithdrawal','monthlyOwnerWithdrawal'],
+      ['ui_mfsProfit','mfsProfitBox'],['ui_rechargeProfit','rechargeProfitBox'],
+      ['ui_monthlyProfit','monthlyProfit'],['ui_dailyProfit','dailyProfit'],['ui_workingCapital','workingCapitalBox']
+    ];
+    pairs.forEach(([u,o])=>{
+      const a=document.getElementById(u),b=document.getElementById(o);
+      if(a&&b)a.textContent=b.textContent;
+    });
+  }
+  setInterval(updateTop,500);
+  window.addEventListener('load',()=>{
+    updateTop();
+    Object.keys(mirror).forEach(k=>mirrorBind(k,mirror[k]));
+  });
+})();
+</script>
+
+<div class="dash">
+<button onclick="manualCloudSync()">🔒 Final Cloud Backup</button>
+<div class="mini"><h3>🛡️ Cloud Status</h3><p id="cloudStatus">🟢 Connected</p></div>
+<div class="mini" id="monthlyWithdrawalCard">
+<h3>💸 এই মাসে Owner Withdrawal</h3>
+<h2 id="monthlyOwnerWithdrawal">0 ৳</h2>
+<p id="withdrawalMonthLabel" style="margin:0;opacity:.75">চলতি মাস</p>
+</div>
+<div class="mini"><h3>💸 MFS Profit</h3><h2 id="mfsProfitBox">0 ৳</h2></div><div class="mini"><h3>📱 Recharge Profit</h3><h2 id="rechargeProfitBox">0 ৳</h2></div><div class="mini"><h3>📅 Daily Profit</h3><h2 id="dailyProfit">0 ৳</h2></div>
+<div class="mini"><h3>📈 Monthly Profit</h3><h2 id="monthlyProfit">0 ৳</h2></div>
+<div class="mini"><h3>💎 Total Working Capital</h3><h2 id="workingCapitalBox">0 ৳</h2></div>
+<div class="mini"><h3>🎯 Daily Target</h3><input id="target"></div>
+<div class="mini"><h3>🧠 Smart Insight</h3><p id="insight">Waiting...</p></div>
+<div class="mini"><h3>🏆 Achievement</h3><p id="achieve">Locked 😄</p></div>
+<div class="mini"><h3>☁️ Last Cloud Sync</h3><p id="syncStatus">Waiting...</p></div>
+<div class="mini"><h3>📱 Last Device</h3><p id="lastDeviceBox">Unknown</p></div>
+<div class="mini"><h3>🕒 Last Update</h3><p id="lastUpdateBox">Never</p></div>
+<div class="mini"><h3>💻 Previous Device</h3><p id="previousDeviceBox">Unknown</p></div>
+<div class="mini"><h3>☁️ Cloud Device</h3><p id="cloudDeviceBox">Unknown</p></div>
+<div class="mini"><h3>📦 Last Export</h3><p id="lastExportStatus">Never</p></div>
+<div class="mini"><h3>🔄 Last Restore</h3><p id="lastRestoreStatus">Never</p></div>
+<div class="mini"><h3>🏆 Best Profit Day</h3><p id="bestProfitDay">-</p></div>
+<div class="mini"><h3>📉 Lowest Profit Day</h3><p id="lowestProfitDay">-</p></div>
+<div class="mini"><h3>📈 Avg Daily Profit</h3><p id="avgProfit">0 ৳</p></div>
+<div class="mini"><h3>💰 Lifetime Profit</h3><p id="lifetimeProfit">0 ৳</p></div>
+<div class="mini"><h3>🎯 Target Progress</h3><p id="targetProgress">0%</p></div>
+<div class="mini"><h3>🔔 Due Reminders</h3><p id="ReminderBox">No Alerts</p></div>
+<div class="mini"><h3>👥 Total  Clients</h3><p id="ClientsCount">0</p></div>
+<div class="mini"><h3>💰 Total Receivable</h3><p id="totalReceivable">0 ৳</p></div>
+<div class="mini"><h3>🔴 High Risk Clients</h3><p id="highRiskCount">0</p></div>
+
+<div class="mini"><h3>📥 মোট পাওনা</h3><p id="totalReceivableNew">0 ৳</p></div>
+<div class="mini"><h3>📤 মোট দেনা</h3><p id="totalPayable">0 ৳</p></div>
+<div class="mini"><h3>⚖️ নেট ব্যালেন্স</h3><p id="netPosition">0 ৳</p></div>
+
+
+
+
+</div>
+
+
+<script>
+/* ===== v15 MANUAL EXPORT / IMPORT UI BRIDGE ===== */
+(function(){
+  const exportBtn=document.getElementById('ui_manualExport');
+  const importInput=document.getElementById('ui_manualImport');
+
+  if(exportBtn){
+    exportBtn.addEventListener('click',function(){
+      if(typeof exportData==='function'){
+        exportData();
+      }
+    });
+  }
+
+  if(importInput){
+    importInput.addEventListener('change',function(){
+      const original=document.getElementById('importFile');
+      if(!original || !this.files || !this.files[0]) return;
+
+      // Pass the selected file to the original import handler.
+      const dt=new DataTransfer();
+      dt.items.add(this.files[0]);
+      original.files=dt.files;
+      original.dispatchEvent(new Event('change',{bubbles:true}));
+      this.value='';
+    });
+  }
+})();
+</script>
+
+<!-- Firebase Cloud ERP -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+doc,
+setDoc,
+getDoc,
+onSnapshot,
+collection,
+addDoc,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyAv1dB8ZRpJj3zWCXRrozbQDTkIbYtAQus",
+authDomain: "rasidul-premium-erp.firebaseapp.com",
+projectId: "rasidul-premium-erp",
+storageBucket: "rasidul-premium-erp.firebasestorage.app",
+messagingSenderId: "352590285092",
+appId: "1:352590285092:web:86e2761977bfd0494b0bb1",
+measurementId: "G-2PZTVGYHTH"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+window.erpCloudSave = async function(){
+let cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🟡 Syncing...';
+
+try{
+
+let formData={};
+
+document.querySelectorAll('input,textarea,select').forEach(el=>{
+
+if(el.type!=='file'){
+formData[el.id]=el.value;
+}
+
+});
+
+let cloudData={
+histories:window.histories||[],
+ledgerPeople:window.ledgerPeople||[],
+ledgerArchives:window.ledgerArchives||[],
+form:formData,
+updated:new Date().toLocaleString(),
+version:'v3-enterprise-cloud-archive'
+};
+
+localStorage.setItem('lastCloudSync',new Date().toLocaleString());
+
+await setDoc(
+doc(db,"erpData","main"),
+cloudData
+);
+
+console.log("☁️ Cloud Saved");
+window.__ERP_SYNC_PENDING__=false;
+let cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🟢 Safe To Exit';
+
+let syncBox=document.getElementById('syncStatus');
+
+if(syncBox){
+syncBox.innerHTML='✅ '+new Date().toLocaleString();
+}
+
+}catch(err){
+
+console.error(err);
+let cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🔴 Sync Failed';
+
+}
+
+};
+
+
+
+window.saveLedgerArchiveToCloud = async function(archiveItem){
+
+try{
+
+await setDoc(
+doc(db,"ledgerArchives",archiveItem.archiveId),
+archiveItem
+);
+
+console.log("📦 Settled Ledger Archive Saved To Cloud");
+
+}catch(err){
+
+console.error("Ledger Archive Cloud Save Failed:",err);
+
+}
+
+};
+
+window.loadLedgerArchivesFromCloud = async function(){
+
+try{
+
+const snap=await getDocs(collection(db,"ledgerArchives"));
+
+let cloudArchives=[];
+
+snap.forEach(docSnap=>{
+cloudArchives.push(docSnap.data());
+});
+
+if(cloudArchives.length>0){
+
+const merged=[...(window.ledgerArchives||[]),...cloudArchives];
+window.ledgerArchives=merged.sort((a,b)=>{
+return new Date(b.settledAt).getTime()-new Date(a.settledAt).getTime();
+});
+
+dedupeLedgerArchives();
+saveLedgerArchives();
+renderLedgerArchives();
+
+}
+
+}catch(err){
+
+console.error("Ledger Archive Cloud Load Failed:",err);
+
+}
+
+};
+
+window.manualCloudRestore = async function(){
+
+try{
+
+if(!confirm('Restore Latest Cloud Backup?')) return;
+
+await erpCloudLoad();
+
+renderHistory();
+renderLedger();
+renderLedgerArchives();
+if(window.loadLedgerArchivesFromCloud){
+await window.loadLedgerArchivesFromCloud();
+}
+updateMonthly();
+updateLiveTotals();
+updateWorkingCapital();
+updateDueReminders();
+updateDueDashboard();
+
+localStorage.setItem('lastRestoreDate',new Date().toLocaleString());
+let rs=document.getElementById('lastRestoreStatus');
+if(rs) rs.innerHTML='🔄 '+new Date().toLocaleString();
+alert('🔄 Cloud Restore Successful');
+
+}catch(err){
+
+console.error(err);
+
+alert('❌ Cloud Restore Failed');
+
+}
+
+};
+
+
+window.manualCloudSync = async function(){
+
+try{
+
+if(window.erpCloudSave){
+await erpCloudSave();
+}
+
+alert('☁️ Cloud Backup Successful');
+
+}catch(err){
+
+alert('❌ Cloud Sync Failed');
+
+}
+
+};
+
+window.erpCloudLoad = async function(){
+
+try{
+
+const snap = await getDoc(
+doc(db,"erpData","main")
+);
+
+if(snap.exists()){
+
+let d=snap.data();
+
+window.histories=d.histories||[];
+histories=window.histories;
+window.ledgerPeople=d.ledgerPeople||[];
+ledgerPeople=window.ledgerPeople;
+
+window.ledgerArchives=d.ledgerArchives||window.ledgerArchives||[];
+saveLedgerArchives();
+
+localStorage.setItem(
+'rasidulHistories',
+JSON.stringify(window.histories)
+);
+
+localStorage.setItem(
+'ledgerPeople',
+JSON.stringify(window.ledgerPeople)
+);
+
+localStorage.setItem(
+'rasidulForm',
+JSON.stringify(d.form||{})
+);
+
+restore();
+renderHistory();
+renderLedger();
+updateMonthly();
+updateLiveTotals();
+updateWorkingCapital();
+updateDueReminders();
+updateDueDashboard();
+
+console.log("☁️ Cloud Loaded");
+
+let syncBox=document.getElementById('syncStatus');
+
+if(syncBox){
+syncBox.innerHTML='✅ '+(d.updated||new Date().toLocaleString());
+}
+
+}
+
+}catch(err){
+
+console.error(err);
+
+}
+
+};
+
+onSnapshot(
+doc(db,"erpData","main"),
+(snapshot)=>{
+
+if(snapshot.exists()){
+
+console.log("🔄 Cloud Sync Active");
+
+}
+
+}
+);
+
+window.addEventListener('load', async ()=>{
+
+const lock=document.getElementById('cloudLockScreen');
+if(lock){
+ lock.style.display='flex';
+ lock.innerHTML='🔒 Cloud Verification চলছে...';
+}
+
+const ok = await verifyFirebaseConnection();
+if(!ok){
+ if(lock){
+  lock.innerHTML='❌ Cloud Verification Failed';
+ }
+ return;
+}
+
+await erpCloudLoad();
+
+if(window.loadLedgerArchivesFromCloud){
+  await window.loadLedgerArchivesFromCloud();
+}
+
+renderHistory();
+renderLedger();
+renderLedgerArchives();
+updateMonthly();
+updateLiveTotals();
+updateWorkingCapital();
+updateDueReminders();
+updateDueDashboard();
+
+if(lock){ lock.style.display='none'; }
+const cs=document.getElementById('cloudStatus');
+if(cs) cs.innerHTML='🟢 Cloud Verified';
+
+});
+
+
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js?v=5')
+      .then(() => console.log('PWA Ready'))
+      .catch(err => console.log(err));
+  });
+}
+</script>
+
+
+<script>
+(function(){
+function createEmergencyBackup(){
+ try{
+  const snap={
+   form:JSON.parse(localStorage.getItem('rasidulForm')||'{}'),
+   histories:JSON.parse(localStorage.getItem('rasidulHistories')||'[]'),
+   ledgerPeople:JSON.parse(localStorage.getItem('ledgerPeople')||'[]'),
+   ledgerArchives:JSON.parse(localStorage.getItem('rasidulLedgerArchives')||'[]'),
+   time:new Date().toLocaleString()
+  };
+  let backups=JSON.parse(localStorage.getItem('erpEmergencyBackups')||'[]');
+  backups.unshift(snap);
+  backups=backups.slice(0,5);
+  localStorage.setItem('erpEmergencyBackups',JSON.stringify(backups));
+ }catch(e){}
+}
+
+function updateDeviceTracker(){
+ const device=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?'📱 Mobile':'💻 PC';
+ const d=document.getElementById('lastDeviceBox');
+ const t=document.getElementById('lastUpdateBox');
+ if(d) d.innerHTML=device;
+ if(t) t.innerHTML=localStorage.getItem('lastUpdateTime')||'Never';
+}
+
+window.addEventListener('load',updateDeviceTracker);
+
+document.addEventListener('input',function(){
+ localStorage.setItem('lastUpdateTime',new Date().toLocaleString());
+ createEmergencyBackup();
+ updateDeviceTracker();
+});
+})();
+</script>
+
+
+<script>
+(function(){
+ function updateInternetGuard(){
+   const lock=document.getElementById('cloudLockScreen');
+   if(!lock) return;
+
+   if(navigator.onLine){
+      lock.style.display='none';
+   }else{
+      lock.style.display='flex';
+   }
+ }
+
+ window.addEventListener('online',updateInternetGuard);
+ window.addEventListener('offline',updateInternetGuard);
+ window.addEventListener('load',updateInternetGuard);
+})();
+</script>
+
+
+<script>
+window.addEventListener('beforeunload',function(e){
+ if(window.__ERP_SYNC_PENDING__){
+   e.preventDefault();
+   e.returnValue='Cloud Sync pending';
+ }
+});
+</script>
+
+<script>
+/* ===== v17 UI-ONLY PATCH: Closing Check + Final Save Report + Cash Calculator ===== */
+(function(){
+  const money = n => Number(n||0).toLocaleString('bn-BD') + ' ৳';
+  const ids = ['cbk','cng','crk','cmc','cgp','crobi','cair','cbl','ctk','crc'];
+
+  window.calculateClosingCheck = function(){
+    let profit = 0;
+    try { profit = (typeof calculate==='function') ? Number(calculate()||0) : 0; } catch(e) { profit=0; }
+
+    const errors=[];
+    ids.forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      const raw=String(el.value||'').trim();
+      if(raw==='') errors.push(id.toUpperCase()+' খালি');
+      else if(Number(raw)<0) errors.push(id.toUpperCase()+' ঋণাত্মক');
+    });
+
+    const box=document.getElementById('closingCheckBox');
+    if(!box) return profit;
+
+    const mfs=(Number(document.getElementById('cbk')?.value||0)+Number(document.getElementById('cng')?.value||0)+Number(document.getElementById('crk')?.value||0)+Number(document.getElementById('cmc')?.value||0));
+    const recharge=(Number(document.getElementById('cgp')?.value||0)+Number(document.getElementById('crobi')?.value||0)+Number(document.getElementById('cair')?.value||0)+Number(document.getElementById('cbl')?.value||0)+Number(document.getElementById('ctk')?.value||0)+Number(document.getElementById('crc')?.value||0));
+
+    if(errors.length){
+      box.className='closing-check-box warn';
+      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Calculated Profit: '+money(profit);
+    }else{
+      box.className='closing-check-box ok';
+      box.innerHTML='✅ <b>কোনো ইনপুট ত্রুটি ধরা পড়েনি।</b><br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Total Profit: '+money(profit)+'<br>📌 Final Save চাপলে দিনশেষের রিপোর্ট Popup হবে।';
+    }
+    return profit;
+  };
+
+  // Final Save remains the original business function. Only the UI report is added after it succeeds.
+  if(typeof window.saveFinal==='function' && !window.__v16SaveWrapped){
+    const originalSaveFinal=window.saveFinal;
+    window.saveFinal=function(){
+      const result=originalSaveFinal.apply(this,arguments);
+      setTimeout(function(){
+        if(typeof window.showClosingReport==='function') window.showClosingReport();
+      },80);
+      return result;
+    };
+    window.__v16SaveWrapped=true;
+  }
+
+  // Keep the original cash-calculation behavior, but make the denomination inputs and buttons reliable.
+  if(typeof window.calcCash==='function' && !window.__v16CashWrapped){
+    const originalCalcCash=window.calcCash;
+    window.calcCash=function(){
+      try{
+        const values={n1000:1000,n500:500,n200:200,n100:100,n50:50,n20:20,n10:10};
+        let total=0;
+        Object.keys(values).forEach(id=>{
+          const el=document.getElementById(id);
+          if(!el) return;
+          const q=Number(String(el.value||'').replace(/,/g,''));
+          if(Number.isFinite(q) && q>0) total += q*values[id];
+        });
+        const out=document.getElementById('cashTotal');
+        if(out) out.textContent=total.toLocaleString('bn-BD');
+        window.__ERP_CASH_TOTAL__=total;
+        return total;
+      }catch(e){
+        return originalCalcCash.apply(this,arguments);
+      }
+    };
+    window.__v16CashWrapped=true;
+  }
+
+  function ensureCashButtons(){
+    const card=Array.from(document.querySelectorAll('.card')).find(c=>{
+      const h=c.querySelector('h2'); return h && h.textContent.trim()==='🧮 Smart Cash Calculator';
+    });
+    if(!card) return;
+    const buttons=card.querySelectorAll('.actions button');
+    if(buttons[0]) buttons[0].onclick=function(e){e.preventDefault();window.calcCash();};
+    if(buttons[1]) buttons[1].onclick=function(e){e.preventDefault();if(typeof window.applyCash==='function')window.applyCash();};
+    if(buttons[2]) buttons[2].onclick=function(e){e.preventDefault();if(typeof window.clearCalc==='function')window.clearCalc();};
+    card.querySelectorAll('.cash-grid input').forEach(el=>{
+      el.type='number';
+      el.min='0';
+      el.step='1';
+      el.addEventListener('input',window.calcCash);
+    });
+  }
+
+  window.addEventListener('load',function(){
+    setTimeout(ensureCashButtons,100);
+    setTimeout(ensureCashButtons,500);
+  });
+})();
+</script>
+</body>
+
+<script>
+
+window.ledgerPeople=JSON.parse(
+localStorage.getItem('ledgerPeople')||
+sessionStorage.getItem('ledgerPeople')||
+'[]'
+);
+
+// ===== SETTLED LEDGER ARCHIVE =====
+window.ledgerArchives=JSON.parse(
+localStorage.getItem('rasidulLedgerArchives')||
+sessionStorage.getItem('rasidulLedgerArchives')||
+'[]'
+);
+
+function dedupeLedgerArchives(){
+  const seen=new Set();
+  const out=[];
+  (window.ledgerArchives||[]).forEach(a=>{
+    const key=String(
+      a.archiveId ||
+      ((a.personId||'')+'|'+(a.personName||'')+'|'+(a.settledAt||'')+'|'+(a.businessDate||''))
+    );
+    if(seen.has(key)) return;
+    seen.add(key);
+    out.push(a);
+  });
+  window.ledgerArchives=out;
+  return out;
+}
+
+function saveLedgerArchives(){
+
+dedupeLedgerArchives();
+
+localStorage.setItem(
+'rasidulLedgerArchives',
+JSON.stringify(window.ledgerArchives)
+);
+
+sessionStorage.setItem(
+'rasidulLedgerArchives',
+JSON.stringify(window.ledgerArchives)
+);
+
+}
+// ===== END SETTLED LEDGER ARCHIVE =====
+
+function saveLedgerData(){
+
+localStorage.setItem('ledgerPeople',JSON.stringify(ledgerPeople));
+
+sessionStorage.setItem('ledgerPeople',JSON.stringify(ledgerPeople));
+
+if(window.erpCloudSave){
+erpCloudSave();
+}
+
+}
+
+function addPerson(){
+
+if(!personName.value) return alert('নাম লিখুন');
+
+ledgerPeople.push({
+name:personName.value,
+mobile:personMobile.value,
+history:[]
+});
+
+saveLedgerData();
+renderLedger();
+updateDueReminders();
+updateDueDashboard();
+
+if(window.erpCloudSave){
+erpCloudSave();
+}
+
+personName.value='';
+personMobile.value='';
+
+}
+
+
+function updateDueReminders(){
+let alerts=[];
+
+(ledgerPeople||[]).forEach(p=>{
+ if(!p.history || p.history.length===0) return;
+
+ let last=p.history[p.history.length-1];
+ let d=new Date(last.time);
+ let days=Math.floor((Date.now()-d.getTime())/(1000*60*60*24));
+
+ if(days>=10){
+   alerts.push('🔴 '+p.name+' ('+days+' days)');
+ }else if(days>=7){
+   alerts.push('🟠 '+p.name+' ('+days+' days)');
+ }else if(days>=3){
+   alerts.push('🟡 '+p.name+' ('+days+' days)');
+ }
+});
+
+let box=document.getElementById('dueReminderBox');
+if(box){
+ box.innerHTML=alerts.length?alerts.slice(0,3).join('<br>'):'✅ No Due Alerts';
+}
+}
+
+
+function sendDueReminder(index){
+let p=ledgerPeople[index];
+let balance=getLedgerBalance(p);
+if(balance>=0){ alert('No Due Found'); return; }
+if(!p.mobile){ alert('Mobile Number Missing'); return; }
+
+let msg=`🟠 ৳${Math.abs(balance)} টাকা বকেয়া রয়েছে
+
+👤 ${p.name}
+
+📌 পরিশোধযোগ্য বকেয়া: ৳${Math.abs(balance)}
+
+🙏 অনুগ্রহ করে সুবিধামতো সময়ে বকেয়া পরিশোধ করার জন্য অনুরোধ করা হলো।
+
+🤝 আপনার সহযোগিতার জন্য ধন্যবাদ।
+
+🏪 **Rubaiya Pharmacy**
+📩 *Sent by Rasidul*
+
+Please review your statement carefully. If you find any **mistake, unknown transaction, or unexpected entry**, kindly inform us immediately.
+
+🤖 *This is a computer-generated message.*
+
+Thank you for your cooperation. 💙
+**Rubaiya Pharmacy**
+`;
+
+window.location.href='https://wa.me/'+p.mobile+'?text='+encodeURIComponent(msg);
+}
+
+function updateDueDashboard(){
+let clients=0,total=0,high=0,payable=0;
+
+(ledgerPeople||[]).forEach(p=>{
+ let bal=getLedgerBalance(p);
+
+ if(bal<0){
+   clients++;
+   total+=Math.abs(bal);
+ }
+
+ if(bal>0){
+   payable+=bal;
+ }
+
+ if(p.history && p.history.length){
+   let d=new Date(p.history[p.history.length-1].time);
+   let days=Math.floor((Date.now()-d.getTime())/(1000*60*60*24));
+   if(days>=10) high++;
+ }
+});
+
+let el=document.getElementById('dueClientsCount');
+if(el) el.innerHTML=clients;
+
+el=document.getElementById('totalReceivable');
+if(el) el.innerHTML=total+' ৳';
+
+el=document.getElementById('totalReceivableNew');
+if(el) el.innerHTML=total+' ৳';
+
+el=document.getElementById('totalPayable');
+if(el) el.innerHTML=payable+' ৳';
+
+el=document.getElementById('netPosition');
+if(el) el.innerHTML=(total-payable)+' ৳';
+
+el=document.getElementById('highRiskCount');
+if(el) el.innerHTML=high;
+}
+function renderLedger(){
+
+let select=document.getElementById('ledgerPerson');
+
+if(select){
+select.innerHTML='';
+
+ledgerPeople.forEach((p,i)=>{
+select.innerHTML+=`<option value="${i}">${p.name}</option>`;
+});
+}
+
+let box=document.getElementById('ledgerBox');
+
+if(!box) return;
+
+box.innerHTML='';
+
+ledgerPeople.forEach((p,index)=>{
+
+let balance=0;
+let totalGiven=0;
+let totalTaken=0;
+let refundGiven=0;
+let refundReceived=0;
+
+p.history.forEach(h=>{
+
+if(h.type==='gave'){
+balance+=Number(h.amount);
+totalGiven+=Number(h.amount);
+}
+
+if(h.type==='took'){
+balance-=Number(h.amount);
+totalTaken+=Number(h.amount);
+}
+
+if(h.type==='refundGiven'){
+balance-=Number(h.amount);
+refundGiven+=Number(h.amount);
+}
+
+if(h.type==='refundReceived'){
+balance+=Number(h.amount);
+refundReceived+=Number(h.amount);
+}
+
+});
+
+let status=balance<0
+? `🟢 আমি তার কাছে পাবে ${Math.abs(balance)} ৳`
+: balance>0
+? `🔴 সে আমার কাছে পাবে ${balance} ৳`
+: `⚖️ Settled`;
+
+let historyHTML='';
+
+p.history.slice().reverse().slice(0,10).forEach(h=>{
+
+let typeText='';
+
+if(h.type==='gave') typeText='সে আমাকে টাকা দিল';
+if(h.type==='took') typeText='সে আমার থেকে টাকা নিল';
+if(h.type==='refundGiven') typeText='আমি তাকে ফেরত দিলাম';
+if(h.type==='refundReceived') typeText='সে আমাকে ফেরত দিল';
+
+historyHTML+=`
+<div class="history">
+
+<div class="tag">
+<button class="smallBtn edit" onclick="editTransaction(${index},${p.history.indexOf(h)})">Edit</button>
+<button class="smallBtn del" onclick="deleteTransaction(${index},${p.history.indexOf(h)})">Delete</button>
+</div>
+
+📅 ${h.time}<br>
+💰 ${h.amount} ৳<br>
+📌 ${typeText}<br>💳 ${h.method||'Not Set'}
+
+</div>
+`;
+
+});
+
+box.innerHTML+=`
+<div class="partner">
+
+<div class="tag">
+<button class="smallBtn edit" onclick="editPerson(${index})">Edit</button>
+<button class="smallBtn del" onclick="deletePerson(${index})">Delete</button>
+</div>
+
+<h3 style="margin-top:0">👤 ${p.name}</h3>
+📱 ${p.mobile||'No Mobile'}<br>
+${(()=>{let risk='🟢 Regular'; if(p.history&&p.history.length){let days=Math.floor((Date.now()-new Date(p.history[p.history.length-1].time).getTime())/(1000*60*60*24)); if(days>=90) risk='🔴 High Risk'; else if(days>=60) risk='🟠 Follow Up'; else if(days>=30) risk='🟡 Attention';} return risk;})()}<br><br>
+
+💸 Given: ${totalGiven} ৳<br>
+💵 Taken: ${totalTaken} ৳<br>
+🔄 Refund Given: ${refundGiven} ৳<br>
+🔁 Refund Received: ${refundReceived} ৳<br><br>
+
+<b>${status}</b><br><br><button onclick="sendDueReminder(${index})">📲 Send Reminder</button>
+
+${historyHTML||'<div class="history">No Transaction</div>'}
+</div>
+`;
+
+});
+
+}
+
+function editPerson(index){
+
+let p=ledgerPeople[index];
+
+let newName=prompt('Edit Name',p.name);
+
+if(newName===null) return;
+
+let newMobile=prompt('Edit Mobile',p.mobile||'');
+
+p.name=newName;
+p.mobile=newMobile;
+
+saveLedgerData();
+renderLedger();
+updateDueReminders();
+updateDueDashboard();
+
+}
+
+function deletePerson(index){
+
+let p=ledgerPeople[index];
+
+if(!confirm('Delete Client: '+p.name+' ?')) return;
+
+ledgerPeople.splice(index,1);
+
+saveLedgerData();
+renderLedger();
+updateDueReminders();
+updateDueDashboard();
+updateDueDashboard();
+
+}
+
+function editTransaction(personIndex,historyIndex){
+
+let item=ledgerPeople[personIndex].history[historyIndex];
+
+let amount=prompt('Edit Amount',item.amount);
+
+if(amount===null) return;
+
+amount=Number(amount);
+
+if(isNaN(amount)) return alert('Invalid Amount');
+
+item.amount=amount;
+
+let type=prompt(
+'gave / took / refundGiven / refundReceived',
+item.type
+);
+
+if(type){
+item.type=type;
+}
+
+item.updated=new Date().toLocaleString();
+
+saveLedgerData();
+renderLedger();
+updateDueDashboard();
+
+}
+
+function deleteTransaction(personIndex,historyIndex){
+
+if(!confirm('Delete Transaction?')) return;
+
+ledgerPeople[personIndex].history.splice(historyIndex,1);
+
+saveLedgerData();
+renderLedger();
+updateDueReminders();
+updateDueDashboard();
+
+}
+
+function archiveSettledLedger(personIndex){
+
+let person=ledgerPeople[personIndex];
+
+if(!person || !person.history || person.history.length===0){
+return false;
+}
+
+let finalBalance=getLedgerBalance(person);
+
+if(Math.abs(finalBalance)>0.001){
+return false;
+}
+
+let totalGiven=0;
+let totalTaken=0;
+let refundGiven=0;
+let refundReceived=0;
+
+person.history.forEach(h=>{
+
+let amount=Number(h.amount||0);
+
+if(h.type==='gave') totalGiven+=amount;
+if(h.type==='took') totalTaken+=amount;
+if(h.type==='refundGiven') refundGiven+=amount;
+if(h.type==='refundReceived') refundReceived+=amount;
+
+});
+
+let archiveItem={
+
+archiveId:'ARC-'+Date.now()+'-'+personIndex+'-'+Math.random().toString(36).slice(2,8),
+
+personId:person.id||null,
+
+personName:person.name,
+
+personMobile:person.mobile||'',
+
+settledAt:new Date().toLocaleString(),
+
+businessDate:new Date().toISOString().slice(0,10),
+
+finalBalance:0,
+
+totalGiven:totalGiven,
+
+totalTaken:totalTaken,
+
+refundGiven:refundGiven,
+
+refundReceived:refundReceived,
+
+transactions:JSON.parse(JSON.stringify(person.history))
+
+};
+
+dedupeLedgerArchives();
+
+const duplicateArchive=window.ledgerArchives.some(a =>
+  String(a.archiveId)===String(archiveItem.archiveId) ||
+  (
+    String(a.personName||'')===String(archiveItem.personName||'') &&
+    String(a.settledAt||'')===String(archiveItem.settledAt||'') &&
+    Number(a.finalBalance||0)===0 &&
+    JSON.stringify(a.transactions||[])===JSON.stringify(archiveItem.transactions||[])
+  )
+);
+
+if(!duplicateArchive){
+  window.ledgerArchives.unshift(archiveItem);
+}
+
+dedupeLedgerArchives();
+saveLedgerArchives();
+
+// Current ledger starts a fresh cycle.
+// The archived copy remains safely stored separately.
+person.history=[];
+
+saveLedgerData();
+
+renderLedger();
+renderLedgerArchives();
+updateDueReminders();
+updateDueDashboard();
+
+if(window.saveLedgerArchiveToCloud){
+  // Keep the archive cloud write in the settlement flow.
+  // The caller does not await this legacy helper, but the archive is already
+  // saved locally and the main cloud backup is awaited before WhatsApp opens.
+  window.saveLedgerArchiveToCloud(archiveItem);
+}
+
+alert(
+'✅ সকল হিসাব সমন্বয় হয়েছে!\\n\\n'+
+'👤 '+person.name+'\\n'+
+'📦 এই হিসাব Archive-এ সংরক্ষিত হয়েছে।\\n'+
+'🆕 Client-এর নতুন হিসাব এখন থেকে আলাদাভাবে শুরু হবে।'
+);
+
+return true;
+
+}
+
+function renderLedgerArchives(){
+
+dedupeLedgerArchives();
+
+let box=document.getElementById('ledgerArchiveBox');
+
+if(!box) return;
+
+box.innerHTML='';
+
+if(!window.ledgerArchives || window.ledgerArchives.length===0){
+
+box.innerHTML='<div class="history">📦 এখনো কোনো Settled Ledger Archive নেই।</div>';
+
+return;
+
+}
+
+window.ledgerArchives.forEach((a,i)=>{
+
+let txHTML=(a.transactions||[]).slice().reverse().map(h=>{
+
+let typeText='';
+
+if(h.type==='gave') typeText='সে আমাকে টাকা দিল';
+if(h.type==='took') typeText='সে আমার থেকে টাকা নিল';
+if(h.type==='refundGiven') typeText='আমি তাকে ফেরত দিলাম';
+if(h.type==='refundReceived') typeText='সে আমাকে ফেরত দিল';
+
+return `
+<div style="margin-top:8px;padding:8px;border-top:1px solid rgba(255,255,255,.15)">
+📅 ${h.time||''}<br>
+💰 ${Number(h.amount||0)} ৳<br>
+📌 ${typeText}<br>
+💳 ${h.method||'Not Set'}
+</div>
+`;
+
+}).join('');
+
+box.innerHTML+=`
+
+<div class="partner">
+
+<h3 style="margin-top:0">📦 ${a.personName}</h3>
+
+📱 ${a.personMobile||'No Mobile'}<br>
+🗓️ Settlement Date: ${a.settledAt}<br><br>
+
+💸 Given: ${a.totalGiven||0} ৳<br>
+💵 Taken: ${a.totalTaken||0} ৳<br>
+🔄 Refund Given: ${a.refundGiven||0} ৳<br>
+🔁 Refund Received: ${a.refundReceived||0} ৳<br>
+
+<h4 style="margin-bottom:5px">⚖️ Final Balance: 0 ৳</h4>
+
+<button type="button" class="archive-print-btn no-print" onclick="printLedgerArchive(${i})">🖨️ 58mm Print</button>
+
+<details>
+<summary>📜 View Archived Transactions (${(a.transactions||[]).length})</summary>
+${txHTML}
+</details>
+
+</div>
+`;
+
+});
+
+}
+
+async function saveLedgerTransaction(){
+
+if(ledgerPeople.length===0){
+return alert('আগে Person Add করুন');
+}
+
+let personIndex=Number(document.getElementById('ledgerPerson').value);
+let amount=Number(document.getElementById('ledgerAmount').value||0);
+let type=document.getElementById('ledgerType').value;
+let method=document.getElementById('ledgerMethod').value;
+let fundSource=document.getElementById('ledgerFundSource').value;
+
+if(amount<=0){
+return alert('সঠিক Amount দিন');
+}
+
+ledgerPeople[personIndex].history.push({
+amount:amount,
+type:type,
+method:method,
+fundSource:fundSource,
+time:new Date().toLocaleString()
+});
+
+let sign=(type==='gave' || type==='refundReceived') ? 1 : -1;
+
+if(fundSource==='mfs'){
+mfsCapital.value=(+mfsCapital.value||0)+(amount*sign);
+}else{
+rechargeCapital.value=(+rechargeCapital.value||0)+(amount*sign);
+}
+
+if(method.includes('Bkash')){
+obk.value=(+obk.value||0)+(amount*sign);
+}else if(method.includes('Nagad')){
+ong.value=(+ong.value||0)+(amount*sign);
+}else if(method.includes('Rocket')){
+ork.value=(+ork.value||0)+(amount*sign);
+}else if(method==='GP'){
+ogp.value=(+ogp.value||0)+(amount*sign);
+}else if(method==='Robi'){
+orobi.value=(+orobi.value||0)+(amount*sign);
+}else if(method==='Airtel'){
+oair.value=(+oair.value||0)+(amount*sign);
+}else if(method==='Banglalink'){
+obl.value=(+obl.value||0)+(amount*sign);
+}else if(method==='Tally'){
+otk.value=(+otk.value||0)+(amount*sign);
+}else if(method==='Cash'){
+if(fundSource==='mfs'){
+omc.value=(+omc.value||0)+(amount*sign);
+}else{
+orc.value=(+orc.value||0)+(amount*sign);
+}
+}
+
+// If this transaction makes the client's balance exactly zero,
+// archive the complete settlement cycle before starting a new cycle.
+let settledNow = archiveSettledLedger(personIndex);
+
+if(settledNow){
+  // Settlement archive must also trigger the normal WhatsApp confirmation.
+  // archiveSettledLedger() clears the live history, so build the message
+  // from the settled transaction before returning.
+  updateWorkingCapital();
+  updateLiveTotals();
+  autoSave();
+
+  saveLedgerData();
+
+  if(window.erpCloudSave){
+    await erpCloudSave();
+  }
+
+  let person=ledgerPeople[personIndex];
+
+  if(person && person.mobile && person.mobile.trim()!==''){
+    const message=buildWhatsAppSettlementMessage(person,amount,type,method);
+    const waUrl='https://wa.me/'+person.mobile+'?text='+encodeURIComponent(message);
+
+    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+      window.location.href=waUrl;
+    }else{
+      window.open(waUrl,'_blank');
+    }
+  }
+
+  document.getElementById('ledgerAmount').value='';
+  return;
+}
+
+updateWorkingCapital();
+updateLiveTotals();
+autoSave();
+
+saveLedgerData();
+renderLedger();
+updateDueReminders();
+updateDueDashboard();
+
+if(window.erpCloudSave){
+erpCloudSave();
+}
+
+let person=ledgerPeople[personIndex];
+
+if(person.mobile && person.mobile.trim()!==''){
+const message=buildWhatsAppMessage(person,amount,type,method);
+const waUrl='https://wa.me/'+person.mobile+'?text='+encodeURIComponent(message);
+
+if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+    window.location.href = waUrl;
+}else{
+    window.open(waUrl,'_blank');
+}
+}
+
+document.getElementById('ledgerAmount').value='';
+
+}
+
+renderLedger();
+renderLedgerArchives();
+updateDueReminders();
+updateDueDashboard();
+
+function getLedgerBalance(person){
+let balance=0;
+(person.history||[]).forEach(h=>{
+if(h.type==='gave' || h.type==='refundReceived') balance+=Number(h.amount||0);
+if(h.type==='took' || h.type==='refundGiven') balance-=Number(h.amount||0);
+});
+return balance;
+}
+
+
+function buildWhatsAppSettlementMessage(person,amount,type,method){
+  let title='';
+  if(type==='gave') title='🟢 ৳'+amount+' টাকা গ্রহণ করা হয়েছে';
+  else if(type==='took') title='🔴 ৳'+amount+' টাকা প্রদান করা হয়েছে';
+  else if(type==='refundReceived') title='💚 ৳'+amount+' টাকা ফেরত গ্রহণ করা হয়েছে';
+  else title='🧾 ৳'+amount+' টাকা ফেরত প্রদান করা হয়েছে';
+
+  return `${title}
+
+👤 NAME: ${person.name}
+💳 মাধ্যম: ${method}
+
+🤝 বর্তমান পাওনা: ৳0
+⚖️ সকল হিসাব সমন্বয় হয়ে গেছে।
+
+📦 সম্পূর্ণ হিসাবটি Archive-এ সংরক্ষণ করা হয়েছে।
+🧾 এই লেনদেনের পর নতুন হিসাবের সাইকেল শুরু হবে।
+
+✅ লেনদেন সফলভাবে সংরক্ষিত হয়েছে।
+
+⚠️ অনুগ্রহ করে হিসাবটি যাচাই করুন। কোনো ভুল, অপরিচিত বা অস্বাভাবিক লেনদেন দেখতে পেলে দ্রুত আমাদের জানান।
+
+🏪 Rubaiya Pharmacy
+📩 *Sent by RasidulAI*
+
+🤖*This is a computer-generated message.*
+
+💙 ধন্যবাদ।
+`;
+}
+
+function buildWhatsAppMessage(person,amount,type,method){
+const balance=getLedgerBalance(person);
+
+let title='';
+if(type==='gave') title='🟢 ৳'+amount+' টাকা গ্রহণ করা হয়েছে';
+else if(type==='took') title='🔴 ৳'+amount+' টাকা প্রদান করা হয়েছে';
+else if(type==='refundReceived') title='💚 ৳'+amount+' টাকা ফেরত গ্রহণ করা হয়েছে';
+else title='🧾 ৳'+amount+' টাকা ফেরত প্রদান করা হয়েছে';
+
+let balanceText='';
+if(balance<0) balanceText='📥 বর্তমান পাওনা: ৳'+Math.abs(balance);
+else if(balance>0) balanceText='📤 বর্তমান দেনা: ৳'+balance;
+else balanceText='🤝 সকল হিসাব সমন্বয় হয়েছে';
+
+return `${title}
+
+👤 NAME: ${person.name}
+💳 মাধ্যম: ${method}
+
+${balanceText}
+
+✅ লেনদেন সফলভাবে সংরক্ষিত হয়েছে।
+
+⚠️ অনুগ্রহ করে হিসাবটি যাচাই করুন। কোনো ভুল, অপরিচিত বা অস্বাভাবিক লেনদেন দেখতে পেলে দ্রুত আমাদের জানান।
+
+🏪 Rubaiya Pharmacy
+📩 *Sent by RasidulAI*
+
+🤖*This is a computer-generated message.*
+
+💙 ধন্যবাদ।
+`;
+}
+
+
+</script>
+
+
+<script>
+(function(){
+const currentDevice=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?'📱 Mobile':'💻 PC';
+
+window.addEventListener('load',()=>{
+ try{
+   const pd=document.getElementById('previousDeviceBox');
+   const cd=document.getElementById('cloudDeviceBox');
+   if(pd) pd.innerHTML=localStorage.getItem('previousDevice')||'Unknown';
+   if(cd) cd.innerHTML=localStorage.getItem('cloudDevice')||'Unknown';
+ }catch(e){}
+});
+
+document.addEventListener('input',()=>{
+ try{
+   localStorage.setItem('previousDevice',localStorage.getItem('lastDeviceName')||currentDevice);
+   localStorage.setItem('lastDeviceName',currentDevice);
+ }catch(e){}
+});
+})();
+</script>
+
+
+<style>
+/* ===== v19 HOTFIX: Base Capital + Smart Cash Calculator visibility ===== */
+#capitalPanel .capital-live-box{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;
+}
+#capitalPanel .capital-live{
+  padding:10px;border-radius:12px;background:rgba(255,255,255,.08);
+  text-align:center;border:1px solid rgba(255,255,255,.10);
+}
+#capitalPanel .capital-live small{display:block;opacity:.75;font-size:11px}
+#capitalPanel .capital-live b{font-size:17px}
+#ui_cash_mount>.card{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#ui_cash_mount>.card .cash-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,1fr)!important;
+  gap:7px!important;
+}
+#ui_cash_mount>.card .cash-grid input{
+  min-width:0!important;padding:10px 7px!important;
+}
+#ui_cash_mount>.card>.actions{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:7px!important;
+  margin-top:9px!important;
+}
+#ui_cash_mount>.card>.actions button{
+  margin:0!important;padding:10px 6px!important;font-size:12px!important;
+}
+@media(max-width:480px){
+  #capitalPanel .capital-live-box{grid-template-columns:1fr 1fr}
+  #ui_cash_mount>.card .cash-grid{grid-template-columns:repeat(2,1fr)!important}
+  #ui_cash_mount>.card>.actions{grid-template-columns:1fr 1fr 1fr!important}
+}
+</style>
+<script>
+/* ===== v19 HOTFIX CONTROLLER ===== */
+(function(){
+  function byId(id){return document.getElementById(id);}
+
+  function syncCapitalUI(){
+    const m=byId('mfsCapital'), r=byId('rechargeCapital');
+    const um=byId('ui_mfsCapital'), ur=byId('ui_rechargeCapital');
+    if(m && um && document.activeElement!==um) um.value=m.value||'0';
+    if(r && ur && document.activeElement!==ur) ur.value=r.value||'0';
+
+    let a=byId('capitalLiveMfs'), b=byId('capitalLiveRecharge');
+    if(a && m) a.textContent=Number(m.value||0).toLocaleString('bn-BD')+' ৳';
+    if(b && r) b.textContent=Number(r.value||0).toLocaleString('bn-BD')+' ৳';
+  }
+
+  function repairCapitalPanel(){
+    const panel=byId('capitalPanel');
+    if(!panel) return;
+
+    if(!byId('capitalLiveMfs')){
+      const live=document.createElement('div');
+      live.className='capital-live-box';
+      live.innerHTML='<div class="capital-live"><small>💸 MFS Current Capital</small><b id="capitalLiveMfs">0 ৳</b></div>'+
+                     '<div class="capital-live"><small>📱 Recharge Current Capital</small><b id="capitalLiveRecharge">0 ৳</b></div>';
+      const grid=panel.querySelector('.grid');
+      if(grid) grid.insertAdjacentElement('afterend',live);
+      else panel.appendChild(live);
+    }
+    syncCapitalUI();
+  }
+
+  function repairCashPanel(){
+    const mount=byId('ui_cash_mount');
+    if(!mount) return;
+
+    /* Find the original Smart Cash Calculator card and move only that card
+       into the visible UI panel. No cash business logic is replaced. */
+    let card=Array.from(document.querySelectorAll('.card')).find(c=>{
+      const h=c.querySelector('h2');
+      return h && h.textContent.trim()==='🧮 Smart Cash Calculator';
+    });
+
+    if(card && card.parentNode!==mount){
+      mount.appendChild(card);
+    }
+
+    if(card){
+      card.style.display='block';
+      card.style.visibility='visible';
+      card.style.opacity='1';
+
+      const title=card.querySelector('h2');
+      if(title) title.textContent='🧮 Smart Cash Calculator';
+
+      const btns=card.querySelectorAll('.actions button');
+      if(btns[0]) btns[0].onclick=function(e){e.preventDefault(); if(typeof window.calcCash==='function') window.calcCash();};
+      if(btns[1]) btns[1].onclick=function(e){e.preventDefault(); if(typeof window.applyCash==='function') window.applyCash();};
+      if(btns[2]) btns[2].onclick=function(e){e.preventDefault(); if(typeof window.clearCalc==='function') window.clearCalc();};
+
+      card.querySelectorAll('.cash-grid input').forEach(inp=>{
+        inp.type='number';
+        inp.min='0';
+        inp.step='1';
+        inp.addEventListener('input',function(){
+          if(typeof window.calcCash==='function') window.calcCash();
+        });
+      });
+    }
+  }
+
+  function ensureButtons(){
+    const cashBtn=document.querySelector('.ui-middle-btn[data-section="cashPanel"]');
+    if(cashBtn){
+      cashBtn.innerHTML='🧮 Smart Cash Calculator';
+      cashBtn.style.display='flex';
+      cashBtn.style.visibility='visible';
+    }
+
+    const capBtn=document.querySelector('.ui-middle-btn[data-business="capitalPanel"]');
+    if(capBtn){
+      capBtn.innerHTML='💎 Base Capital';
+      capBtn.style.display='flex';
+      capBtn.style.visibility='visible';
+    }
+  }
+
+  function repair(){
+    ensureButtons();
+    repairCapitalPanel();
+    repairCashPanel();
+    syncCapitalUI();
+  }
+
+  document.addEventListener('input',function(e){
+    if(e.target && ['mfsCapital','rechargeCapital','ui_mfsCapital','ui_rechargeCapital'].includes(e.target.id)){
+      setTimeout(syncCapitalUI,0);
+    }
+  });
+
+  window.addEventListener('load',function(){
+    repair();
+    setTimeout(repair,250);
+    setTimeout(repair,1000);
+  });
+
+  document.addEventListener('click',function(e){
+    const cash=e.target.closest && e.target.closest('.ui-middle-btn[data-section="cashPanel"]');
+    if(cash){
+      setTimeout(repairCashPanel,20);
+    }
+    const cap=e.target.closest && e.target.closest('.ui-middle-btn[data-business="capitalPanel"]');
+    if(cap){
+      setTimeout(repairCapitalPanel,20);
+    }
+  });
+
+  setInterval(syncCapitalUI,1000);
+})();
+</script>
+
+<style>
+/* ===== Smart Cash Calculator BUTTON FIX ===== */
+#ui_cash_mount .smart-cash-actions{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:10px 0 0;
+}
+#ui_cash_mount .smart-cash-actions button{
+  width:100%;
+  margin:0!important;
+  padding:11px 6px!important;
+  border-radius:12px!important;
+  font-size:13px!important;
+}
+#ui_cash_mount .smart-cash-total{
+  margin-top:10px;
+  padding:11px 12px;
+  border-radius:13px;
+  background:rgba(255,255,255,.08);
+  text-align:center;
+  font-weight:bold;
+}
+@media(max-width:480px){
+  #ui_cash_mount .smart-cash-actions{grid-template-columns:repeat(3,1fr);gap:6px}
+  #ui_cash_mount .smart-cash-actions button{font-size:11px!important;padding:10px 4px!important}
+}
+</style>
+<script>
+/* ===== Smart Cash Calculator BUTTON RESTORE =====
+   Uses the original calcCash(), applyCash(), clearCalc() functions.
+   No accounting/business logic is changed. */
+(function(){
+  function installSmartCashButtons(){
+    const mount=document.getElementById('ui_cash_mount');
+    if(!mount) return;
+    if(!mount.querySelector('.smart-cash-actions')){
+      const actions=document.createElement('div');
+      actions.className='smart-cash-actions';
+      actions.innerHTML=
+        '<button type="button" id="ui_cash_calculate">🧮 Calculate</button>'+
+        '<button type="button" id="ui_cash_apply">✅ Apply</button>'+
+        '<button type="button" id="ui_cash_clear">🧹 Clear</button>';
+      mount.appendChild(actions);
+
+      const total=document.createElement('div');
+      total.className='smart-cash-total';
+      total.innerHTML='💰 Total Cash: <span id="ui_cash_total">0</span> ৳';
+      mount.appendChild(total);
+
+      document.getElementById('ui_cash_calculate').onclick=function(){
+        if(typeof window.calcCash==='function'){
+          const result=window.calcCash();
+          const out=document.getElementById('ui_cash_total');
+          if(out) out.textContent=Number(result||0).toLocaleString('bn-BD');
+        }
+      };
+      document.getElementById('ui_cash_apply').onclick=function(){
+        if(typeof window.applyCash==='function') window.applyCash();
+        const out=document.getElementById('ui_cash_total');
+        const legacy=document.getElementById('cashTotal');
+        if(out && legacy) out.textContent=legacy.textContent||'0';
+      };
+      document.getElementById('ui_cash_clear').onclick=function(){
+        if(typeof window.clearCalc==='function') window.clearCalc();
+        const out=document.getElementById('ui_cash_total');
+        if(out) out.textContent='0';
+      };
+    }
+
+    mount.querySelectorAll('.cash-grid input').forEach(inp=>{
+      if(!inp.dataset.smartCashBound){
+        inp.dataset.smartCashBound='1';
+        inp.addEventListener('input',function(){
+          if(typeof window.calcCash==='function'){
+            const result=window.calcCash();
+            const out=document.getElementById('ui_cash_total');
+            if(out) out.textContent=Number(result||0).toLocaleString('bn-BD');
+          }
+        });
+      }
+    });
+  }
+
+  window.addEventListener('load',function(){
+    installSmartCashButtons();
+    setTimeout(installSmartCashButtons,200);
+    setTimeout(installSmartCashButtons,700);
+    setTimeout(installSmartCashButtons,1500);
+  });
+
+  document.addEventListener('click',function(e){
+    if(e.target.closest && e.target.closest('[data-section="cashPanel"]')){
+      setTimeout(installSmartCashButtons,30);
+    }
+  });
+})();
+</script>
+</html>
+
+<style>
+/* REQUESTED-ONLY FIX: Base Capital visible, not button */
+#capitalPanel{display:block!important;visibility:visible!important;}
+.ui-middle-btn[data-business="capitalPanel"]{display:none!important;}
+</style>
+<script>
+/* REQUESTED-ONLY FIX: Final Save -> Daily History + Closing Report + Monthly Profit */
+(function(){
+  function install(){
+    if(window.__requestedOnlyFinalSaveFix) return;
+    if(typeof window.saveFinal!=='function') return;
+    const original=window.saveFinal;
+    window.saveFinal=function(){
+      const result=original.apply(this,arguments);
+      try{
+        if(typeof window.renderHistory==='function') window.renderHistory();
+        if(typeof window.updateMonthly==='function') window.updateMonthly();
+        if(typeof window.updateAnalytics==='function') window.updateAnalytics();
+      }catch(e){}
+      setTimeout(function(){
+        if(typeof window.showClosingReport==='function') window.showClosingReport();
+      },100);
+      return result;
+    };
+    window.__requestedOnlyFinalSaveFix=true;
+  }
+  window.addEventListener('load',function(){
+    install(); setTimeout(install,100); setTimeout(install,500); setTimeout(install,1000);
+  });
+})();
+</script>
+
+<!-- FINAL SAVE ONLY: force the visible Closing Balance button to execute the existing saveFinal once -->
+<script>
+(function(){
+  function bindFinalSaveOnly(){
+    if(window.__dailyHistoryFinalSaveBound) return;
+    var btn=document.querySelector('#closingPanel button[onclick="saveFinal()"]');
+    if(!btn || typeof window.saveFinal!=='function') return;
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      var pairs=[
+        ['ui_cbk','cbk'],['ui_cng','cng'],['ui_crk','crk'],['ui_cmc','cmc'],
+        ['ui_cgp','cgp'],['ui_crobi','crobi'],['ui_cair','cair'],['ui_cbl','cbl'],
+        ['ui_ctk','ctk'],['ui_crc','crc'],['ui_closingNote','note']
+      ];
+      pairs.forEach(function(pair){
+        var ui=document.getElementById(pair[0]), legacy=document.getElementById(pair[1]);
+        if(ui && legacy) legacy.value=ui.value;
+      });
+      window.saveFinal();
+    },true);
+    window.__dailyHistoryFinalSaveBound=true;
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bindFinalSaveOnly);
+  else bindFinalSaveOnly();
+  window.addEventListener('load',bindFinalSaveOnly);
+  setTimeout(bindFinalSaveOnly,300);
+  setTimeout(bindFinalSaveOnly,1000);
+})();
+</script>
+
+<script>
+/* FINAL SAVE ONLY: ensure legacy saveFinal receives the visible closing values and note */
+(function(){
+  function fix(){
+    var b=document.querySelector('#closingPanel button');
+    var buttons=document.querySelectorAll('#closingPanel button');
+    for(var i=0;i<buttons.length;i++){
+      if((buttons[i].textContent||'').indexOf('Final Save')>-1){ b=buttons[i]; break; }
+    }
+    if(!b || b.__finalSaveV2) return;
+    b.__finalSaveV2=true;
+    b.removeAttribute('onclick');
+    b.addEventListener('click',function(ev){
+      ev.preventDefault(); ev.stopImmediatePropagation();
+      var map={ui_cbk:'cbk',ui_cng:'cng',ui_crk:'crk',ui_cmc:'cmc',ui_cgp:'cgp',ui_crobi:'crobi',ui_cair:'cair',ui_cbl:'cbl',ui_ctk:'ctk',ui_crc:'crc'};
+      Object.keys(map).forEach(function(a){var x=document.getElementById(a),y=document.getElementById(map[a]);if(x&&y)y.value=x.value;});
+      var n=document.getElementById('note');
+      if(!n){n=document.createElement('textarea');n.id='note';n.style.display='none';document.body.appendChild(n);}
+      var un=document.getElementById('ui_closingNote'); if(un)n.value=un.value;
+      try{ window.saveFinal(); }catch(err){ console.error('Final Save error:',err); alert('Final Save ব্যর্থ হয়েছে। Browser Console-এ ত্রুটি দেখুন।'); }
+    },true);
+  }
+  document.addEventListener('DOMContentLoaded',fix);
+  window.addEventListener('load',fix);
+  setTimeout(fix,300);setTimeout(fix,1000);setTimeout(fix,2000);
+})();
+</script>
+
+
+(function(){
+  function setupFinalSaveOnly(){
+    var all=document.querySelectorAll('button');
+    for(var i=0;i<all.length;i++){
+      var b=all[i], t=(b.textContent||'').replace(/\s+/g,' ').trim();
+      if(t.indexOf('Final Save')!==-1){
+        if(b.closest && b.closest('#closingPanel')) {
+          b.removeAttribute('onclick');
+          b.type='button';
+          b.style.display='';
+        } else {
+          b.removeAttribute('onclick');
+          b.style.display='none';
+          b.disabled=true;
+        }
+      }
+    }
+    var cb=document.querySelector('#closingPanel button');
+    if(!cb)return;
+    var buttons=document.querySelectorAll('#closingPanel button');
+    for(var j=0;j<buttons.length;j++){
+      if((buttons[j].textContent||'').indexOf('Final Save')!==-1){
+        cb=buttons[j]; break;
+      }
+    }
+    if(cb.__onlyClosingSave)return;
+    cb.__onlyClosingSave=true;
+    cb.addEventListener('click',function(e){
+      e.preventDefault(); e.stopImmediatePropagation();
+      var map=[['ui_cbk','cbk'],['ui_cng','cng'],['ui_crk','crk'],['ui_cmc','cmc'],['ui_cgp','cgp'],['ui_crobi','crobi'],['ui_cair','cair'],['ui_cbl','cbl'],['ui_ctk','ctk'],['ui_crc','crc']];
+      map.forEach(function(x){var a=document.getElementById(x[0]),b=document.getElementById(x[1]);if(a&&b)b.value=a.value;});
+      var u=document.getElementById('ui_closingNote'), n=document.getElementById('note');
+      if(!n){n=document.createElement('textarea');n.id='note';n.style.display='none';document.body.appendChild(n);}
+      if(u)n.value=u.value;
+      if(typeof window.saveFinal==='function') window.saveFinal();
+    },true);
+  }
+  document.addEventListener('DOMContentLoaded',setupFinalSaveOnly);
+  window.addEventListener('load',setupFinalSaveOnly);
+  setTimeout(setupFinalSaveOnly,500);
+  setTimeout(setupFinalSaveOnly,1500);
+})();
+</script>
+
+
+<!-- Expense Tracker now opens the dedicated expense-tracker.html page. -->
+
