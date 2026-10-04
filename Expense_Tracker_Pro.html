@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>Expense Tracker Pro</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#0d1828;--panel2:#111f32;--line:rgba(255,255,255,.09);
+  --text:#f8fafc;--muted:#94a3b8;--primary:#38bdf8;--primary2:#6366f1;
+  --good:#34d399;--warn:#fbbf24;--bad:#fb7185;--shadow:0 20px 60px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Bengali",sans-serif;background:
+radial-gradient(circle at 10% 0%,rgba(56,189,248,.13),transparent 28%),radial-gradient(circle at 90% 10%,rgba(99,102,241,.12),transparent 25%),var(--bg);color:var(--text)}
+button,input,select{font:inherit} button{cursor:pointer}
+.app{max-width:1450px;margin:auto;padding:18px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;border:1px solid var(--line);background:rgba(13,24,40,.82);backdrop-filter:blur(18px);border-radius:22px;box-shadow:var(--shadow);position:sticky;top:10px;z-index:30}
+.brand{display:flex;align-items:center;gap:13px}.brand-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--primary2));font-size:25px;box-shadow:0 10px 30px rgba(56,189,248,.2)}
+.brand h1{font-size:20px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#16243a;color:#fff;border-radius:12px;padding:10px 13px;font-weight:700}.btn:hover{filter:brightness(1.12)}.btn.primary{background:linear-gradient(135deg,#0284c7,#4f46e5);border:0}.btn.good{background:#065f46}.btn.warn{background:#92400e}.btn.danger{background:#7f1d1d}
+.nav{display:flex;gap:7px;overflow:auto;margin:14px 0;padding:6px;border:1px solid var(--line);background:rgba(13,24,40,.65);border-radius:16px}.nav button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:11px;font-weight:700}.nav button.active{background:#1d3552;color:#fff;box-shadow:inset 0 0 0 1px var(--line)}
+.page{display:none}.page.active{display:block}
+.hero{padding:24px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(99,102,241,.12)),rgba(13,24,40,.78);margin-bottom:14px}
+.hero-row{display:flex;justify-content:space-between;gap:20px;align-items:flex-end}.hero h2{font-size:28px;margin:0 0 7px}.hero p{margin:0;color:var(--muted);line-height:1.6}.monthbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.input,.select{width:100%;background:#081322;color:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 12px;outline:none}.monthbar .input{width:165px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}.card{padding:17px;border:1px solid var(--line);border-radius:18px;background:rgba(13,24,40,.8);box-shadow:var(--shadow)}.card small{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}.card strong{font-size:23px}.card .sub{font-size:11px;color:var(--muted);margin-top:7px}.card.good{border-color:rgba(52,211,153,.22)}.card.bad{border-color:rgba(251,113,133,.25)}.card.blue{border-color:rgba(56,189,248,.22)}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.panel{border:1px solid var(--line);border-radius:20px;background:rgba(13,24,40,.8);padding:17px;box-shadow:var(--shadow)}.panel h3{margin:0 0 13px;font-size:16px}.muted{color:var(--muted);font-size:12px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.full{grid-column:1/-1}.label{display:block;color:var(--muted);font-size:12px;margin:0 0 6px}
+.quickcats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.quickcats button{border:1px solid var(--line);background:#0b1626;color:#dbeafe;border-radius:11px;padding:9px 5px;font-size:11px}
+.tablewrap{overflow:auto;max-height:500px}.table{width:100%;border-collapse:collapse;min-width:720px}.table th,.table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}.table th{color:var(--muted);font-size:11px;position:sticky;top:0;background:#0d1828}.tag{display:inline-flex;padding:4px 8px;border-radius:999px;background:#122a43;color:#bae6fd;font-size:10px}.tag.owner{background:#3b1d32;color:#fbcfe8}.amount{font-weight:800}.negative{color:var(--bad)}.positive{color:var(--good)}
+.chart{width:100%;height:300px;display:block}.chartbox{height:300px}.empty{padding:30px;text-align:center;color:var(--muted)}
+.barrow{margin:12px 0}.barhead{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}.track{height:9px;background:#081322;border-radius:99px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:99px}
+.budget{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}.budget:last-child{border-bottom:0}
+.goalbox{padding:14px;border:1px solid var(--line);border-radius:15px;background:#0a1525}.goalbar{height:12px;background:#07101d;border-radius:99px;overflow:hidden;margin:10px 0}.goalbar>div{height:100%;background:linear-gradient(90deg,#34d399,#22d3ee);border-radius:99px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}.modal.show{display:flex}.modalbox{width:min(650px,100%);max-height:90vh;overflow:auto;background:#0d1828;border:1px solid var(--line);border-radius:22px;padding:19px;box-shadow:var(--shadow)}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modalhead h3{margin:0}.close{border:0;background:#17263a;color:#fff;border-radius:10px;width:38px;height:38px}
+.toast{position:fixed;right:18px;bottom:18px;z-index:200;background:#0d1828;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:13px;padding:12px 15px;display:none}.toast.show{display:block}
+.kpi-line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.kpi-line:last-child{border-bottom:0}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.app{padding:9px}.topbar{position:static;padding:13px}.hero-row{display:block}.monthbar{margin-top:14px}.cards{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.quickcats{grid-template-columns:repeat(3,1fr)}.hero h2{font-size:22px}.actions{width:100%}.actions .btn{flex:1}}
+@media(max-width:430px){.cards{grid-template-columns:1fr}.quickcats{grid-template-columns:1fr 1fr}.brand p{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">🧾</div>
+    <div><h1>Expense Tracker Pro</h1><p>Owner Withdrawal → Expense • Budget • Savings • Analytics</p></div>
+  </div>
+  <div class="actions">
+    <button class="btn" onclick="goERP()">↩ ERP</button>
+    <button class="btn primary" onclick="openExpenseModal()">＋ Manual Expense</button>
+  </div>
+</header>
+
+<nav class="nav">
+  <button class="active" data-tab="dashboard">📊 Dashboard</button>
+  <button data-tab="transactions">📋 Transactions</button>
+  <button data-tab="analytics">📈 Analytics</button>
+  <button data-tab="budget">🎯 Budget & Goals</button>
+  <button data-tab="backup">⚙ Backup & Settings</button>
+</nav>
+
+<section id="dashboard" class="page active">
+  <div class="hero">
+    <div class="hero-row">
+      <div><h2>আপনার খরচের সম্পূর্ণ ছবি</h2><p>Owner Withdrawal-ই Expense Tracker-এর মূল expense source। ERP-তে Withdrawal দিলেই কারণ, amount, date ও method স্বয়ংক্রিয়ভাবে এখানে আসে।</p></div>
+      <div class="monthbar"><input id="monthPicker" class="input" type="month"><button class="btn" onclick="setCurrentMonth()">📅 Current</button><button class="btn good" onclick="syncOwnerWithdrawals()">🔄 Sync ERP</button></div>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="card blue"><small>💸 Personal Expense</small><strong id="kExpense">৳0</strong><div class="sub">নির্বাচিত মাস</div></div>
+    <div class="card"><small>🏢 Business Profit</small><strong id="kProfit">৳0</strong><div class="sub">ERP history থেকে</div></div>
+    <div class="card good"><small>💰 Profit After Expense</small><strong id="kNet">৳0</strong><div class="sub">Profit − Expense</div></div>
+    <div class="card"><small>💼 Owner Withdrawal</small><strong id="kOwner">৳0</strong><div class="sub">Expense-এর মধ্যে অন্তর্ভুক্ত</div></div>
+    <div class="card"><small>🧮 Entries</small><strong id="kEntries">0</strong><div class="sub">এই মাসে</div></div>
+  </div>
+  <div class="grid2">
+    <div class="panel"><h3>📈 Daily Expense Trend</h3><div class="chartbox"><canvas id="dailyChart" class="chart"></canvas></div></div>
+    <div class="panel"><h3>🧠 Smart Insights</h3><div id="insights"></div></div>
+  </div>
+  <div class="grid3" style="margin-top:14px">
+    <div class="panel"><h3>🗂 Category Breakdown</h3><div id="categoryBreakdown"></div></div>
+    <div class="panel"><h3>💳 Payment Methods</h3><div id="methodBreakdown"></div></div>
+    <div class="panel"><h3>⚡ Quick Add</h3><div class="quickcats" id="quickCats"></div></div>
+  </div>
+</section>
+
+<section id="transactions" class="page">
+  <div class="hero"><div class="hero-row"><div><h2>📋 Expense Transactions</h2><p>সব খরচ এক জায়গায়। Owner Withdrawal আলাদা tag-এ দেখা যাবে।</p></div><button class="btn primary" onclick="openExpenseModal()">＋ Add Expense</button></div></div>
+  <div class="panel">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <input id="searchBox" class="input" style="max-width:280px" placeholder="🔎 Search note/category...">
+      <select id="filterCategory" class="select" style="max-width:210px"><option value="">সব Category</option></select>
+      <select id="filterMethod" class="select" style="max-width:180px"><option value="">সব Method</option></select>
+    </div>
+    <div class="tablewrap"><table class="table"><thead><tr><th>Date</th><th>Category</th><th>Note</th><th>Method</th><th>Amount</th><th>Source</th><th>Action</th></tr></thead><tbody id="expenseTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="analytics" class="page">
+  <div class="hero"><h2>📈 Analytics Center</h2><p>কোন খাতে বেশি খরচ হচ্ছে, কোন payment method বেশি ব্যবহার হচ্ছে এবং মাসভিত্তিক trend দেখুন।</p></div>
+  <div class="grid2">
+    <div class="panel"><h3>📊 Category Spending</h3><div class="chartbox"><canvas id="categoryChart" class="chart"></canvas></div></div>
+    <div class="panel"><h3>📅 Monthly Spending</h3><div class="chartbox"><canvas id="monthlyChart" class="chart"></canvas></div></div>
+  </div>
+  <div class="grid3" style="margin-top:14px">
+    <div class="panel"><h3>🔥 Highest Spending Category</h3><div id="topCategory" class="empty"></div></div>
+    <div class="panel"><h3>🧮 Average Entry</h3><div id="avgEntry" class="empty"></div></div>
+    <div class="panel"><h3>📉 Expense Ratio</h3><div id="expenseRatio" class="empty"></div></div>
+  </div>
+</section>
+
+<section id="budget" class="page">
+  <div class="hero"><div class="hero-row"><div><h2>🎯 Budget & Savings Goals</h2><p>আপনার মাসিক খরচের সীমা এবং savings target আলাদা করে সেট করুন।</p></div><button class="btn primary" onclick="openBudgetModal()">＋ Budget / Goal</button></div></div>
+  <div class="grid2">
+    <div class="panel"><h3>🧾 Category Budgets</h3><div id="budgetList"></div></div>
+    <div class="panel"><h3>💚 Savings Goal</h3><div id="goalBox"></div></div>
+  </div>
+</section>
+
+<section id="backup" class="page">
+  <div class="hero"><h2>⚙ Backup & Settings</h2><p>Expense data আলাদা localStorage-এ থাকে। Export করলে আপনার Expense Tracker-এর সম্পূর্ণ backup পাওয়া যাবে।</p></div>
+  <div class="grid3">
+    <div class="panel"><h3>📦 Backup</h3><p class="muted">Expense, budgets ও savings goal একসাথে JSON backup করুন।</p><button class="btn primary" onclick="exportAll()">⬇ Export Backup</button></div>
+    <div class="panel"><h3>📥 Restore</h3><p class="muted">আগের JSON backup restore করুন।</p><label class="btn" style="display:inline-block">⬆ Import Backup<input type="file" id="importFile" accept=".json,application/json" hidden></label></div>
+    <div class="panel"><h3>🧹 Data</h3><p class="muted">শুধু Expense Tracker-এর data মুছবে। ERP history স্পর্শ করবে না।</p><button class="btn danger" onclick="clearExpenseData()">Delete Expense Data</button></div>
+  </div>
+</section>
+</div>
+
+<div id="expenseModal" class="modal">
+ <div class="modalbox">
+  <div class="modalhead"><h3>➕ নতুন Expense</h3><button class="close" onclick="closeExpenseModal()">×</button></div>
+  <div class="formgrid">
+   <div><label class="label">তারিখ</label><input id="fDate" class="input" type="date"></div>
+   <div><label class="label">Amount (৳)</label><input id="fAmount" class="input" type="number" min="0" step="0.01" placeholder="0"></div>
+   <div><label class="label">Category</label><select id="fCategory" class="select"></select></div>
+   <div><label class="label">Payment Method</label><select id="fMethod" class="select"></select></div>
+   <div class="full"><label class="label">Note</label><input id="fNote" class="input" maxlength="180" placeholder="যেমন: বাজার, ওষুধ, যাতায়াত..."></div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:15px"><button class="btn" onclick="closeExpenseModal()">Cancel</button><button class="btn primary" onclick="saveExpense()">💾 Save Expense</button></div>
+ </div>
+</div>
+
+<div id="budgetModal" class="modal">
+ <div class="modalbox">
+  <div class="modalhead"><h3>🎯 Budget / Savings Goal</h3><button class="close" onclick="closeBudgetModal()">×</button></div>
+  <div class="formgrid">
+   <div><label class="label">Budget Category</label><select id="bCategory" class="select"></select></div>
+   <div><label class="label">Monthly Budget (৳)</label><input id="bAmount" class="input" type="number" min="0" placeholder="0"></div>
+   <div><label class="label">Savings Goal (৳)</label><input id="gTarget" class="input" type="number" min="0" placeholder="যেমন: 100000"></div>
+   <div><label class="label">Already Saved (৳)</label><input id="gSaved" class="input" type="number" min="0" placeholder="0"></div>
+  </div>
+  <p class="muted">Budget দিলে Category অনুযায়ী warning দেখাবে। Savings Goal dashboard-এ progress হিসেবে থাকবে।</p>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:15px"><button class="btn" onclick="closeBudgetModal()">Cancel</button><button class="btn primary" onclick="saveBudgetGoal()">💾 Save</button></div>
+ </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+'use strict';
+const KEY='rasidulExpenseTracker_v2';
+const LEGACY_KEY='rasidulExpenseTracker_v1';
+const CATS=['খাবার','বাসা','যাতায়াত','মোবাইল/ইন্টারনেট','পরিবার','চিকিৎসা','শিক্ষা','কেনাকাটা','বিল','Owner Withdrawal','অন্যান্য'];
+const METHODS=['Cash','Bkash','Nagad','Rocket','Bank','Other'];
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+const monthOf=d=>String(d||'').slice(0,7);
+const currentMonth=()=>today().slice(0,7);
+const money=n=>'৳'+(Number(n)||0).toLocaleString('en-US',{maximumFractionDigits:2});
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'{}');if(Array.isArray(x))return {expenses:x,budgets:{},goal:{target:0,saved:0}};return {expenses:Array.isArray(x.expenses)?x.expenses:[],budgets:x.budgets||{},goal:x.goal||{target:0,saved:0}}}catch(e){return {expenses:[],budgets:{},goal:{target:0,saved:0}}}}
+function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
+function selectedMonth(){return $('monthPicker').value||currentMonth()}
+function readERP(){try{const h=JSON.parse(localStorage.getItem('rasidulHistories')||'[]');return Array.isArray(h)?h:[]}catch(e){return []}}
+function parseHistDate(h){
+ let raw=h.date||h.savedAt||h.createdAt||'';
+ if(raw instanceof Date)return raw;
+ let s=String(raw);
+ let m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+ if(m){
+   let d=new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));
+   return isNaN(d)?null:d;
+ }
+ let d=new Date(raw);
+ return isNaN(d)?null:d;
+}
+function localDateKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function extractWithdrawalReason(h){
+ if(h.withdrawalReason)return String(h.withdrawalReason).trim();
+ const note=String(h.note||'');
+ const m=note.match(/📝\s*(.*?)\s*$/);
+ if(m)return m[1].trim();
+ return note.replace(/^💸\s*Owner Withdrawal:\s*[^|]+\|\s*💳[^|]+\|\s*/,'').trim()||'Owner Withdrawal';
+}
+function readOwnerWithdrawals(){return readERP().filter(h=>h.type==='ownerWithdrawal'&&Number(h.withdrawalAmount||0)>0).map(h=>{
+ const d=parseHistDate(h); if(!d)return null;
+ const id=String(h.id||('LEGACY-'+String(h.savedAt||h.date||'')+'-'+h.withdrawalAmount));
+ return {id:'OWNER-'+id,sourceId:'OWNER-'+id,erpWithdrawalId:h.id||'',date:localDateKey(d),amount:Number(h.withdrawalAmount||0),category:'Owner Withdrawal',method:h.withdrawalMethod||'Cash',note:extractWithdrawalReason(h),source:'ERP Owner Withdrawal',createdAt:h.createdAt||new Date().toISOString()};
+}).filter(Boolean)}
+function syncOwnerWithdrawals(){
+ let s=load();
+ const owners=readOwnerWithdrawals();
+ const ownerIds=new Set(owners.map(x=>x.sourceId));
+ const manual=s.expenses.filter(x=>x.source!=='ERP Owner Withdrawal' && !x.sourceId);
+ const synced=owners;
+ const next=[...synced,...manual];
+ const changed=JSON.stringify(next)!==JSON.stringify(s.expenses);
+ if(changed){s.expenses=next;save(s);toast('Owner Withdrawal → Expense Tracker sync হয়েছে ✓')}
+ renderAll();
+}
+function expenses(){return load().expenses}
+function monthExpenses(){return expenses().filter(x=>monthOf(x.date)===selectedMonth())}
+function openExpenseModal(cat){
+ $('expenseModal').classList.add('show');$('fDate').value=today();fillSelects();
+ if(cat) $('fCategory').value=cat;$('fAmount').focus();
+}
+function closeExpenseModal(){$('expenseModal').classList.remove('show')}
+window.openExpenseModal=openExpenseModal;window.closeExpenseModal=closeExpenseModal;
+function fillSelects(){
+ $('fCategory').innerHTML=CATS.map(x=>`<option>${esc(x)}</option>`).join('');
+ $('fMethod').innerHTML=METHODS.map(x=>`<option>${esc(x)}</option>`).join('');
+ $('bCategory').innerHTML=CATS.filter(x=>x!=='Owner Withdrawal').map(x=>`<option>${esc(x)}</option>`).join('');
+}
+function saveExpense(){
+ const date=$('fDate').value,amount=Number($('fAmount').value||0);
+ if(!date||amount<=0){toast('তারিখ ও সঠিক Amount দিন');return}
+ let s=load();s.expenses.unshift({id:'EXP-'+Date.now().toString(36),date,amount,category:$('fCategory').value,method:$('fMethod').value,note:$('fNote').value.trim(),source:'Manual',createdAt:new Date().toISOString()});save(s);
+ $('fAmount').value='';$('fNote').value='';closeExpenseModal();$('monthPicker').value=date.slice(0,7);toast('Expense save হয়েছে ✓');renderAll();
+}
+window.saveExpense=saveExpense;
+function deleteExpense(id){let s=load(),x=s.expenses.find(e=>e.id===id);if(!x)return;if(x.sourceId||x.source==='ERP Owner Withdrawal'){toast('ERP Owner Withdrawal এখান থেকে delete করা যাবে না। ERP থেকে পরিবর্তন করুন।');return}if(!confirm('এই Expense delete করবেন?'))return;s.expenses=s.expenses.filter(e=>e.id!==id);save(s);renderAll();toast('Expense deleted')}
+window.deleteExpense=deleteExpense;
+function setCurrentMonth(){$('monthPicker').value=currentMonth();renderAll()}window.setCurrentMonth=setCurrentMonth;
+function toast(t){const x=$('toast');x.textContent=t;x.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>x.classList.remove('show'),2200)}
+function initTabs(){document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active');renderAll()})}
+function drawLine(id,items){
+ const c=$(id),r=c.getBoundingClientRect(),dpr=devicePixelRatio||1,w=Math.max(320,r.width),h=Math.max(260,r.height);c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+ const by={};items.forEach(x=>by[x.date]=(by[x.date]||0)+Number(x.amount||0));const days=Object.keys(by).sort(),vals=days.map(d=>by[d]),max=Math.max(1,...vals),L=40,R=14,T=18,B=35,cw=w-L-R,ch=h-T-B;
+ ctx.strokeStyle='rgba(255,255,255,.1)';ctx.fillStyle='rgba(255,255,255,.45)';ctx.font='10px Arial';
+ for(let i=0;i<5;i++){let y=T+ch*i/4;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(w-R,y);ctx.stroke();ctx.fillText(String(Math.round(max*(1-i/4))),3,y+3)}
+ if(!days.length){ctx.textAlign='center';ctx.font='13px Arial';ctx.fillText('এই মাসে কোনো Expense নেই',w/2,h/2);return}
+ ctx.strokeStyle='#38bdf8';ctx.lineWidth=2.5;ctx.beginPath();
+ days.forEach((d,i)=>{let x=days.length===1?L+cw/2:L+i*cw/(days.length-1),y=T+ch-(by[d]/max)*ch;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+ ctx.stroke();ctx.fillStyle='#38bdf8';days.forEach((d,i)=>{let x=days.length===1?L+cw/2:L+i*cw/(days.length-1),y=T+ch-(by[d]/max)*ch;ctx.beginPath();ctx.arc(x,y,3.5,0,7);ctx.fill();if(i===0||i===days.length-1||i%Math.max(1,Math.floor(days.length/6))===0){ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='9px Arial';ctx.textAlign='center';ctx.fillText(d.slice(8,10),x,h-12);ctx.fillStyle='#38bdf8'}})
+}
+function drawCategory(){
+ const c=$('categoryChart'),r=c.getBoundingClientRect(),dpr=devicePixelRatio||1,w=Math.max(320,r.width),h=Math.max(260,r.height);c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+ const by={};monthExpenses().forEach(x=>by[x.category]=(by[x.category]||0)+Number(x.amount||0));const arr=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,8),max=Math.max(1,...arr.map(x=>x[1]));arr.forEach((x,i)=>{let y=20+i*29;ctx.fillStyle='rgba(255,255,255,.65)';ctx.font='11px Arial';ctx.fillText(x[0],5,y+9);ctx.fillStyle='#6366f1';ctx.fillRect(130,y,w-220,14);ctx.fillStyle='#fff';ctx.font='10px Arial';ctx.fillText(money(x[1]),w-84,y+10)});if(!arr.length){ctx.fillStyle='rgba(255,255,255,.5)';ctx.textAlign='center';ctx.fillText('No data',w/2,h/2)}
+}
+function drawMonthly(){
+ const c=$('monthlyChart'),r=c.getBoundingClientRect(),dpr=devicePixelRatio||1,w=Math.max(320,r.width),h=Math.max(260,r.height);c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+ const all=expenses(),by={};all.forEach(x=>{let m=monthOf(x.date);by[m]=(by[m]||0)+Number(x.amount||0)});const arr=Object.entries(by).sort().slice(-8),max=Math.max(1,...arr.map(x=>x[1])),L=35,R=15,B=28,T=15,cw=w-L-R;arr.forEach((x,i)=>{let bw=Math.max(18,cw/arr.length*.6),xx=L+(i+.5)*cw/arr.length-bw/2,hh=(x[1]/max)*(h-T-B);ctx.fillStyle='#38bdf8';ctx.fillRect(xx,h-B-hh,bw,hh);ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='9px Arial';ctx.textAlign='center';ctx.fillText(x[0].slice(5),xx+bw/2,h-9);ctx.fillStyle='#fff';ctx.fillText(String(Math.round(x[1])),xx+bw/2,h-B-hh-5)});if(!arr.length){ctx.fillStyle='rgba(255,255,255,.5)';ctx.textAlign='center';ctx.fillText('No data',w/2,h/2)}
+}
+function breakdown(items,key,target){
+ const by={};items.forEach(x=>by[x[key]]=(by[x[key]]||0)+Number(x.amount||0));const arr=Object.entries(by).sort((a,b)=>b[1]-a[1]),total=arr.reduce((a,x)=>a+x[1],0);
+ $(target).innerHTML=arr.length?arr.slice(0,7).map(x=>`<div class="barrow"><div class="barhead"><span>${esc(x[0])}</span><b>${money(x[1])}</b></div><div class="track"><div class="fill" style="width:${total?Math.min(100,x[1]/total*100):0}%"></div></div></div>`).join(''):'<div class="empty">কোনো data নেই</div>';
+}
+function renderDashboard(){
+ const it=monthExpenses(),total=it.reduce((a,x)=>a+Number(x.amount||0),0),profit=businessProfit(selectedMonth()),owner=it.filter(x=>x.category==='Owner Withdrawal').reduce((a,x)=>a+Number(x.amount||0),0),net=profit-total;
+ $('kExpense').textContent=money(total);$('kProfit').textContent=money(profit);$('kNet').textContent=money(net);$('kOwner').textContent=money(owner);$('kEntries').textContent=it.length;
+ drawLine('dailyChart',it);breakdown(it,'category','categoryBreakdown');breakdown(it,'method','methodBreakdown');
+ const s=load(),by={};it.forEach(x=>by[x.category]=(by[x.category]||0)+Number(x.amount||0));const cats=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+ let msgs=[];if(!it.length)msgs.push('এই মাসে এখনো কোনো personal expense নেই।');if(profit>0&&total>profit*.5)msgs.push('⚠️ Personal Expense এই মাসের Business Profit-এর ৫০% ছাড়িয়েছে।');if(cats[0])msgs.push('📌 সবচেয়ে বেশি খরচ: '+cats[0][0]+' ('+money(cats[0][1])+').');if(total>0)msgs.push('🧮 প্রতি entry গড়ে '+money(total/it.length)+'.');if(net<0)msgs.push('🔴 Expense বাদ দিলে এই মাসের হিসাব negative হচ্ছে।');
+ if(s.budgets){Object.entries(s.budgets).forEach(([cat,lim])=>{let spent=by[cat]||0;if(Number(lim)>0&&spent>Number(lim))msgs.push('⚠️ '+cat+' budget '+money(lim)+' ছাড়িয়েছে।')})}
+ $('insights').innerHTML=msgs.map(x=>`<div class="goalbox" style="margin-bottom:8px">${esc(x)}</div>`).join('')||'<div class="empty">কোনো বিশেষ সতর্কতা নেই।</div>';
+ $('quickCats').innerHTML=CATS.filter(x=>x!=='Owner Withdrawal').map(x=>`<button onclick="openExpenseModal('${esc(x).replace(/'/g,"&#39;")}')">${x}</button>`).join('');
+}
+function filteredTransactions(){
+ let it=monthExpenses(),q=$('searchBox').value.toLowerCase(),c=$('filterCategory').value,m=$('filterMethod').value;
+ return it.filter(x=>(!q||`${x.category} ${x.note} ${x.method}`.toLowerCase().includes(q))&&(!c||x.category===c)&&(!m||x.method===m))
+}
+function renderTransactions(){
+ const all=monthExpenses(),fc=$('filterCategory'),fm=$('filterMethod'),oldc=fc.value,oldm=fm.value;
+ fc.innerHTML='<option value="">সব Category</option>'+[...new Set(all.map(x=>x.category))].map(x=>`<option>${esc(x)}</option>`).join('');fm.innerHTML='<option value="">সব Method</option>'+[...new Set(all.map(x=>x.method))].map(x=>`<option>${esc(x)}</option>`).join('');fc.value=oldc;fm.value=oldm;
+ const it=filteredTransactions();$('expenseTable').innerHTML=it.length?it.map(x=>`<tr><td>${esc(x.date)}</td><td><span class="tag ${x.category==='Owner Withdrawal'?'owner':''}">${esc(x.category)}</span></td><td>${esc(x.note||'—')}</td><td>${esc(x.method)}</td><td class="amount">${money(x.amount)}</td><td>${x.source==='ERP Owner Withdrawal'?'<span class="tag owner">ERP</span>':'Manual'}</td><td><button class="btn danger" style="padding:6px 9px;font-size:11px" onclick="deleteExpense('${esc(x.id)}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">কোনো transaction পাওয়া যায়নি।</td></tr>';
+}
+function renderAnalytics(){
+ drawCategory();drawMonthly();const it=monthExpenses(),total=it.reduce((a,x)=>a+Number(x.amount||0),0),p=businessProfit(selectedMonth()),by={};it.forEach(x=>by[x.category]=(by[x.category]||0)+Number(x.amount||0));const top=Object.entries(by).sort((a,b)=>b[1]-a[1])[0];
+ $('topCategory').textContent=top?top[0]+' • '+money(top[1]):'No data';$('avgEntry').textContent=it.length?money(total/it.length):'৳0';$('expenseRatio').textContent=p>0?((total/p)*100).toFixed(1)+'% of Business Profit':'Business Profit data নেই';
+}
+function renderBudget(){
+ const s=load(),it=monthExpenses(),by={};it.forEach(x=>by[x.category]=(by[x.category]||0)+Number(x.amount||0));
+ $('budgetList').innerHTML=Object.keys(s.budgets).length?Object.entries(s.budgets).map(([cat,lim])=>{let spent=by[cat]||0,pct=Math.min(100,lim?spent/lim*100:0);return `<div class="budget"><div><b>${esc(cat)}</b><div class="muted">Spent ${money(spent)} / Budget ${money(lim)}</div><div class="track" style="margin-top:6px"><div class="fill" style="width:${pct}%"></div></div></div><button class="btn danger" style="padding:6px 9px" onclick="removeBudget('${esc(cat)}')">×</button></div>`}).join(''):'<div class="empty">কোনো budget সেট করা হয়নি।</div>';
+ const g=s.goal||{},target=Number(g.target||0),saved=Number(g.saved||0),pct=target?Math.min(100,saved/target*100):0;
+ $('goalBox').innerHTML=target?`<div class="goalbox"><div class="kpi-line"><span>Target</span><b>${money(target)}</b></div><div class="kpi-line"><span>Saved</span><b>${money(saved)}</b></div><div class="goalbar"><div style="width:${pct}%"></div></div><b>${pct.toFixed(0)}% complete</b><p class="muted">আরও ${money(Math.max(0,target-saved))} সঞ্চয় করলে target পূর্ণ হবে।</p></div>`:'<div class="empty">Savings Goal সেট করা হয়নি।</div>';
+}
+window.removeBudget=function(cat){let s=load();delete s.budgets[cat];save(s);renderBudget();toast('Budget removed')}
+function openBudgetModal(){const s=load();fillSelects();$('bAmount').value='';$('gTarget').value=s.goal.target||'';$('gSaved').value=s.goal.saved||'';$('budgetModal').classList.add('show')}function closeBudgetModal(){$('budgetModal').classList.remove('show')}window.openBudgetModal=openBudgetModal;window.closeBudgetModal=closeBudgetModal;
+window.saveBudgetGoal=function(){let s=load(),cat=$('bCategory').value,amt=Number($('bAmount').value||0);if(amt>0)s.budgets[cat]=amt;s.goal={target:Number($('gTarget').value||0),saved:Number($('gSaved').value||0)};save(s);closeBudgetModal();renderAll();toast('Budget & Goal saved ✓')}
+function exportAll(){const payload={app:'Expense Tracker Pro',version:2,exportedAt:new Date().toISOString(),...load()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='expense-tracker-pro-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}window.exportAll=exportAll;
+$('importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(!j||!Array.isArray(j.expenses))throw Error();save({expenses:j.expenses,budgets:j.budgets||{},goal:j.goal||{}});renderAll();toast('Backup restored ✓')}catch(x){toast('Invalid backup file')}};r.readAsText(f);e.target.value=''});
+function clearExpenseData(){if(!confirm('শুধু Expense Tracker-এর সব manual data মুছে ফেলবেন? ERP history মুছবে না।'))return;localStorage.removeItem(KEY);renderAll();toast('Expense Tracker data cleared')}
+window.clearExpenseData=clearExpenseData;
+function goERP(){if(document.referrer)history.back();else location.href='ERP_Expense_Tracker_Page.html'}window.goERP=goERP;
+function renderAll(){syncOwnerWithdrawalsSilent();renderDashboard();renderTransactions();renderAnalytics();renderBudget()}
+function syncOwnerWithdrawalsSilent(){let s=load(),owners=readOwnerWithdrawals(),manual=s.expenses.filter(x=>x.source!=='ERP Owner Withdrawal' && !x.sourceId),next=[...owners,...manual];if(JSON.stringify(next)!==JSON.stringify(s.expenses)){s.expenses=next;save(s)}}
+$('monthPicker').value=currentMonth();$('fDate').value=today();fillSelects();try{const old=JSON.parse(localStorage.getItem(LEGACY_KEY)||'[]');if(Array.isArray(old)&&old.length){let s=load(),manual=s.expenses.filter(x=>x.source!=='ERP Owner Withdrawal'&&!x.sourceId),legacyManual=old.filter(x=>x.source!=='ERP Owner Withdrawal'&&!x.sourceId);s.expenses=[...s.expenses.filter(x=>x.source==='ERP Owner Withdrawal'||x.sourceId),...manual,...legacyManual];save(s)}}catch(e){}initTabs();$('monthPicker').addEventListener('change',renderAll);$('searchBox').addEventListener('input',renderTransactions);$('filterCategory').addEventListener('change',renderTransactions);$('filterMethod').addEventListener('change',renderTransactions);
+window.syncOwnerWithdrawals=syncOwnerWithdrawals;window.addEventListener('resize',()=>{renderDashboard();renderAnalytics()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeExpenseModal();closeBudgetModal()}});
+window.addEventListener('storage',e=>{if(e.key==='rasidulHistories'){syncOwnerWithdrawalsSilent();renderAll();}});
+renderAll();
+})();
+</script>
+</body>
+</html>
