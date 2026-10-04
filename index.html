@@ -581,7 +581,7 @@ body.rpl-locked .container{filter:blur(5px);pointer-events:none;user-select:none
     <div class="rpl-icon">🔐</div>
     <h2 id="rplTitle">ERP Protected</h2>
     <p id="rplText">আপনার ব্যবসার হিসাব দেখতে ৪–৬ সংখ্যার PIN দিন।</p>
-    <input id="rplPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="PIN লিখুন" aria-label="ERP PIN">
+    <input id="rplPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="off" placeholder="PIN লিখুন" aria-label="ERP PIN">
     <div id="rplError" class="rpl-error"></div>
     <button id="rplBtn" type="button">🔓 Login</button>
     <button id="rplBioBtn" type="button" style="width:100%;margin-top:9px;height:46px;border:1px solid rgba(56,189,248,.28);border-radius:13px;background:#0b2033;color:#e0f2fe;font-weight:800;font-size:13px;cursor:pointer;display:none">🫆 Fingerprint / Device Unlock</button>
@@ -607,7 +607,7 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
       <button class="ers-btn" style="width:100%;margin-top:10px;background:#075985" onclick="saveERPNewPin()">💾 Save New PIN</button>
     </div>
     <div id="ersStatus" class="ers-status"></div>
-    <div class="ers-note">নোট: PIN ও security preferences এই browser-এর local storage-এ থাকে। দুটো security option-ই OFF করলে ERP সরাসরি খুলবে।</div>
+    <div class="ers-note">নোট: PIN-এর দৈনন্দিন setting এই browser-এ থাকে। Browser data clear হলেও নতুন PIN সেট করার screen আসবে না; Recovery PIN দিয়ে প্রবেশ করে নতুন PIN সেট করতে হবে।</div>
   </div>
 </div>
 <div class="bg"></div>
@@ -809,6 +809,19 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
   <div class="grid">
     <div><label>💰 Withdraw Amount</label><input id="ui_withdrawAmount" value="0"></div>
     <div><label>📝 Withdraw Reason</label><textarea id="ui_withdrawReason" placeholder="Reason"></textarea></div>
+    <div><label>📂 Expense Category</label>
+      <select id="ui_withdrawCategory">
+        <option value="খাবার ও বাজার">🍚 খাবার ও বাজার</option>
+        <option value="বাসা ও ভাড়া">🏠 বাসা ও ভাড়া</option>
+        <option value="চিকিৎসা">💊 চিকিৎসা</option>
+        <option value="শিক্ষা">📚 শিক্ষা</option>
+        <option value="যাতায়াত">🚗 যাতায়াত</option>
+        <option value="বিল ও ইউটিলিটি">💡 বিল ও ইউটিলিটি</option>
+        <option value="পরিবার ও ব্যক্তিগত">👨‍👩‍👧 পরিবার ও ব্যক্তিগত</option>
+        <option value="ব্যবসা সংক্রান্ত">💼 ব্যবসা সংক্রান্ত</option>
+        <option value="অন্যান্য">📦 অন্যান্য</option>
+      </select>
+    </div>
     <div><label>🏦 Withdraw From</label>
       <select id="ui_withdrawSource"><option value="mfs">MFS Capital</option><option value="recharge">Recharge Capital</option></select>
     </div>
@@ -866,6 +879,19 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 <label style="margin-top:10px">📝 Withdraw Reason</label>
 <textarea id="withdrawReason" placeholder="Reason"></textarea>
+
+<label style="margin-top:10px">📂 Expense Category</label>
+<select id="withdrawCategory">
+<option value="খাবার ও বাজার">🍚 খাবার ও বাজার</option>
+<option value="বাসা ও ভাড়া">🏠 বাসা ও ভাড়া</option>
+<option value="চিকিৎসা">💊 চিকিৎসা</option>
+<option value="শিক্ষা">📚 শিক্ষা</option>
+<option value="যাতায়াত">🚗 যাতায়াত</option>
+<option value="বিল ও ইউটিলিটি">💡 বিল ও ইউটিলিটি</option>
+<option value="পরিবার ও ব্যক্তিগত">👨‍👩‍👧 পরিবার ও ব্যক্তিগত</option>
+<option value="ব্যবসা সংক্রান্ত">💼 ব্যবসা সংক্রান্ত</option>
+<option value="অন্যান্য">📦 অন্যান্য</option>
+</select>
 
 <label style="margin-top:10px">🏦 Withdraw From</label>
 <select id="withdrawSource">
@@ -1052,8 +1078,8 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
 
 <script id="expenseTrackerPageNavigation">
 function openExpenseTrackerPage(){
-  try { window.location.href='expense-tracker.html'; }
-  catch(e){ alert('Expense Tracker page খোলা যাচ্ছে না। একই folder-এ expense-tracker.html রাখুন।'); }
+  try { window.location.href='Expense_Tracker_Pro.html'; }
+  catch(e){ alert('Expense Tracker page খোলা যাচ্ছে না। একই folder-এ Expense_Tracker_Pro.html রাখুন।'); }
 }
 </script>
 
@@ -1478,6 +1504,7 @@ let amount=v('withdrawAmount');
 if(amount<=0) return alert('Enter Valid Amount');
 
 let reason=document.getElementById('withdrawReason').value||'No Reason';
+let category=document.getElementById('withdrawCategory').value||'অন্যান্য';
 let source=document.getElementById('withdrawSource').value;
 let method=document.getElementById('withdrawMethod').value;
 
@@ -1506,12 +1533,16 @@ else{
   else orc.value=Math.max(0,v('orc')-amount);
 }
 
+const withdrawalId='OW-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
 histories.unshift({
+id:withdrawalId,
 date:new Date().toLocaleString(),
 type:'ownerWithdrawal',
 withdrawalAmount:amount,
 withdrawalMethod:method,
 withdrawalSource:source,
+withdrawalReason:reason,
+withdrawalCategory:category,
 mfs:0,
 recharge:0,
 profit:0,
@@ -1519,38 +1550,11 @@ note:'💸 Owner Withdrawal: '+amount+' ৳ | 💳 '+method+' | 📝 '+reason
 });
 
 localStorage.setItem('rasidulHistories',JSON.stringify(histories));
+try{ window.dispatchEvent(new StorageEvent('storage',{key:'rasidulHistories',newValue:localStorage.getItem('rasidulHistories')})); }catch(e){}
 
-/* ===== ADDITIVE EXPENSE TRACKER LINK =====
-   Owner Withdrawal remains a separate Owner Withdrawal record exactly as before.
-   In addition, the same withdrawal is recorded in the separate Expense Tracker
-   so personal spending is visible in the expense ledger. This does NOT change
-   Business Profit, Capital, Opening/Closing Balance, or the Owner Withdrawal formula.
-*/
-try{
-  const expenseKey='rasidulExpenseTracker_v1';
-  const expenseData=JSON.parse(localStorage.getItem(expenseKey)||'[]');
-  const now=new Date();
-  const yyyy=now.getFullYear();
-  const mm=String(now.getMonth()+1).padStart(2,'0');
-  const dd=String(now.getDate()).padStart(2,'0');
-  expenseData.unshift({
-    id:'OW-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),
-    date:yyyy+'-'+mm+'-'+dd,
-    amount:amount,
-    category:'Owner Withdrawal',
-    method:method,
-    note:'Owner Withdrawal: '+reason+' | Source: '+source,
-    type:'ownerWithdrawalExpense',
-    createdAt:now.toISOString()
-  });
-  localStorage.setItem(expenseKey,JSON.stringify(expenseData));
-  if(typeof window.etRender==='function' && document.getElementById('expenseTrackerOverlay')?.style.display!=='none'){
-    document.getElementById('etMonth').value=yyyy+'-'+mm;
-    window.etRender();
-  }
-}catch(expenseLinkError){
-  console.warn('Expense Tracker link failed, original withdrawal is preserved.',expenseLinkError);
-}
+/* Expense Tracker reads this Owner Withdrawal record automatically from
+   rasidulHistories. No separate expense record is written here, which prevents
+   duplicate entries and keeps ERP accounting as the single source of truth. */
 
 /* Existing calculations/UI refresh only. No accounting formula changed. */
 renderHistory();
@@ -2120,6 +2124,8 @@ ${tx}
   var PIN_KEY='rasidulERP_pin_v2';
   var BIO_KEY='rasidulERP_biometric_credential_v2';
   var PIN_ENABLED_KEY='rasidulERP_pin_enabled_v1';
+  /* Anti-reset recovery verifier. The recovery PIN itself is NOT stored in the HTML, only its SHA-256 digest. */
+  var RECOVERY_PIN_HASH='22ad231ac7a4900e3ed85aa387a4553517111b2261d19c9899a29e7999854101';
   var BIO_ENABLED_KEY='rasidulERP_biometric_enabled_v1';
   var lock=document.getElementById('rasidulPinLock');
   var input=document.getElementById('rplPin');
@@ -2135,9 +2141,12 @@ ${tx}
   document.body.classList.add('rpl-locked');
   lock.hidden=false;
 
-  function clean(v){return String(v||'').replace(/\D/g,'').slice(0,6);}
+  function clean(v){return String(v||'').replace(/\D/g,'').slice(0,12);}
   function getPin(){try{return localStorage.getItem(PIN_KEY)||'';}catch(e){return '';}}
-  function getPinEnabled(){try{var v=localStorage.getItem(PIN_ENABLED_KEY);return v===null?!!getPin():v==='1';}catch(e){return !!getPin();}}
+  async function sha256(v){if(!window.crypto||!crypto.subtle)throw new Error('SHA-256 unavailable');var b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b),a=new Uint8Array(h),s='';for(var i=0;i<a.length;i++)s+=a[i].toString(16).padStart(2,'0');return s;}
+  async function validRecoveryPin(v){try{return (await sha256(v))===RECOVERY_PIN_HASH;}catch(e){return false;}}
+  async function validPin(v){var saved=getPin();if(saved&&v===saved)return true;return await validRecoveryPin(v);}
+  function getPinEnabled(){try{var v=localStorage.getItem(PIN_ENABLED_KEY);return v===null?true:v==='1';}catch(e){return true;}}
   function getBioEnabled(){try{return localStorage.getItem(BIO_ENABLED_KEY)==='1';}catch(e){return false;}}
   function setBool(k,v){try{localStorage.setItem(k,v?'1':'0');return true;}catch(e){return false;}}
   function setPin(v){try{localStorage.setItem(PIN_KEY,v);return true;}catch(e){return false;}}
@@ -2157,7 +2166,7 @@ ${tx}
     title.textContent='Set ERP PIN';
     text.textContent='প্রথমবার ব্যবহার। ৪–৬ সংখ্যার একটি PIN সেট করুন।';
     btn.textContent='🔒 Set PIN & Login';
-    note.textContent='PIN এই browser-এর local storage-এ থাকবে।';
+    note.textContent='Security reset হলে নতুন PIN বানানো যাবে না। Owner PIN দিয়ে Login করতে হবে।';
   }
   function showLogin(){
     title.textContent='ERP Protected';
@@ -2219,18 +2228,23 @@ ${tx}
       if(bioStatus)bioStatus.textContent='Fingerprint/Device Unlock সফল হয়নি। PIN দিয়ে Login করুন।';
     }
   }
-  function submit(){
+  async function submit(){
     var pin=clean(input.value);input.value=pin;error.textContent='';
     if(pin.length<4){error.textContent='কমপক্ষে ৪টি সংখ্যা দিন।';input.focus();return;}
-    var saved=getPin();
-    if(!saved){if(!setPin(pin)){error.textContent='PIN সংরক্ষণ করা যায়নি। Browser storage চালু করুন।';return;}finish();updateBioUI();return;}
-    if(pin===saved)finish();
-    else{error.textContent='PIN সঠিক নয়। আবার চেষ্টা করুন।';input.value='';input.focus();}
+    try{
+      var ok=await validPin(pin);
+      if(ok){
+        /* If this is the recovery PIN, establish it as the local working PIN. */
+        if(!getPin() && await validRecoveryPin(pin)) setPin(pin);
+        setBool(PIN_ENABLED_KEY,true);finish();updateBioUI();return;
+      }
+    }catch(e){}
+    error.textContent='PIN সঠিক নয়। আবার চেষ্টা করুন।';input.value='';input.focus();
   }
 
   /* Never trust a previous tab/session unlock flag. A new page load starts locked. */
-  if(!getPin()){showSetup();}
-  else if(getPinEnabled()){showLogin();}
+  /* Never expose a 'first setup' path after storage is cleared. */
+  if(getPinEnabled()){showLogin();}
   else {finish();}
   input.addEventListener('input',function(){input.value=clean(input.value);error.textContent='';});
   input.addEventListener('keydown',function(e){if(e.key==='Enter')submit();});
@@ -2250,10 +2264,12 @@ ${tx}
 <script id="rasidul-security-settings-js">
 (function(){
 'use strict';
-var PK='rasidulERP_pin_v2',PE='rasidulERP_pin_enabled_v1',BE='rasidulERP_biometric_enabled_v1',BK='rasidulERP_biometric_credential_v2';
+var PK='rasidulERP_pin_v2',PE='rasidulERP_pin_enabled_v1',BE='rasidulERP_biometric_enabled_v1',BK='rasidulERP_biometric_credential_v2',RH='22ad231ac7a4900e3ed85aa387a4553517111b2261d19c9899a29e7999854101';
 function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
 function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
 function pin(){return lsGet(PK,'')}
+async function sha256(v){if(!window.crypto||!crypto.subtle)throw new Error('SHA-256 unavailable');var b=new TextEncoder().encode(v),h=await crypto.subtle.digest('SHA-256',b),a=new Uint8Array(h),s='';for(var i=0;i<a.length;i++)s+=a[i].toString(16).padStart(2,'0');return s;}
+async function validCurrent(v){var p=pin();if(p&&v===p)return true;return (await sha256(v))===RH}
 function pinOn(){return lsGet(PE,pin()?'1':'0')==='1'}
 function bioOn(){return lsGet(BE,'0')==='1'}
 function setText(t){var x=document.getElementById('ersStatus');if(x)x.textContent=t}
@@ -2262,7 +2278,7 @@ window.openERPSecuritySettings=function(){
 };
 window.closeERPSecuritySettings=function(){document.getElementById('erpSecuritySettings').classList.remove('show')};
 window.showERPChangePin=function(){document.getElementById('ersChangeBox').style.display='block';document.getElementById('ersNewPin').focus()};
-window.saveERPNewPin=function(){var a=document.getElementById('ersNewPin').value.replace(/\D/g,'').slice(0,6),b=document.getElementById('ersNewPin2').value.replace(/\D/g,'').slice(0,6);if(a.length<4){setText('PIN কমপক্ষে ৪ সংখ্যার হতে হবে।');return}if(a!==b){setText('দুইটি PIN মিলছে না।');return}if(!lsSet(PK,a)){setText('PIN সংরক্ষণ করা যায়নি।');return}lsSet(PE,'1');document.getElementById('ersPinEnabled').checked=true;document.getElementById('ersNewPin').value='';document.getElementById('ersNewPin2').value='';document.getElementById('ersChangeBox').style.display='none';setText('নতুন PIN সফলভাবে সংরক্ষণ হয়েছে ✓')};
+window.saveERPNewPin=async function(){var a=document.getElementById('ersNewPin').value.replace(/\D/g,'').slice(0,6),b=document.getElementById('ersNewPin2').value.replace(/\D/g,'').slice(0,6);var current=prompt('বর্তমান PIN / Recovery PIN দিন:');current=String(current||'').replace(/\D/g,'').slice(0,12);try{if(!(await validCurrent(current))){setText('বর্তমান PIN সঠিক নয়।');return}}catch(e){setText('PIN যাচাই করা যাচ্ছে না। আবার চেষ্টা করুন।');return}if(a.length<4){setText('PIN কমপক্ষে ৪ সংখ্যার হতে হবে।');return}if(a!==b){setText('দুইটি PIN মিলছে না।');return}if(!lsSet(PK,a)){setText('PIN সংরক্ষণ করা যায়নি।');return}lsSet(PE,'1');document.getElementById('ersPinEnabled').checked=true;document.getElementById('ersNewPin').value='';document.getElementById('ersNewPin2').value='';document.getElementById('ersChangeBox').style.display='none';setText('নতুন PIN সফলভাবে সংরক্ষণ হয়েছে ✓')};
 document.getElementById('ersPinEnabled').addEventListener('change',function(){
  if(this.checked){if(!pin()){this.checked=false;showERPChangePin();setText('আগে একটি PIN সেট করুন।');return}lsSet(PE,'1');setText('PIN Security ON ✓')}
  else {lsSet(PE,'0');setText('PIN Security OFF ✓');document.getElementById('ersBioEnabled').checked=false;lsSet(BE,'0')}
@@ -2551,6 +2567,7 @@ document.getElementById('ersBioEnabled').addEventListener('change',async functio
     ui_mfsCapital:'mfsCapital', ui_rechargeCapital:'rechargeCapital',
     ui_mfsReinvest:'mfsReinvest', ui_rechargeReinvest:'rechargeReinvest',
     ui_withdrawAmount:'withdrawAmount', ui_withdrawReason:'withdrawReason',
+    ui_withdrawCategory:'withdrawCategory',
     ui_withdrawSource:'withdrawSource', ui_withdrawMethod:'withdrawMethod'
   };
 
