@@ -3842,8 +3842,8 @@ fundSource:fundSource,
 time:new Date().toLocaleString()
 });
 
-// Cash/Opening Balance movement: money given out reduces the selected opening balance; money received increases it.
-let sign=(type==='gave' || type==='refundGiven') ? -1 : 1;
+// Cash/Opening Balance movement follows the selected transaction: money received increases the balance; money paid out decreases it.
+let sign=(type==='took' || type==='refundGiven') ? -1 : 1;
 
 if(fundSource==='mfs'){
 mfsCapital.value=(+mfsCapital.value||0)+(amount*sign);
