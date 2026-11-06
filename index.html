@@ -1565,105 +1565,73 @@ alert('🚀 Main Capital Updated');
 }
 
 function withdrawCapital(){
+  const amount=v('withdrawAmount');
+  if(!Number.isFinite(amount)||amount<=0) return alert('সঠিক Withdrawal Amount দিন');
 
-let amount=v('withdrawAmount');
-if(amount<=0) return alert('Enter Valid Amount');
+  const reason=document.getElementById('withdrawReason').value||'No Reason';
+  const category=document.getElementById('withdrawCategory').value||'অন্যান্য';
+  const source=document.getElementById('withdrawSource').value;
+  const method=document.getElementById('withdrawMethod').value;
 
-let reason=document.getElementById('withdrawReason').value||'No Reason';
-let category=document.getElementById('withdrawCategory').value||'অন্যান্য';
-let source=document.getElementById('withdrawSource').value;
-let method=document.getElementById('withdrawMethod').value;
+  // Method -> exact Opening Balance field and its owning capital group.
+  const accountMap={
+    Bkash:{field:'obk',source:'mfs'}, Nagad:{field:'ong',source:'mfs'},
+    Rocket:{field:'ork',source:'mfs'}, Tally:{field:'otk',source:'mfs'},
+    GP:{field:'ogp',source:'recharge'}, Robi:{field:'orobi',source:'recharge'},
+    Airtel:{field:'oair',source:'recharge'}, Banglalink:{field:'obl',source:'recharge'},
+    Cash:{field:source==='mfs'?'omc':'orc',source:source}
+  };
+  const account=accountMap[method];
+  if(!account) return alert('নির্বাচিত Method সঠিক নয়।');
+  if(account.source!==source){
+    return alert('নির্বাচিত Method এবং Withdraw From মিলছে না। '+method+' হলো '+(account.source==='mfs'?'MFS':'Recharge')+' খাতের।');
+  }
 
-/*
-  OWNER WITHDRAWAL FORMULA UNCHANGED:
-  1) Selected Base Capital থেকে Withdrawal amount বাদ হবে.
-  2) যে Method থেকে টাকা নেওয়া হচ্ছে, সেই Opening Balance থেকে একই amount বাদ হবে.
-  3) Withdrawal Profit/Loss নয়, তাই profit = 0 থাকবে.
-*/
-if(source==='mfs'){
-  mfsCapital.value=Math.max(0,v('mfsCapital')-amount);
-}else{
-  rechargeCapital.value=Math.max(0,v('rechargeCapital')-amount);
-}
+  const capitalId=source==='mfs'?'mfsCapital':'rechargeCapital';
+  const capital=Number(document.getElementById(capitalId).value||0);
+  const opening=Number(document.getElementById(account.field).value||0);
+  if(amount>opening) return alert('নির্বাচিত Opening Balance-এ পর্যাপ্ত টাকা নেই। Available: '+opening+' ৳');
+  if(amount>capital) return alert('নির্বাচিত Base Capital-এ পর্যাপ্ত টাকা নেই। Available: '+capital+' ৳');
 
-if(method==='Bkash') obk.value=Math.max(0,v('obk')-amount);
-else if(method==='Nagad') ong.value=Math.max(0,v('ong')-amount);
-else if(method==='Rocket') ork.value=Math.max(0,v('ork')-amount);
-else if(method==='GP') ogp.value=Math.max(0,v('ogp')-amount);
-else if(method==='Robi') orobi.value=Math.max(0,v('orobi')-amount);
-else if(method==='Airtel') oair.value=Math.max(0,v('oair')-amount);
-else if(method==='Banglalink') obl.value=Math.max(0,v('obl')-amount);
-else if(method==='Tally') otk.value=Math.max(0,v('otk')-amount);
-else{
-  if(source==='mfs') omc.value=Math.max(0,v('omc')-amount);
-  else orc.value=Math.max(0,v('orc')-amount);
-}
+  // Deduct exactly the same amount from the selected Opening account and Base Capital.
+  document.getElementById(account.field).value=opening-amount;
+  document.getElementById(capitalId).value=capital-amount;
 
-const withdrawalId='OW-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
-histories.unshift({
-id:withdrawalId,
-date:new Date().toLocaleString(),
-type:'ownerWithdrawal',
-withdrawalAmount:amount,
-withdrawalMethod:method,
-withdrawalSource:source,
-withdrawalReason:reason,
-withdrawalCategory:category,
-createdAt:new Date().toISOString(),
-mfs:0,
-recharge:0,
-profit:0,
-note:'💸 Owner Withdrawal: '+amount+' ৳ | 📂 '+category+' | 💳 '+method+' | 📝 '+reason
-});
-
-localStorage.setItem('rasidulHistories',JSON.stringify(histories));
-try{ window.dispatchEvent(new StorageEvent('storage',{key:'rasidulHistories',newValue:localStorage.getItem('rasidulHistories')})); }catch(e){}
-/* Push the updated ERP source-of-truth directly to an open Expense Tracker. */
-try{ if(__expenseTrackerWin && !__expenseTrackerWin.closed) sendExpenseTrackerSync(__expenseTrackerWin); }catch(e){}
-
-/* Expense Tracker reads this Owner Withdrawal record automatically from
-   rasidulHistories. No separate expense record is written here, which prevents
-   duplicate entries and keeps ERP accounting as the single source of truth. */
-
-/* Existing calculations/UI refresh only. No accounting formula changed. */
-renderHistory();
-updateMonthly();
-updateWorkingCapital();
-updateLiveTotals();
-autoSave();
-
-/* Make the top Owner Withdrawal card refresh immediately. */
-if(typeof updateMonthlyOwnerWithdrawal==='function'){
-  updateMonthlyOwnerWithdrawal();
-}
-const topWithdrawal=document.getElementById('ui_monthlyWithdrawal');
-if(topWithdrawal && typeof updateMonthlyOwnerWithdrawal==='function'){
-  const now=new Date();
-  const y=now.getFullYear();
-  const m=now.getMonth();
-  let total=0;
-  (window.histories||[]).forEach(h=>{
-    if(h.type!=='ownerWithdrawal') return;
-    const d=new Date(h.date);
-    if(!isNaN(d.getTime()) && d.getFullYear()===y && d.getMonth()===m){
-      total+=Number(h.withdrawalAmount||0);
-    }
+  const withdrawalId='OW-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
+  histories.unshift({
+    id:withdrawalId,date:new Date().toLocaleString(),type:'ownerWithdrawal',
+    withdrawalAmount:amount,withdrawalMethod:method,withdrawalSource:source,
+    withdrawalReason:reason,withdrawalCategory:category,createdAt:new Date().toISOString(),
+    mfs:0,recharge:0,profit:0,
+    note:'💸 Owner Withdrawal: '+amount+' ৳ | 📂 '+category+' | 💳 '+method+' | 📝 '+reason
   });
-  topWithdrawal.textContent=total+' ৳';
+
+  localStorage.setItem('rasidulHistories',JSON.stringify(histories));
+  try{window.dispatchEvent(new StorageEvent('storage',{key:'rasidulHistories',newValue:localStorage.getItem('rasidulHistories')}));}catch(e){}
+  try{if(__expenseTrackerWin && !__expenseTrackerWin.closed) sendExpenseTrackerSync(__expenseTrackerWin);}catch(e){}
+
+  [capitalId,account.field].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  renderHistory(); updateMonthly(); updateWorkingCapital(); updateLiveTotals(); autoSave();
+  if(typeof updateMonthlyOwnerWithdrawal==='function') updateMonthlyOwnerWithdrawal();
+
+  const topWithdrawal=document.getElementById('ui_monthlyWithdrawal');
+  if(topWithdrawal){
+    const now=new Date(); let total=0;
+    (window.histories||[]).forEach(h=>{
+      if(h.type!=='ownerWithdrawal') return;
+      const d=new Date(h.date);
+      if(!isNaN(d.getTime())&&d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()) total+=Number(h.withdrawalAmount||0);
+    });
+    topWithdrawal.textContent=total+' ৳';
+  }
+  const wa=document.getElementById('withdrawAmount'); if(wa) wa.value='0';
+  const wr=document.getElementById('withdrawReason'); if(wr) wr.value='';
+  alert('💸 Withdrawal Saved. Opening Balance ও Base Capital সমন্বয় হয়েছে।');
 }
 
-withdrawAmount.value='0';
-withdrawReason.value='';
-
-/* Keep the visible UI mirror synchronized with the original fields. */
-['mfsCapital','rechargeCapital','obk','ong','ork','omc','ogp','orobi','oair','obl','otk','orc'].forEach(id=>{
-  const el=document.getElementById(id);
-  if(el) el.dispatchEvent(new Event('input',{bubbles:true}));
-});
-
-alert('💸 Withdrawal Saved');
-
-}
 function newDay(){
 
 obk.value=cbk.value;
@@ -3219,16 +3187,15 @@ window.addEventListener('beforeunload',function(e){
     const box=document.getElementById('closingCheckBox');
     if(!box) return profit;
 
-    // Use the single authoritative accounting summary. Tally Khata is included in MFS.
-    const b=(typeof getBalanceSummary==='function') ? getBalanceSummary() : {opening:0,closing:0,openMFS:0,closeMFS:0,openRecharge:0,closeRecharge:0,profit:profit};
-    profit=Number(b.profit||0);
+    const mfs=(Number(document.getElementById('cbk')?.value||0)+Number(document.getElementById('cng')?.value||0)+Number(document.getElementById('crk')?.value||0)+Number(document.getElementById('cmc')?.value||0));
+    const recharge=(Number(document.getElementById('cgp')?.value||0)+Number(document.getElementById('crobi')?.value||0)+Number(document.getElementById('cair')?.value||0)+Number(document.getElementById('cbl')?.value||0)+Number(document.getElementById('ctk')?.value||0)+Number(document.getElementById('crc')?.value||0));
 
     if(errors.length){
       box.className='closing-check-box warn';
-      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>🌅 Opening Balance: '+money(b.opening)+'<br>🌙 Closing Balance: '+money(b.closing)+'<br>💸 MFS Closing: '+money(b.closeMFS)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(b.closeRecharge)+'<br>💰 Total Profit/Loss: '+money(profit);
+      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Calculated Profit: '+money(profit);
     }else{
       box.className='closing-check-box ok';
-      box.innerHTML='✅ <b>Opening ও Closing হিসাব যাচাই সম্পন্ন।</b><br>🌅 Opening Balance: '+money(b.opening)+'<br>🌙 Closing Balance: '+money(b.closing)+'<br>💸 MFS Closing: '+money(b.closeMFS)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(b.closeRecharge)+'<br>💰 Total Profit/Loss: '+money(profit)+'<br>📌 Profit/Loss = Closing Balance − Opening Balance';
+      box.innerHTML='✅ <b>কোনো ইনপুট ত্রুটি ধরা পড়েনি।</b><br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Total Profit: '+money(profit)+'<br>📌 Final Save চাপলে দিনশেষের রিপোর্ট Popup হবে।';
     }
     return profit;
   };
@@ -3844,125 +3811,74 @@ ${txHTML}
 }
 
 async function saveLedgerTransaction(){
+  if(!ledgerPeople.length) return alert('আগে Person Add করুন');
 
-if(ledgerPeople.length===0){
-return alert('আগে Person Add করুন');
-}
+  const personIndex=Number(document.getElementById('ledgerPerson').value);
+  const person=ledgerPeople[personIndex];
+  const amount=Number(document.getElementById('ledgerAmount').value||0);
+  const type=document.getElementById('ledgerType').value;
+  const method=document.getElementById('ledgerMethod').value;
+  const fundSource=document.getElementById('ledgerFundSource').value;
+  if(!person || !Array.isArray(person.history)) return alert('সঠিক Person নির্বাচন করুন');
+  if(!Number.isFinite(amount)||amount<=0) return alert('সঠিক Amount দিন');
 
-let personIndex=Number(document.getElementById('ledgerPerson').value);
-let amount=Number(document.getElementById('ledgerAmount').value||0);
-let type=document.getElementById('ledgerType').value;
-let method=document.getElementById('ledgerMethod').value;
-let fundSource=document.getElementById('ledgerFundSource').value;
+  // Map the selected method to the exact Opening Balance account.
+  let accountId='';
+  if(method.includes('Bkash')) accountId='obk';
+  else if(method.includes('Nagad')) accountId='ong';
+  else if(method==='Rocket') accountId='ork';
+  else if(method==='GP') accountId='ogp';
+  else if(method==='Robi') accountId='orobi';
+  else if(method==='Airtel') accountId='oair';
+  else if(method==='Banglalink') accountId='obl';
+  else if(method==='Tally') accountId='otk';
+  else if(method==='Cash') accountId=fundSource==='mfs'?'omc':'orc';
+  else return alert('এই Method-এর জন্য Opening Balance খাত নেই। Cash/Bkash/Nagad/Rocket/GP/Robi/Airtel/Banglalink/Tally নির্বাচন করুন।');
 
-if(amount<=0){
-return alert('সঠিক Amount দিন');
-}
+  const methodSource=['obk','ong','ork','otk','omc'].includes(accountId)?'mfs':'recharge';
+  if(methodSource!==fundSource) return alert('নির্বাচিত Method এবং Fund Source মিলছে না। '+method+' হলো '+(methodSource==='mfs'?'MFS':'Recharge')+' খাতের।');
 
-ledgerPeople[personIndex].history.push({
-amount:amount,
-type:type,
-method:method,
-fundSource:fundSource,
-time:new Date().toLocaleString()
-});
+  // Person gives / refunds to us: incoming (+). Person takes / we refund: outgoing (-).
+  const sign=(type==='gave'||type==='refundReceived')?1:-1;
+  if(!['gave','took','refundGiven','refundReceived'].includes(type)) return alert('লেনদেনের ধরন সঠিক নয়');
 
-// Cash/Opening Balance movement follows the selected transaction: money received increases the balance; money paid out decreases it.
-let sign=(type==='took' || type==='refundGiven') ? -1 : 1;
+  const capitalId=fundSource==='mfs'?'mfsCapital':'rechargeCapital';
+  const opening=Number(document.getElementById(accountId).value||0);
+  const capital=Number(document.getElementById(capitalId).value||0);
+  if(sign<0 && amount>opening) return alert('নির্বাচিত Opening Balance-এ পর্যাপ্ত টাকা নেই। Available: '+opening+' ৳');
+  if(sign<0 && amount>capital) return alert('নির্বাচিত Base Capital-এ পর্যাপ্ত টাকা নেই। Available: '+capital+' ৳');
 
-if(fundSource==='mfs'){
-mfsCapital.value=(+mfsCapital.value||0)+(amount*sign);
-}else{
-rechargeCapital.value=(+rechargeCapital.value||0)+(amount*sign);
-}
+  // Apply one consistent signed movement to the selected account and its capital group.
+  document.getElementById(accountId).value=opening+(amount*sign);
+  document.getElementById(capitalId).value=capital+(amount*sign);
+  [accountId,capitalId].forEach(id=>document.getElementById(id).dispatchEvent(new Event('input',{bubbles:true})));
 
-if(method.includes('Bkash')){
-obk.value=(+obk.value||0)+(amount*sign);
-}else if(method.includes('Nagad')){
-ong.value=(+ong.value||0)+(amount*sign);
-}else if(method.includes('Rocket')){
-ork.value=(+ork.value||0)+(amount*sign);
-}else if(method==='GP'){
-ogp.value=(+ogp.value||0)+(amount*sign);
-}else if(method==='Robi'){
-orobi.value=(+orobi.value||0)+(amount*sign);
-}else if(method==='Airtel'){
-oair.value=(+oair.value||0)+(amount*sign);
-}else if(method==='Banglalink'){
-obl.value=(+obl.value||0)+(amount*sign);
-}else if(method==='Tally'){
-otk.value=(+otk.value||0)+(amount*sign);
-}else if(method==='Cash'){
-if(fundSource==='mfs'){
-omc.value=(+omc.value||0)+(amount*sign);
-}else{
-orc.value=(+orc.value||0)+(amount*sign);
-}
-}
+  person.history.push({amount,type,method,fundSource,time:new Date().toLocaleString()});
+  const settledNow=archiveSettledLedger(personIndex);
 
-// If this transaction makes the client's balance exactly zero,
-// archive the complete settlement cycle before starting a new cycle.
-let settledNow = archiveSettledLedger(personIndex);
-
-if(settledNow){
-  // Settlement archive must also trigger the normal WhatsApp confirmation.
-  // archiveSettledLedger() clears the live history, so build the message
-  // from the settled transaction before returning.
-  updateWorkingCapital();
-  updateLiveTotals();
-  autoSave();
-
-  saveLedgerData();
-
-  if(window.erpCloudSave){
-    await erpCloudSave();
-  }
-
-  let person=ledgerPeople[personIndex];
-
-  if(person && person.mobile && person.mobile.trim()!==''){
-    const message=buildWhatsAppSettlementMessage(person,amount,type,method);
-    const waUrl='https://wa.me/'+person.mobile+'?text='+encodeURIComponent(message);
-
-    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
-      window.location.href=waUrl;
-    }else{
-      window.open(waUrl,'_blank');
+  updateWorkingCapital(); updateLiveTotals(); autoSave(); saveLedgerData();
+  if(settledNow){
+    if(window.erpCloudSave) await erpCloudSave();
+    const settledPerson=ledgerPeople[personIndex];
+    if(settledPerson && settledPerson.mobile && settledPerson.mobile.trim()!==''){
+      const message=buildWhatsAppSettlementMessage(settledPerson,amount,type,method);
+      const waUrl='https://wa.me/'+settledPerson.mobile+'?text='+encodeURIComponent(message);
+      if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) window.location.href=waUrl;
+      else window.open(waUrl,'_blank');
     }
+    document.getElementById('ledgerAmount').value='';
+    return;
   }
 
+  renderLedger(); updateDueReminders(); updateDueDashboard();
+  if(window.erpCloudSave) await erpCloudSave();
+  if(person.mobile && person.mobile.trim()!==''){
+    const message=buildWhatsAppMessage(person,amount,type,method);
+    const waUrl='https://wa.me/'+person.mobile+'?text='+encodeURIComponent(message);
+    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) window.location.href=waUrl;
+    else window.open(waUrl,'_blank');
+  }
   document.getElementById('ledgerAmount').value='';
-  return;
-}
-
-updateWorkingCapital();
-updateLiveTotals();
-autoSave();
-
-saveLedgerData();
-renderLedger();
-updateDueReminders();
-updateDueDashboard();
-
-if(window.erpCloudSave){
-erpCloudSave();
-}
-
-let person=ledgerPeople[personIndex];
-
-if(person.mobile && person.mobile.trim()!==''){
-const message=buildWhatsAppMessage(person,amount,type,method);
-const waUrl='https://wa.me/'+person.mobile+'?text='+encodeURIComponent(message);
-
-if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
-    window.location.href = waUrl;
-}else{
-    window.open(waUrl,'_blank');
-}
-}
-
-document.getElementById('ledgerAmount').value='';
-
 }
 
 renderLedger();
