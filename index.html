@@ -3219,15 +3219,16 @@ window.addEventListener('beforeunload',function(e){
     const box=document.getElementById('closingCheckBox');
     if(!box) return profit;
 
-    const mfs=(Number(document.getElementById('cbk')?.value||0)+Number(document.getElementById('cng')?.value||0)+Number(document.getElementById('crk')?.value||0)+Number(document.getElementById('cmc')?.value||0));
-    const recharge=(Number(document.getElementById('cgp')?.value||0)+Number(document.getElementById('crobi')?.value||0)+Number(document.getElementById('cair')?.value||0)+Number(document.getElementById('cbl')?.value||0)+Number(document.getElementById('ctk')?.value||0)+Number(document.getElementById('crc')?.value||0));
+    // Use the single authoritative accounting summary. Tally Khata is included in MFS.
+    const b=(typeof getBalanceSummary==='function') ? getBalanceSummary() : {opening:0,closing:0,openMFS:0,closeMFS:0,openRecharge:0,closeRecharge:0,profit:profit};
+    profit=Number(b.profit||0);
 
     if(errors.length){
       box.className='closing-check-box warn';
-      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Calculated Profit: '+money(profit);
+      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>🌅 Opening Balance: '+money(b.opening)+'<br>🌙 Closing Balance: '+money(b.closing)+'<br>💸 MFS Closing: '+money(b.closeMFS)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(b.closeRecharge)+'<br>💰 Total Profit/Loss: '+money(profit);
     }else{
       box.className='closing-check-box ok';
-      box.innerHTML='✅ <b>কোনো ইনপুট ত্রুটি ধরা পড়েনি।</b><br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Total Profit: '+money(profit)+'<br>📌 Final Save চাপলে দিনশেষের রিপোর্ট Popup হবে।';
+      box.innerHTML='✅ <b>Opening ও Closing হিসাব যাচাই সম্পন্ন।</b><br>🌅 Opening Balance: '+money(b.opening)+'<br>🌙 Closing Balance: '+money(b.closing)+'<br>💸 MFS Closing: '+money(b.closeMFS)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(b.closeRecharge)+'<br>💰 Total Profit/Loss: '+money(profit)+'<br>📌 Profit/Loss = Closing Balance − Opening Balance';
     }
     return profit;
   };
