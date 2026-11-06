@@ -671,9 +671,15 @@ Cloud ERP ব্যবহার করতে ইন্টারনেট চা�
     </div>
     <div id="closingReportDate" style="opacity:.78"></div>
     <div class="closing-report-grid">
-      <div class="closing-report-item"><small>💸 MFS Profit</small><b id="cr_mfs">0 ৳</b></div>
-      <div class="closing-report-item"><small>📱 Recharge Profit</small><b id="cr_recharge">0 ৳</b></div>
-      <div class="closing-report-item"><small>💰 Total Profit</small><b id="cr_total">0 ৳</b></div>
+      <div class="closing-report-item"><small>🌅 Total Opening Balance</small><b id="cr_opening">0 ৳</b></div>
+      <div class="closing-report-item"><small>🌙 Total Closing Balance</small><b id="cr_closing">0 ৳</b></div>
+      <div class="closing-report-item" style="grid-column:1/-1"><small>💰 Total Profit / Loss (Closing − Opening)</small><b id="cr_total">0 ৳</b></div>
+      <div class="closing-report-item"><small>💸 MFS Opening</small><b id="cr_mfs_open">0 ৳</b></div>
+      <div class="closing-report-item"><small>💸 MFS Closing</small><b id="cr_mfs_close">0 ৳</b></div>
+      <div class="closing-report-item"><small>💸 MFS Profit / Loss</small><b id="cr_mfs">0 ৳</b></div>
+      <div class="closing-report-item"><small>📱 Recharge Opening</small><b id="cr_recharge_open">0 ৳</b></div>
+      <div class="closing-report-item"><small>📱 Recharge Closing</small><b id="cr_recharge_close">0 ৳</b></div>
+      <div class="closing-report-item"><small>📱 Recharge Profit / Loss</small><b id="cr_recharge">0 ৳</b></div>
       <div class="closing-report-item"><small>💎 Working Capital</small><b id="cr_capital">0 ৳</b></div>
       <div class="closing-report-item"><small>💵 Closing Cash</small><b id="cr_cash">0 ৳</b></div>
       <div class="closing-report-item"><small>🏦 Closing E-Money</small><b id="cr_emoney">0 ৳</b></div>
@@ -1258,20 +1264,24 @@ function v(id){
  return +document.getElementById(id).value||0;
 }
 
+function getBalanceSummary(){
+  // Tally Khata is part of MFS, not Recharge.
+  const openMFS=v('obk')+v('ong')+v('ork')+v('otk')+v('omc');
+  const closeMFS=v('cbk')+v('cng')+v('crk')+v('ctk')+v('cmc');
+  const openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('orc');
+  const closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('crc');
+  const opening=openMFS+openRecharge;
+  const closing=closeMFS+closeRecharge;
+  return {openMFS,closeMFS,openRecharge,closeRecharge,opening,closing,profit:closing-opening};
+}
+
 function calculate(){
-
-let openMFS=v('obk')+v('ong')+v('ork')+v('omc');
-let closeMFS=v('cbk')+v('cng')+v('crk')+v('cmc');
-
-let openRecharge=v('ogp')+v('orobi')+v('oair')+v('obl')+v('otk')+v('orc');
-let closeRecharge=v('cgp')+v('crobi')+v('cair')+v('cbl')+v('ctk')+v('crc');
-
-window.mfsProfit=closeMFS-openMFS;
-window.rechargeProfit=closeRecharge-openRecharge;
-
-let rawProfit=mfsProfit+rechargeProfit;
-
-window.profit=rawProfit;
+const b=getBalanceSummary();
+window.balanceSummary=b;
+window.mfsProfit=b.closeMFS-b.openMFS;
+window.rechargeProfit=b.closeRecharge-b.openRecharge;
+window.profit=b.profit;
+let rawProfit=window.profit;
 
 mfsProfitBox.innerHTML=mfsProfit+' ৳';
 rechargeProfitBox.innerHTML=rechargeProfit+' ৳';
@@ -1294,8 +1304,15 @@ function saveFinal(){
 
 let p=calculate();
 
+const balance=getBalanceSummary();
 let item={
  date:new Date().toLocaleString(),
+ opening:Number(balance.opening||0),
+ closing:Number(balance.closing||0),
+ openingMFS:Number(balance.openMFS||0),
+ closingMFS:Number(balance.closeMFS||0),
+ openingRecharge:Number(balance.openRecharge||0),
+ closingRecharge:Number(balance.closeRecharge||0),
  mfs:Number(window.mfsProfit||0),
  recharge:Number(window.rechargeProfit||0),
  profit:Number(p||0),
@@ -1345,9 +1362,10 @@ ${isWithdrawal
      💳 Method: ${h.withdrawalMethod||'—'}<br>
      📝 Reason: ${h.withdrawalReason||'—'}<br>
      💰 Profit/Loss: 0 টাকা`
-  : `💸 MFS Profit: ${h.mfs||0} টাকা<br>
-     📱 Recharge Profit: ${h.recharge||0} টাকা<br>
-     💰 Total Profit: ${h.profit} টাকা<br>
+  : `${h.opening!==undefined ? `🌅 Opening Balance: <b>${Number(h.opening||0).toLocaleString('bn-BD')} টাকা</b><br>🌙 Closing Balance: <b>${Number(h.closing||0).toLocaleString('bn-BD')} টাকা</b><br>` : ''}
+     💸 MFS Profit: ${Number(h.mfs||0).toLocaleString('bn-BD')} টাকা<br>
+     📱 Recharge Profit: ${Number(h.recharge||0).toLocaleString('bn-BD')} টাকা<br>
+     💰 Total Profit/Loss: <b>${Number(h.profit||0).toLocaleString('bn-BD')} টাকা</b><br>
      📝 ${h.note||''}`}
 
 </div>`;
@@ -2073,15 +2091,13 @@ ${tx}
     const box=document.getElementById('closingCheckBox');
     if(!box) return profit;
 
-    const mfs=(Number(document.getElementById('cbk')?.value||0)+Number(document.getElementById('cng')?.value||0)+Number(document.getElementById('crk')?.value||0)+Number(document.getElementById('cmc')?.value||0));
-    const recharge=(Number(document.getElementById('cgp')?.value||0)+Number(document.getElementById('crobi')?.value||0)+Number(document.getElementById('cair')?.value||0)+Number(document.getElementById('cbl')?.value||0)+Number(document.getElementById('ctk')?.value||0)+Number(document.getElementById('crc')?.value||0));
-
+    const b=(typeof getBalanceSummary==='function')?getBalanceSummary():{openMFS:0,closeMFS:0,openRecharge:0,closeRecharge:0,opening:0,closing:0,profit:profit};
     if(errors.length){
       box.className='closing-check-box warn';
-      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Calculated Profit: '+money(profit);
+      box.innerHTML='⚠️ <b>ইনপুট চেক:</b> '+errors.join(', ')+'।<br>🌅 Opening: '+money(b.opening)+' &nbsp; | &nbsp; 🌙 Closing: '+money(b.closing)+'<br>💸 MFS Closing: '+money(b.closeMFS)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(b.closeRecharge)+'<br>💰 Profit/Loss: '+money(b.profit);
     }else{
       box.className='closing-check-box ok';
-      box.innerHTML='✅ <b>কোনো ইনপুট ত্রুটি ধরা পড়েনি।</b><br>💸 MFS Closing: '+money(mfs)+' &nbsp; | &nbsp; 📱 Recharge Closing: '+money(recharge)+'<br>💰 Total Profit: '+money(profit)+'<br>📌 Final Save চাপলে দিনশেষের রিপোর্ট Popup হবে।';
+      box.innerHTML='✅ <b>Opening ও Closing যাচাই সম্পন্ন।</b><br>🌅 Opening: '+money(b.opening)+' &nbsp; | &nbsp; 🌙 Closing: '+money(b.closing)+'<br>💸 MFS Profit: '+money(b.closeMFS-b.openMFS)+' &nbsp; | &nbsp; 📱 Recharge Profit: '+money(b.closeRecharge-b.openRecharge)+'<br>💰 Total Profit/Loss: '+money(b.profit)+'<br>📌 Final Save চাপলে বিস্তারিত Summary Report দেখাবে।';
     }
     return profit;
   };
@@ -2433,9 +2449,17 @@ document.getElementById('ersBioEnabled').addEventListener('change',async functio
     const ov=g('closingReportOverlay');
     if(!ov)return;
     g('closingReportDate').textContent=new Date().toLocaleString('bn-BD');
-    g('cr_mfs').textContent=(window.mfsProfit||0)+' ৳';
-    g('cr_recharge').textContent=(window.rechargeProfit||0)+' ৳';
-    g('cr_total').textContent=(window.profit||0)+' ৳';
+    const b=(typeof getBalanceSummary==='function')?getBalanceSummary():{openMFS:0,closeMFS:0,openRecharge:0,closeRecharge:0,opening:0,closing:0,profit:0};
+    const fmt=n=>Number(n||0).toLocaleString('bn-BD')+' ৳';
+    g('cr_opening').textContent=fmt(b.opening);
+    g('cr_closing').textContent=fmt(b.closing);
+    g('cr_mfs_open').textContent=fmt(b.openMFS);
+    g('cr_mfs_close').textContent=fmt(b.closeMFS);
+    g('cr_recharge_open').textContent=fmt(b.openRecharge);
+    g('cr_recharge_close').textContent=fmt(b.closeRecharge);
+    g('cr_mfs').textContent=fmt(b.closeMFS-b.openMFS);
+    g('cr_recharge').textContent=fmt(b.closeRecharge-b.openRecharge);
+    g('cr_total').textContent=fmt(b.profit);
     g('cr_capital').textContent=text('workingCapitalBox');
     g('cr_cash').textContent=text('closingCash');
     g('cr_emoney').textContent=text('closingEmoney');
